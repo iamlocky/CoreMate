@@ -131,7 +131,13 @@ public class WebFrag extends CoreFrag {
         webView.pauseTimers();
     }
 
-	/*内部回调*/
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        webView.destroy();
+    }
+
+    /*内部回调*/
 
     protected void onPrepareWebView(WebView webView) {
         webView.setWebViewClient(new FragWebClient());
