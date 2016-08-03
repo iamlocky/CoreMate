@@ -2,7 +2,7 @@ package core.mate.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import core.mate.app.CoreFrag;
 import core.mate.util.LogUtil;
@@ -11,12 +11,12 @@ import core.mate.util.LogUtil;
  * @author DrkCore
  * @since 2016年4月20日21:32:37
  */
-public class FragPagerAdapter extends FragmentPagerAdapter {
+public class FragStatePagerAdapter extends FragmentStatePagerAdapter{
 
     private final Class[] fragClzs;
     private final Fragment[] frags;
 
-    public FragPagerAdapter(FragmentManager fm, Class[] fragClzs) {
+    public FragStatePagerAdapter(FragmentManager fm, Class[] fragClzs) {
         super(fm);
         this.fragClzs = fragClzs;
         this.frags = new Fragment[fragClzs.length];
