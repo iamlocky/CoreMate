@@ -26,12 +26,3 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.android.support:recyclerview-v7:24.1.1'
 }
-
-publish {
-    userOrg = 'drkcore'
-    groupId = 'core.mate'
-    artifactId = 'core'
-    publishVersion = '1.0.0-beta'
-    desc = 'A library consists of common utils and classes'
-    website = 'https://github.com/DrkCore/CoreMate'
-}
