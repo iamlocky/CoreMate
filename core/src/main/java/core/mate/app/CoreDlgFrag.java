@@ -18,6 +18,7 @@ import core.mate.common.ClearableHolder;
 import core.mate.common.ClearableWrapper;
 import core.mate.common.RefreshRate;
 import core.mate.util.ClassUtil;
+import core.mate.util.LogUtil;
 
 /**
  * 简单封装的DialogFrag基类
@@ -75,7 +76,16 @@ public abstract class CoreDlgFrag extends DialogFragment {
         }
     }
 
-	/* 模板方法 */
+    @Override
+    public void dismiss() {
+        try {
+            super.dismiss();
+        }catch (Throwable e){
+            LogUtil.e(e);
+        }
+    }
+
+    /* 模板方法 */
 
     private int winAnimStyle;
 
