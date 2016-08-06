@@ -88,7 +88,10 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         Object tag = v.getTag();
         if (tag instanceof RecyclerView.ViewHolder && onItemClickListener != null) {
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) tag;
-            onItemClickListener.onItemClick(v, viewHolder.getAdapterPosition(), getItem(viewHolder.getAdapterPosition()));
+            int pos = viewHolder.getAdapterPosition();
+            if (pos >= 0) {
+                onItemClickListener.onItemClick(v, pos, getItem(pos));
+            }
         }
     }
 
@@ -97,11 +100,14 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         Object tag = v.getTag();
         if (tag instanceof RecyclerView.ViewHolder && onItemLongClickListener != null) {
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) tag;
-            return onItemLongClickListener.onItemLongClick(v, viewHolder.getAdapterPosition(), getItem(viewHolder.getAdapterPosition()));
+            int pos = viewHolder.getAdapterPosition();
+            if (pos >= 0) {
+                return onItemLongClickListener.onItemLongClick(v, pos, getItem(pos));
+            }
         }
         return false;
     }
-	
+
 	/* 外部接口 */
 
     public interface OnItemClickListener<Item> {
@@ -134,7 +140,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     public final void setOnItemLongClickListener(OnItemLongClickListener<Item> onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
     }
-	
+
 	/* 数据处理 */
 
     @SafeVarargs
