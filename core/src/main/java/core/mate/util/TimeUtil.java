@@ -104,19 +104,7 @@ public final class TimeUtil extends DateUtils {
 
     private volatile static LruCache<String, DateFormat> dateFormatLruCache;
 
-    /**
-     * 按照时间格式给出一个时间的描述。比如“2014年8月17日 09:50”。
-     * 默认使用{@link Locale#CHINA}作为时区。
-     *
-     * @param time
-     * @param pattern 时间的格式。<br>
-     *                如果为null，则默认使用
-     *                “yyyy-MM-dd HH:mm”
-     * @return
-     */
-    public static String toFormattedDescription(long time, String pattern) {
-        pattern = !TextUtil.isEmpty(pattern) ? pattern : "yyyy-MM-dd HH:mm";
-
+    private static DateFormat getDateFormat(String pattern) {
         if (dateFormatLruCache == null) {
             synchronized (TimeUtil.class) {
                 if (dateFormatLruCache == null) {
@@ -129,8 +117,22 @@ public final class TimeUtil extends DateUtils {
             format = new SimpleDateFormat(pattern, locale);
             dateFormatLruCache.put(pattern, format);
         }
+        return format;
+    }
 
-        return format.format(new Date(time));
+    /**
+     * 按照时间格式给出一个时间的描述。比如“2014年8月17日 09:50”。
+     * 默认使用{@link Locale#CHINA}作为时区。
+     *
+     * @param time
+     * @param pattern 时间的格式。<br>
+     *                如果为null，则默认使用
+     *                “yyyy-MM-dd HH:mm”
+     * @return
+     */
+    public static String toFormattedDescription(long time, String pattern) {
+        pattern = !TextUtil.isEmpty(pattern) ? pattern : "yyyy-MM-dd HH:mm";
+        return getDateFormat(pattern).format(new Date(time));
     }
 
     /**
@@ -215,8 +217,7 @@ public final class TimeUtil extends DateUtils {
      */
     @SuppressLint("SimpleDateFormat")
     public static Date toDate(String pattern, String formattedStr) throws ParseException {
-        DateFormat format = new SimpleDateFormat(pattern);
-        return format.parse(formattedStr);
+        return getDateFormat(pattern).parse(formattedStr);
     }
 
     /**

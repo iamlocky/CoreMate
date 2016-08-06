@@ -11,11 +11,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.util.List;
-import java.util.Map;
-
-import core.mate.util.HttpUtil;
-
 /**
  * 封装了WebView的Fragment
  *
@@ -46,8 +41,7 @@ public class WebFrag extends CoreFrag {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return WebFrag.this.onAction(url, HttpUtil.getActionsFromUrl(url), HttpUtil.getUrlParamsFromUrl(url))
-                    || super.shouldOverrideUrlLoading(webView, url);
+            return WebFrag.this.onAction(url) || super.shouldOverrideUrlLoading(webView, url);
         }
     }
 
@@ -68,14 +62,14 @@ public class WebFrag extends CoreFrag {
 
     protected final void configWebViewId(@IdRes int webViewId) {
         if (webView != null) {
-            throw new IllegalStateException("ListView已经创建，此时无法设置webViewId");
+            throw new IllegalStateException("WebView已经创建，此时无法设置webViewId");
         }
         this.webViewId = webViewId;
     }
 
     protected final void configLayoutRes(@LayoutRes int layoutRes) {
         if (webView != null) {
-            throw new IllegalStateException("ListView已经创建，此时无法设置layoutRes");
+            throw new IllegalStateException("WebView已经创建，此时无法设置layoutRes");
         }
         this.layoutRes = layoutRes;
     }
@@ -85,7 +79,7 @@ public class WebFrag extends CoreFrag {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View contentView;
-        if (layoutRes <= 0) {// 并未指定布局，直接创建ListView
+        if (layoutRes <= 0) {// 并未指定布局，直接创建WebView
             contentView = new WebView(getActivity());
         } else {// 指定了布局
             contentView = inflater.inflate(layoutRes, container, false);
@@ -96,7 +90,7 @@ public class WebFrag extends CoreFrag {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (view instanceof WebView) {// 布局本身就是ListView或者其子类
+        if (view instanceof WebView) {// 布局本身就是WebView或者其子类
             webView = (WebView) view;
         } else if (webViewId > 0) {// 指定了id
             webView = (WebView) view.findViewById(webViewId);
@@ -152,7 +146,7 @@ public class WebFrag extends CoreFrag {
     public void onPageFinished(String url) {
     }
 
-    public boolean onAction(String url, List<String> actions, Map<String, String> params) {
+    public boolean onAction(String url) {
         return false;
     }
 

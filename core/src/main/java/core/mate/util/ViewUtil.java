@@ -1,6 +1,7 @@
 package core.mate.util;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -204,13 +205,22 @@ public final class ViewUtil {
      * @param view
      * @return
      */
-    public static Bitmap getDrawingCache(View view) {
+    public static Bitmap getBitmapByDrawingCache(View view) {
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
         //因为原图可能会被回收，这里创建一个拷贝
         Bitmap img = Bitmap.createBitmap(view.getDrawingCache());
         view.setDrawingCacheEnabled(false);
         return img;
+    }
+
+    public static Bitmap getBitmapByDraw(View view) {
+        Bitmap bmp = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bmp);
+        view.setWillNotDraw(true);
+        view.draw(canvas);
+        view.setWillNotDraw(false);
+        return bmp;
     }
 
 }

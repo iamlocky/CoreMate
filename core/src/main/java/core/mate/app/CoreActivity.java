@@ -38,7 +38,7 @@ public abstract class CoreActivity extends AppCompatActivity {
 	/* 继承 */
 
     @Override
-    protected final void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 回调各个初始化的方法
         // 如果某个初始化回调中调用了finish则不再进行后续的操作
@@ -53,9 +53,6 @@ public abstract class CoreActivity extends AppCompatActivity {
             if (toolbar != null) {//仅当toolbar存在时回调
                 initToolbar(savedInstanceState, toolbar);
             }
-        }
-        if (!isFinishing()) {
-            afterInit(savedInstanceState);
         }
     }
 
@@ -138,14 +135,6 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @param toolbar
      */
     protected void initToolbar(Bundle savedInstanceState, Toolbar toolbar) {
-    }
-
-    /**
-     * 当所有的initXXX方法调用之后在{@link #onCreate(Bundle)}的末尾回调。
-     *
-     * @param savedInstanceState
-     */
-    protected void afterInit(Bundle savedInstanceState) {
     }
 
     protected boolean onBackKey() {
