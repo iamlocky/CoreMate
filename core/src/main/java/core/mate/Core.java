@@ -15,7 +15,7 @@ public final class Core {
 
     public Context getAppContext() {
         if (appContext == null) {
-            throw new IllegalStateException("在使用CoreBase框架前并未初始化");
+            throw new IllegalStateException("在使用CoreMate框架前并未初始化");
         }
         return appContext;
     }
