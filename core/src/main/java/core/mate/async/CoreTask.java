@@ -6,9 +6,9 @@ import android.support.annotation.WorkerThread;
 
 import core.mate.Core;
 import core.mate.common.Clearable;
+import core.mate.common.ITaskIndicator;
 import core.mate.util.ClassUtil;
 import core.mate.util.LogUtil;
-import core.mate.common.ITaskIndicator;
 
 /**
  * 初步封装的异步任务基类。<br/>
@@ -21,7 +21,8 @@ import core.mate.common.ITaskIndicator;
  * @author DrkCore
  * @since 2015年9月29日10:28:34
  */
-public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Params, Progress, CoreTask.ResultHolder<Result>> implements Clearable {
+public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Params, Progress, CoreTask.ResultHolder<Result>>
+        implements Clearable, AsyncManager.Node<Params, Params, Result> {
 
     protected static class ResultHolder<Result> {
 
@@ -130,6 +131,8 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
         if (onTaskListener != null) {
             onTaskListener.onSuccess(result);
         }
+
+        successWith(result);
     }
 
     protected void onFailure(Exception e) {
@@ -139,6 +142,8 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
         if (onTaskListener != null) {
             onTaskListener.onFailure(e);
         }
+
+        errorWith(e);
     }
 
     protected void onDone() {
@@ -231,7 +236,42 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
         return this;
     }
 
-	/* 开发模式 */
+    /*链式回调管理*/
+
+    private AsyncManager asyncMgr;
+    private int nodeIdx;
+
+    @Override
+    public final void setupNode(AsyncManager asyncMgr, int idx) {
+        this.asyncMgr = asyncMgr;
+        this.nodeIdx = idx;
+    }
+
+    @Override
+    public Params dependOn(Params params) {
+        return params;
+    }
+
+    @Override
+    public void startWith(Params params) {
+        execute(params);
+    }
+
+    @Override
+    public final void errorWith(Exception error) {
+        if (asyncMgr != null) {
+            asyncMgr.onNodeError(getClass(), nodeIdx, error);
+        }
+    }
+
+    @Override
+    public final void successWith(Result result) {
+        if (asyncMgr != null) {
+            asyncMgr.onNodeResult(getClass(), nodeIdx, result);
+        }
+    }
+
+    /* 开发模式 */
 
     private Boolean isDevModeEnable;
     private LogUtil.Builder logBuilder;
@@ -266,18 +306,6 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
         if (isDevModeEnable()) {
             logDevMsg("Task状态：", taskState != null ? taskState.name() : null);
         }
-    }
-
-	/* 拓展 */
-
-    private Object tag;
-
-    public void setTag(Object tag) {
-        this.tag = tag;
-    }
-
-    public Object getTag() {
-        return tag;
     }
 
 	/* 清空数据 */

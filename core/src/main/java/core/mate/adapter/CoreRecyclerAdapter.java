@@ -133,12 +133,14 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         return onItemLongClickListener;
     }
 
-    public final void setOnItemClickListener(OnItemClickListener<Item> onItemClickListener) {
+    public final CoreRecyclerAdapter setOnItemClickListener(OnItemClickListener<Item> onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+        return this;
     }
 
-    public final void setOnItemLongClickListener(OnItemLongClickListener<Item> onItemLongClickListener) {
+    public final CoreRecyclerAdapter setOnItemLongClickListener(OnItemLongClickListener<Item> onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
+        return this;
     }
 
 	/* 数据处理 */

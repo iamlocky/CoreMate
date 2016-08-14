@@ -6,14 +6,21 @@ import java.util.List;
 
 public class ClearableHolder {
 
-    private final List<WeakReference<Clearable>> clearables = new ArrayList<>();
+    private List<WeakReference<Clearable>> clearables;
 
     public void add(Clearable clearable) {
+        if (this.clearables == null) {
+            this.clearables = new ArrayList<>();
+        }
         this.clearables.add(new WeakReference<>(clearable));
     }
 
+    public boolean isCleared() {
+        return clearables == null || clearables.isEmpty();
+    }
+
     public void clearAll() {
-        if (clearables.isEmpty()) {
+        if (isCleared()) {
             return;
         }
         Clearable tmp;
