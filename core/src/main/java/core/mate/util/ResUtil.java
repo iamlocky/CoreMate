@@ -292,7 +292,7 @@ public final class ResUtil {
      * @param asset  资源名
      * @param dstDir 目标文件
      * @param cover  是否覆盖重名文件。如果重名的是目录则抛出异常。
-     * @return 成功导出后的文件，如果指定文件存在且cover为false则直接返回dst。
+     * @return 成功导出后的文件，如果指定目录下存在重名文件且cover为false则直接返回该文件。
      * @throws IOException 写入操作或者dst指向一个目录都将抛出该异常。
      */
     public static File exportAssetFile(String asset, File dstDir, boolean cover) throws IOException {

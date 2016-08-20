@@ -1,6 +1,5 @@
 package core.mate.app;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -9,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 /**
  * 封装了WebView的Fragment
@@ -18,32 +16,6 @@ import android.webkit.WebViewClient;
  * @since 2016年1月10日10:51:02
  */
 public class WebFrag extends CoreFrag {
-
-    private class FragWebClient extends WebViewClient {
-
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-            WebFrag.this.onPageStarted(url, favicon);
-        }
-
-        @Override
-        public void onPageCommitVisible(WebView view, String url) {
-            super.onPageCommitVisible(view, url);
-            WebFrag.this.onPageCommitVisible(url);
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, url);
-            WebFrag.this.onPageFinished(url);
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return WebFrag.this.onAction(url) || super.shouldOverrideUrlLoading(webView, url);
-        }
-    }
 
 	/*成员*/
 
@@ -117,6 +89,10 @@ public class WebFrag extends CoreFrag {
     public void onResume() {
         super.onResume();
         webView.resumeTimers();
+
+        if (url != null) {
+            loadUrl(url);
+        }
     }
 
     @Override
@@ -134,20 +110,23 @@ public class WebFrag extends CoreFrag {
     /*内部回调*/
 
     protected void onPrepareWebView(WebView webView) {
-        webView.setWebViewClient(new FragWebClient());
     }
 
-    public void onPageStarted(String url, Bitmap favicon) {
+    /*拓展*/
+
+    private String url;
+
+    public String getUrl() {
+        if (webView != null) {
+            url = webView.getUrl();
+        }
+        return url;
     }
 
-    public void onPageCommitVisible(String url) {
+    public void loadUrl(String url) {
+        this.url = url;
+        if (webView != null && !url.equals(webView.getUrl())) {
+            webView.loadUrl(url);
+        }
     }
-
-    public void onPageFinished(String url) {
-    }
-
-    public boolean onAction(String url) {
-        return false;
-    }
-
 }
