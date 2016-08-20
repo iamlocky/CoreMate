@@ -4,6 +4,9 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import core.mate.Core;
 import core.mate.common.Clearable;
 import core.mate.common.ITaskIndicator;
@@ -21,8 +24,7 @@ import core.mate.util.LogUtil;
  * @author DrkCore
  * @since 2015年9月29日10:28:34
  */
-public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Params, Progress, CoreTask.ResultHolder<Result>>
-        implements Clearable, AsyncManager.Node<Params, Params, Result> {
+public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Params, Progress, CoreTask.ResultHolder<Result>> implements Clearable {
 
     protected static class ResultHolder<Result> {
 
@@ -59,8 +61,10 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
 
         try {
             Result result = doInBack(params != null && params.length >= 1 ? params[0] : null);
-            if (onTaskListener != null) {
-                onTaskListener.onPrepareResult(result);
+            if (onTaskListeners != null) {
+                for (OnTaskListener listener : onTaskListeners) {
+                    listener.onPrepareResult(result);
+                }
             }
             return new ResultHolder<>(result, null);
         } catch (Exception e) {
@@ -76,9 +80,13 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     @Override
     protected void onProgressUpdate(Progress... values) {
         super.onProgressUpdate(values);
-        if (onTaskListener instanceof OnTaskProgressListener) {
-            OnTaskProgressListener<Progress, Result> listener = (OnTaskProgressListener<Progress, Result>) onTaskListener;
-            listener.onUpdateProgress(values != null && values.length > 0 ? values[0] : null);
+        if (onTaskListeners != null) {
+            for (OnTaskListener listener : onTaskListeners) {
+                if (listener instanceof OnTaskProgressListener) {
+                    OnTaskProgressListener<Progress, Result> progressListener = (OnTaskProgressListener<Progress, Result>) listener;
+                    progressListener.onUpdateProgress(values != null && values.length > 0 ? values[0] : null);
+                }
+            }
         }
     }
 
@@ -108,8 +116,10 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
 
     protected void onStart() {
         // 处理回调
-        if (onTaskListener != null) {
-            onTaskListener.onStart();
+        if (onTaskListeners != null) {
+            for (OnTaskListener<Result> onTaskListener : onTaskListeners) {
+                onTaskListener.onStart();
+            }
         }
     }
 
@@ -127,28 +137,29 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     protected void onSuccess(Result result) {
         taskState = TaskState.SUCCESS;
         logTaskState();
-
-        if (onTaskListener != null) {
-            onTaskListener.onSuccess(result);
+        if (onTaskListeners != null) {
+            for (OnTaskListener<Result> onTaskListener : onTaskListeners) {
+                onTaskListener.onSuccess(result);
+            }
         }
-
-        successWith(result);
     }
 
     protected void onFailure(Exception e) {
         taskState = TaskState.FAILURE;
         logTaskState();
 
-        if (onTaskListener != null) {
-            onTaskListener.onFailure(e);
+        if (onTaskListeners != null) {
+            for (OnTaskListener<Result> onTaskListener : onTaskListeners) {
+                onTaskListener.onFailure(e);
+            }
         }
-
-        errorWith(e);
     }
 
     protected void onDone() {
-        if (onTaskListener != null) {
-            onTaskListener.onDone();
+        if (onTaskListeners != null) {
+            for (OnTaskListener<Result> onTaskListener : onTaskListeners) {
+                onTaskListener.onDone();
+            }
         }
     }
 
@@ -196,10 +207,13 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
 
     }
 
-    private OnTaskListener<Result> onTaskListener;
+    private List<OnTaskListener<Result>> onTaskListeners;
 
-    public final CoreTask<Params, Progress, Result> setOnTaskListener(OnTaskListener<Result> listener) {
-        this.onTaskListener = listener;
+    public final CoreTask<Params, Progress, Result> addOnTaskListener(OnTaskListener<Result> listener) {
+        if (this.onTaskListeners == null) {
+            this.onTaskListeners = new ArrayList<>();
+        }
+        this.onTaskListeners.add(listener);
         return this;
     }
 
@@ -234,41 +248,6 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     public final CoreTask<Params, Progress, Result> setIndicator(ITaskIndicator indicator) {
         this.indicator = indicator;
         return this;
-    }
-
-    /*链式回调管理*/
-
-    private AsyncManager asyncMgr;
-    private int nodeIdx;
-
-    @Override
-    public final void setupNode(AsyncManager asyncMgr, int idx) {
-        this.asyncMgr = asyncMgr;
-        this.nodeIdx = idx;
-    }
-
-    @Override
-    public Params dependOn(Params params) {
-        return params;
-    }
-
-    @Override
-    public void startWith(Params params) {
-        execute(params);
-    }
-
-    @Override
-    public final void errorWith(Exception error) {
-        if (asyncMgr != null) {
-            asyncMgr.onNodeError(getClass(), nodeIdx, error);
-        }
-    }
-
-    @Override
-    public final void successWith(Result result) {
-        if (asyncMgr != null) {
-            asyncMgr.onNodeResult(getClass(), nodeIdx, result);
-        }
     }
 
     /* 开发模式 */
@@ -333,7 +312,7 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     }
 
     /**
-     * 清理外部的引用，包括{@link #onTaskListener}和{@link #indicator}，
+     * 清理外部的引用，包括{@link #onTaskListeners}和{@link #indicator}，
      * 然后取消任务。
      *
      * @param mayInterruptIfRunning
@@ -345,7 +324,11 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
             }
             indicator = null;
         }
-        onTaskListener = null;
+        if (onTaskListeners != null) {
+            onTaskListeners.clear();
+            onTaskListeners = null;
+        }
+
         if (!isCancelled()) {
             cancel(mayInterruptIfRunning);
         }

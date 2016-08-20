@@ -1,26 +1,43 @@
 package core.mate.async;
 
-import android.util.SparseArray;
+import android.support.annotation.IntDef;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import core.mate.common.Clearable;
 import core.mate.common.ClearableHolder;
+import core.mate.common.ITaskIndicator;
 import core.mate.util.LogUtil;
 
 /**
- * 用于串行执行异步的任务的辅助类。
+ * 用于处理任务调度的辅助类，你可以将之理解为状态机。
+ * <p/>
+ * 所有与状态相关的参数应该保存在状态机之中，任务节点应该在
+ * {@link Node#startWith(AsyncManager)} 方法中获取参数并
+ * 启动节点，最终将参数反馈到该状态机的实例中。
+ * <p/>
+ * 该类适用于将嵌套回调改写成线性的形式，比如某一个API依赖于
+ * 前一个API的结果，或者需要线性处理异步任务等。
  *
  * @author DrkCore
  * @since 2016年8月14日22:46:11
  */
-public class AsyncManager implements Clearable {
+public abstract class AsyncManager implements Clearable {
 
     public static final int STATE_PRE = 0;
     public static final int STATE_START = 1;
-    public static final int STATE_ERROR = 2;
-    public static final int STATE_DONE = 3;
+    public static final int STATE_FINISH = 2;
+
+    @IntDef({
+            STATE_PRE,
+            STATE_START,
+            STATE_FINISH
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AsyncManagerState {
+
+    }
 
     private int state = STATE_PRE;
 
@@ -30,154 +47,169 @@ public class AsyncManager implements Clearable {
 
     /*节点管理*/
 
-    public interface Node<Depend, Params, Result> extends Clearable {
-
-        void setupNode(AsyncManager asyncMgr, int idx);
+    /**
+     * 任务节点接口。在实现子类的时候你可以使用{@link NodeImpl}
+     * 和{@link TaskNodeWrapper}的形式来简化任务节点的编写。
+     * <p/>
+     * 由于需要反射创建节点实例，因而节点类必须要有可用的无参构造函数。
+     * <p/>
+     * 你可以从该框架的demo工程中找到比较推荐的写法。
+     *
+     * @param <AsyncMgr>
+     */
+    public interface Node<AsyncMgr extends AsyncManager> {
 
         /**
-         * 上个节点的结果将作为该节点的依赖。
-         * 如果该方法返回非null的对象，当该节点对应的params为null时将会使用该对象作为params用于调用{@link #startWith(Object)}。
+         * 启动任务节点。你需要从asyncMgr实例中获取启动该节点
+         * 的参数。
          *
-         * @param depend
-         * @return
+         * @param asyncMgr
          */
-        Params dependOn(Depend depend);
+        void startWith(AsyncMgr asyncMgr);
 
-        void startWith(Params params);
+        /**
+         * 任务节点完成时应该回调该方法。你需要在该方法中通过
+         * {@link AsyncManager#commitNode(Object, Object, Exception)}
+         * 方法将结果告知状态机。
+         *
+         * @param result
+         * @param error
+         */
+        void endWith(Object result, Exception error);
 
-        void errorWith(Exception error);
-
-        void successWith(Result result);
-
-    }
-
-    private final List<Class<? extends Node>> nodes = new ArrayList<>();
-    private final SparseArray<Object> params = new SparseArray<>();
-
-    public final int getNodeCount() {
-        return nodes.size();
-    }
-
-    public final AsyncManager add(Class<? extends Node> node) {
-        return add(node, null);
-    }
-
-    public final AsyncManager add(Class<? extends Node> node, Object params) {
-        if (state != STATE_PRE) {
-            throw new IllegalStateException("只允许在STATE_PRE阶段添加新的节点");
-        }
-
-        int idx = this.nodes.size();
-        this.nodes.add(node);
-        this.params.put(idx, params);
-        return this;
     }
 
     public final void start() {
-        start(null);
-    }
-
-    public final void start(Object firstDepend) {
         if (state != STATE_PRE) {
-            throw new IllegalStateException("只允许在STATE_PRE状态下启动任务");
-        } else if (nodes.isEmpty()) {
-            throw new IllegalStateException("未添加任何节点，无法启动任务");
+            throw new IllegalStateException("AsyncManager不允许重复启动");
         }
 
-        state = STATE_START;
-
-        if (onAsyncListener != null) {
-            onAsyncListener.onStart();
-        }
-
-        startNode(0, firstDepend);
+        onStart();
+        doStart();
     }
 
-    protected final void startNode(int idx, Object depend) {
+    protected final void startNode(Class node) {
         //实例化节点
-        Class<? extends Node> node = nodes.get(idx);
         Node instance;
         try {
-            instance = node.newInstance();
+            instance = (Node) node.newInstance();
         } catch (Exception e) {
             LogUtil.e(e);
             throw new IllegalStateException("无法使用默认构造方法创建Node实例");
         }
 
-        if (onAsyncListener != null) {
-            onAsyncListener.onPrepareNode(instance, idx);
-        }
-
-        clearableHolder.add(instance);
-
-        //初始化节点参数和依赖
-        instance.setupNode(this, idx);
-        Object tmpParams = instance.dependOn(depend);
-        Object saveParams = this.params.get(idx);
-
-        //依赖转换
-        if (saveParams == null && tmpParams != null) {
-            saveParams = tmpParams;
+        //添加clearable
+        if (instance instanceof Clearable) {
+            clearableHolder.add((Clearable) instance);
         }
 
         try {//走你
-            instance.startWith(saveParams);
+            onNodeStart(node, instance);
+            instance.startWith(this);
         } catch (Exception e) {
             LogUtil.e(e);
-            throw new IllegalStateException("无法使用" + params + "参数启动" + node + "节点");
+            throw new IllegalStateException("无法使用" + getClass() + "启动" + node + "节点");
         }
     }
 
-    public final void onNodeError(Class<? extends Node> node, int idx, Exception e) {
-        clear();
-
-        int redirectIdx = onRedirectOnError(node, idx, e);
-        if (redirectIdx >= 0) {
-            Object params = this.params.get(redirectIdx);
-            startNode(redirectIdx, params);
-            return;
+    /**
+     * 提交任务节点的结果。
+     * 如果e不为null则认定为任务失败。
+     *
+     * @param instance
+     * @param result
+     * @param e
+     */
+    public final void commitNode(Object instance, Object result, Exception e) {
+        Class node = instance.getClass();
+        onNodeEnd(node, instance, result, e);
+        Class nextNode = prepareNextNode(node, instance, e == null);
+        if (nextNode != null) {//存在下一节点
+            startNode(nextNode);
+        } else {//不存在下一节点，所有任务结束
+            onFinish();
         }
+    }
 
-        state = STATE_ERROR;
+    /*内部回调*/
+
+    protected void onStart() {
+        state = STATE_START;
+
+        if (indicator != null && !indicator.isProgressing()) {
+            indicator.showProgress();
+        }
 
         if (onAsyncListener != null) {
-            onAsyncListener.onError(node, idx, e);
+            onAsyncListener.onAsyncStateChanged(this, state);
         }
     }
 
-    protected int onRedirectOnError(Class<? extends Node> node, int idx, Exception e) {
-        return -1;
+    protected abstract void doStart();
+
+    /**
+     * 在创建节点实例之后，节点启动之前回调该方法。
+     *
+     * @param node
+     * @param instance
+     */
+    protected void onNodeStart(Class node, Object instance) {
+        if (onAsyncListener instanceof OnAsyncNodeListener) {
+            OnAsyncNodeListener listener = (OnAsyncNodeListener) onAsyncListener;
+            listener.onNodeStart(this, node, instance);
+        }
     }
 
-    public final void onNodeResult(Class<? extends Node> node, int idx, Object result) {
-        if (idx == nodes.size() - 1) {//最后一个任务完成了
-            clear();
-            state = STATE_DONE;
+    protected void onNodeEnd(Class node, Object instance, Object result, Exception e) {
+        if (onAsyncListener instanceof OnAsyncNodeListener) {
+            OnAsyncNodeListener listener = (OnAsyncNodeListener) onAsyncListener;
+            listener.onNodeEnd(this, node, instance, result, e);
+        }
+    }
 
-            if (onAsyncListener != null) {
-                onAsyncListener.onFinalSuccess(result);
-            }
-        } else {//还有下个任务
-            if (onAsyncListener != null) {
-                onAsyncListener.onNodeSuccess(node, idx, result);
-            }
-            startNode(++idx, result);
+    /**
+     * 准备下一节点。如果返回null则认定所有任务结束。
+     * 上一节点回调{@link #commitNode(Object, Object, Exception)}i时如果e为null则认定sSuccess为true。
+     *
+     * @param lastNode
+     * @param lastInstance
+     * @param isSuccess
+     * @return
+     */
+    protected abstract Class prepareNextNode(Class lastNode, Object lastInstance, boolean isSuccess);
+
+    protected void onFinish() {
+        state = STATE_FINISH;
+
+        if (indicator != null && indicator.isProgressing()) {
+            indicator.hideProgress();
+        }
+
+        if (onAsyncListener != null) {
+            onAsyncListener.onAsyncStateChanged(this, state);
         }
     }
 
     /*监听者*/
 
-    public interface OnAsyncListener<Result> {
+    public interface OnAsyncListener<AsyncMgr extends AsyncManager> {
 
-        void onStart();
+        void onAsyncStateChanged(AsyncMgr asyncMgr, @AsyncManagerState int state);
 
-        void onPrepareNode(Node node, int idx);
+    }
 
-        void onError(Class<? extends Node> node, int idx, Exception e);
+    public interface OnAsyncNodeListener<AsyncMgr extends AsyncManager> extends OnAsyncListener<AsyncMgr> {
 
-        void onNodeSuccess(Class<? extends Node> node, int idx, Object result);
+        /**
+         * 任务节点实例创建完毕，节点启动之前回调该方法。
+         *
+         * @param asyncMgr
+         * @param node
+         * @param instance
+         */
+        void onNodeStart(AsyncMgr asyncMgr, Class node, Object instance);
 
-        void onFinalSuccess(Result result);
+        void onNodeEnd(AsyncMgr asyncMgr, Class node, Object instance, Object result, Exception e);
 
     }
 
@@ -186,6 +218,14 @@ public class AsyncManager implements Clearable {
     public final AsyncManager setOnAsyncListener(OnAsyncListener onAsyncListener) {
         this.onAsyncListener = onAsyncListener;
         return this;
+    }
+
+    /* 用户指示 */
+
+    private ITaskIndicator indicator;
+
+    public final void setIndicator(ITaskIndicator indicator) {
+        this.indicator = indicator;
     }
 
     /*Clearable*/
@@ -199,6 +239,10 @@ public class AsyncManager implements Clearable {
 
     @Override
     public final void clear() {
-        clearableHolder.clearAll();
+        if (indicator != null) {
+            indicator.hideProgress();
+            indicator = null;
+        }
+        clearableHolder.clear();
     }
 }

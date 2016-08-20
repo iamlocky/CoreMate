@@ -9,13 +9,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import core.demo.R;
-import core.demo.async.ExportAssetsTask;
-import core.demo.async.ReadTextTask;
+import core.demo.async.ReadAssetsMgr;
 import core.mate.adapter.CoreRecyclerAdapter;
 import core.mate.adapter.SimpleRecyclerAdapter;
 import core.mate.adapter.SimpleRecyclerViewHolder;
 import core.mate.async.AsyncManager;
-import core.mate.async.OnAsyncListenerImpl;
 import core.mate.util.ToastUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,10 +43,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testAsyncMgr() {
-        new AsyncManager().add(ExportAssetsTask.class, "test.txt").add(ReadTextTask.class).setOnAsyncListener(new OnAsyncListenerImpl<String>() {
+        new ReadAssetsMgr().setUp("test.txt", getFilesDir()).setOnAsyncListener(new AsyncManager.OnAsyncListener<ReadAssetsMgr>() {
             @Override
-            public void onFinalSuccess(String str) {
-                ToastUtil.toastShort("读取出的文字" + str);
+            public void onAsyncStateChanged(ReadAssetsMgr readAssetsMgr, int state) {
+                if (state == AsyncManager.STATE_FINISH) {
+                    String content = readAssetsMgr.getResult();
+                    ToastUtil.toastShort(content);
+                }
             }
         }).start();
     }
