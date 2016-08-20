@@ -495,7 +495,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      */
     protected final void clearAllClearable() {
         if (clearableHolder != null) {
-            clearableHolder.clearAll();
+            clearableHolder.clear();
         }
     }
 

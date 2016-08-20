@@ -360,7 +360,7 @@ public abstract class CoreDlgFrag extends DialogFragment {
      */
     protected final void clearAllClearable() {
         if (clearableHolder != null) {
-            clearableHolder.clearAll();
+            clearableHolder.clear();
         }
     }
 

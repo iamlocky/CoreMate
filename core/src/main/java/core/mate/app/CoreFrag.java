@@ -252,7 +252,7 @@ public abstract class CoreFrag extends Fragment {
      */
     protected final void clearAllClearable() {
         if (clearableHolder != null) {
-            clearableHolder.clearAll();
+            clearableHolder.clear();
         }
     }
 

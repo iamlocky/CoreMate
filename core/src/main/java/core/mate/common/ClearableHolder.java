@@ -4,7 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClearableHolder {
+public class ClearableHolder implements Clearable {
 
     private List<WeakReference<Clearable>> clearables;
 
@@ -15,11 +15,13 @@ public class ClearableHolder {
         this.clearables.add(new WeakReference<>(clearable));
     }
 
+    @Override
     public boolean isCleared() {
         return clearables == null || clearables.isEmpty();
     }
 
-    public void clearAll() {
+    @Override
+    public void clear() {
         if (isCleared()) {
             return;
         }
