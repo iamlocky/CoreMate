@@ -61,8 +61,8 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
 
         try {
             Result result = doInBack(params != null && params.length >= 1 ? params[0] : null);
-            if (onTaskListeners != null) {
-                for (OnTaskListener listener : onTaskListeners) {
+            if (listeners != null) {
+                for (OnTaskListener listener : listeners) {
                     listener.onPrepareResult(result);
                 }
             }
@@ -80,8 +80,8 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     @Override
     protected void onProgressUpdate(Progress... values) {
         super.onProgressUpdate(values);
-        if (onTaskListeners != null) {
-            for (OnTaskListener listener : onTaskListeners) {
+        if (listeners != null) {
+            for (OnTaskListener listener : listeners) {
                 if (listener instanceof OnTaskProgressListener) {
                     OnTaskProgressListener<Progress, Result> progressListener = (OnTaskProgressListener<Progress, Result>) listener;
                     progressListener.onUpdateProgress(values != null && values.length > 0 ? values[0] : null);
@@ -116,8 +116,8 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
 
     protected void onStart() {
         // 处理回调
-        if (onTaskListeners != null) {
-            for (OnTaskListener<Result> onTaskListener : onTaskListeners) {
+        if (listeners != null) {
+            for (OnTaskListener<Result> onTaskListener : listeners) {
                 onTaskListener.onStart();
             }
         }
@@ -137,8 +137,8 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     protected void onSuccess(Result result) {
         taskState = TaskState.SUCCESS;
         logTaskState();
-        if (onTaskListeners != null) {
-            for (OnTaskListener<Result> onTaskListener : onTaskListeners) {
+        if (listeners != null) {
+            for (OnTaskListener<Result> onTaskListener : listeners) {
                 onTaskListener.onSuccess(result);
             }
         }
@@ -148,16 +148,16 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
         taskState = TaskState.FAILURE;
         logTaskState();
 
-        if (onTaskListeners != null) {
-            for (OnTaskListener<Result> onTaskListener : onTaskListeners) {
+        if (listeners != null) {
+            for (OnTaskListener<Result> onTaskListener : listeners) {
                 onTaskListener.onFailure(e);
             }
         }
     }
 
     protected void onDone() {
-        if (onTaskListeners != null) {
-            for (OnTaskListener<Result> onTaskListener : onTaskListeners) {
+        if (listeners != null) {
+            for (OnTaskListener<Result> onTaskListener : listeners) {
                 onTaskListener.onDone();
             }
         }
@@ -207,13 +207,19 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
 
     }
 
-    private List<OnTaskListener<Result>> onTaskListeners;
+    private List<OnTaskListener<Result>> listeners;
+
+    public final OnTaskListener<Result> removeOnTaskListener(OnTaskListener<Result> listener){
+        return listeners != null && listeners.remove(listener) ? listener : null;
+    }
 
     public final CoreTask<Params, Progress, Result> addOnTaskListener(OnTaskListener<Result> listener) {
-        if (this.onTaskListeners == null) {
-            this.onTaskListeners = new ArrayList<>();
+        if(listener != null){
+            if (this.listeners == null) {
+                this.listeners = new ArrayList<>();
+            }
+            this.listeners.add(listener);
         }
-        this.onTaskListeners.add(listener);
         return this;
     }
 
@@ -312,7 +318,7 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     }
 
     /**
-     * 清理外部的引用，包括{@link #onTaskListeners}和{@link #indicator}，
+     * 清理外部的引用，包括{@link #listeners}和{@link #indicator}，
      * 然后取消任务。
      *
      * @param mayInterruptIfRunning
@@ -324,9 +330,9 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
             }
             indicator = null;
         }
-        if (onTaskListeners != null) {
-            onTaskListeners.clear();
-            onTaskListeners = null;
+        if (listeners != null) {
+            listeners.clear();
+            listeners = null;
         }
 
         if (!isCancelled()) {
