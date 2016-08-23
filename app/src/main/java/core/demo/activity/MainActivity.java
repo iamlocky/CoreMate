@@ -3,7 +3,7 @@ package core.demo.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -20,14 +20,16 @@ public class MainActivity extends AppCompatActivity {
 
     /*继承*/
 
+    private static final String ITEM_ASYNC_MGR_TEST = "AsyncManager Test";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView_main);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        recyclerView.setAdapter(new SimpleRecyclerAdapter<String>(TextView.class, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10") {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new SimpleRecyclerAdapter<String>(TextView.class, ITEM_ASYNC_MGR_TEST) {
             @Override
             protected void bindViewData(SimpleRecyclerViewHolder viewHolder, int position, String data, int viewType) {
                 TextView textView = viewHolder.getCastView();
@@ -37,7 +39,11 @@ public class MainActivity extends AppCompatActivity {
         }.setOnItemClickListener(new CoreRecyclerAdapter.OnItemClickListener<String>() {
             @Override
             public void onItemClick(View v, int adapterPosition, String s) {
-                testAsyncMgr();
+                switch (s) {
+                    case ITEM_ASYNC_MGR_TEST:
+                        testAsyncMgr();
+                        break;
+                }
             }
         }));
     }
