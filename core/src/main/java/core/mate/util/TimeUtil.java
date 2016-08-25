@@ -235,22 +235,41 @@ public final class TimeUtil extends DateUtils {
 	/*获取时间*/
 
     /**
+     * 获取某个时间点所在当天的零点时间戳
+     *
+     * @param time
+     * @return
+     */
+    public static long getDayStartMillis(long time) {
+        //取格林威治零点，然后按照时区偏移
+        long dayStart = time / DAY_IN_MILLIS * DAY_IN_MILLIS - getTimeZoneMillisOffset();
+        if (time - dayStart >= DAY_IN_MILLIS) {//补正被整取法抹去的偏差
+            dayStart += DAY_IN_MILLIS;
+        }
+        return dayStart;
+    }
+
+    /**
      * 获取今天0点的毫秒数。
      *
      * @return
      */
     public static long getTodayStartMillis() {
-        //先取整格林威治的天数，然后按照时区偏移
-        return System.currentTimeMillis() / DAY_IN_MILLIS * DAY_IN_MILLIS - getTimeZoneMillisOffset();
+        return getDayStartMillis(System.currentTimeMillis());
     }
 
-    /**
-     * 获取本周日结束时间，也就是下周一的零点减去一毫秒。
-     *
-     * @return
-     */
-    public static long getThisSundayEndMillis() {
-        return getThisMondayStartMillis() + 7 * WEEK_IN_MILLIS - 1;
+    public static long getWeekStart(long time) {
+        //周数取整再按时区偏移
+        long weekStart = time / WEEK_IN_MILLIS * WEEK_IN_MILLIS - getTimeZoneMillisOffset();
+        weekStart -= 3 * DAY_IN_MILLIS;// 1970.1.1 那天是星期四，因而之前有三天，这里减去三天的偏移量算出周一的零点
+
+        //由于1970.1.1 那天是星期四并且因为JAVA的除法是整除，在周四零点之前的时间都会被抹去，
+        // 使得算出的结果其实是上一周的周一零点，这里偏移回来。
+        if (time - weekStart >= WEEK_IN_MILLIS) {
+            weekStart += WEEK_IN_MILLIS;
+        }
+
+        return weekStart;
     }
 
     /**
@@ -259,17 +278,7 @@ public final class TimeUtil extends DateUtils {
      * @return
      */
     public static long getThisMondayStartMillis() {
-        long curMillis = System.currentTimeMillis();
-        long weekStart = curMillis / WEEK_IN_MILLIS * WEEK_IN_MILLIS - getTimeZoneMillisOffset();
-        weekStart -= 3 * DAY_IN_MILLIS;// 1970.1.1 那天是星期四，这里减去三天的偏移量算出周一的零点
-
-        //由于1970.1.1 那天是星期四并且因为JAVA的除法是整除，在周四零点之前的时间都会被抹去，
-        // 使得算出的结果其实是上一周的周一零点，这里偏移回来。
-        if (curMillis - weekStart >= WEEK_IN_MILLIS) {
-            weekStart += WEEK_IN_MILLIS;
-        }
-
-        return weekStart;
+        return getWeekStart(System.currentTimeMillis());
     }
 
     /**
