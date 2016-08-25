@@ -240,7 +240,7 @@ public final class TimeUtil extends DateUtils {
      * @param time
      * @return
      */
-    public static long getDayStartMillis(long time) {
+    public static long getDayStart(long time) {
         //取格林威治零点，然后按照时区偏移
         long dayStart = time / DAY_IN_MILLIS * DAY_IN_MILLIS - getTimeZoneMillisOffset();
         if (time - dayStart >= DAY_IN_MILLIS) {//补正被整取法抹去的偏差
@@ -254,10 +254,16 @@ public final class TimeUtil extends DateUtils {
      *
      * @return
      */
-    public static long getTodayStartMillis() {
-        return getDayStartMillis(System.currentTimeMillis());
+    public static long getTodayStart() {
+        return getDayStart(System.currentTimeMillis());
     }
 
+    /**
+     * 获取时间点所在的周一零点时间戳
+     *
+     * @param time
+     * @return
+     */
     public static long getWeekStart(long time) {
         //周数取整再按时区偏移
         long weekStart = time / WEEK_IN_MILLIS * WEEK_IN_MILLIS - getTimeZoneMillisOffset();
@@ -277,7 +283,7 @@ public final class TimeUtil extends DateUtils {
      *
      * @return
      */
-    public static long getThisMondayStartMillis() {
+    public static long getThisMondayStart() {
         return getWeekStart(System.currentTimeMillis());
     }
 
