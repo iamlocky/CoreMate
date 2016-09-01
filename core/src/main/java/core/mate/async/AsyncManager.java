@@ -12,11 +12,11 @@ import core.mate.util.LogUtil;
 
 /**
  * 用于处理任务调度的辅助类，你可以将之理解为状态机。
- * <p/>
+ * <p>
  * 所有与状态相关的参数应该保存在状态机之中，任务节点应该在
  * {@link Node#startWith(AsyncManager)} 方法中获取参数并
  * 启动节点，最终将参数反馈到该状态机的实例中。
- * <p/>
+ * <p>
  * 该类适用于将嵌套回调改写成线性的形式，比如某一个API依赖于
  * 前一个API的结果，或者需要线性处理异步任务等。
  *
@@ -50,9 +50,9 @@ public abstract class AsyncManager implements Clearable {
     /**
      * 任务节点接口。在实现子类的时候你可以使用{@link NodeImpl}
      * 和{@link TaskNodeWrapper}的形式来简化任务节点的编写。
-     * <p/>
+     * <p>
      * 由于需要反射创建节点实例，因而节点类必须要有可用的无参构造函数。
-     * <p/>
+     * <p>
      * 你可以从该框架的demo工程中找到比较推荐的写法。
      *
      * @param <AsyncMgr>
@@ -98,11 +98,16 @@ public abstract class AsyncManager implements Clearable {
             throw new IllegalStateException("无法使用默认构造方法创建Node实例");
         }
 
+        startNode(instance);
+    }
+
+    protected final void startNode(Node instance) {
         //添加clearable
         if (instance instanceof Clearable) {
             clearableHolder.add((Clearable) instance);
         }
 
+        Class node = instance.getClass();
         try {//走你
             onNodeStart(node, instance);
             instance.startWith(this);

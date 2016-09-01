@@ -477,7 +477,7 @@ public final class FileUtil {
     }
 
     /**
-     * 使用递归遍历目录，包括隐目录，之下的所有文件，并填入指定的List之中。
+     * 使用递归遍历目录下的所有文件，并填入指定的List之中。
      *
      * @param item     如果item本身是文件并且符合filter的要求，也会被添加到list中
      * @param fileList

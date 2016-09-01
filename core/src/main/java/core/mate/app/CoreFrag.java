@@ -240,7 +240,7 @@ public abstract class CoreFrag extends Fragment {
      *
      * @param clearable
      */
-    protected final void addClearable(Clearable clearable) {
+    public final void addClearable(Clearable clearable) {
         if (clearableHolder == null) {
             clearableHolder = new ClearableHolder();
         }
@@ -250,7 +250,7 @@ public abstract class CoreFrag extends Fragment {
     /**
      * clear所有保存着的引用。在{@link #onDestroy()}时自动回调。
      */
-    protected final void clearAllClearable() {
+    public final void clearAllClearable() {
         if (clearableHolder != null) {
             clearableHolder.clear();
         }

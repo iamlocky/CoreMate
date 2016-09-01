@@ -46,8 +46,12 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
         taskState = TaskState.PRE;
         logTaskState();
 
-        if (indicator != null && !indicator.isProgressing()) {
-            indicator.showProgress();
+        if (indicators != null) {
+            for (ITaskIndicator indicator : indicators) {
+                if (!indicator.isProgressing()) {
+                    indicator.showProgress();
+                }
+            }
         }
 
         onStart();
@@ -93,8 +97,12 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     @Override
     protected final void onPostExecute(ResultHolder<Result> holder) {
         super.onPostExecute(holder);
-        if (indicator != null && indicator.isProgressing()) {
-            indicator.hideProgress();
+        if (indicators != null) {
+            for (ITaskIndicator indicator : indicators) {
+                if (indicator.isProgressing()) {
+                    indicator.hideProgress();
+                }
+            }
         }
 
         resultHolder = holder;
@@ -209,12 +217,12 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
 
     private List<OnTaskListener<Result>> listeners;
 
-    public final OnTaskListener<Result> removeOnTaskListener(OnTaskListener<Result> listener){
+    public final OnTaskListener<Result> removeOnTaskListener(OnTaskListener<Result> listener) {
         return listeners != null && listeners.remove(listener) ? listener : null;
     }
 
     public final CoreTask<Params, Progress, Result> addOnTaskListener(OnTaskListener<Result> listener) {
-        if(listener != null){
+        if (listener != null) {
             if (this.listeners == null) {
                 this.listeners = new ArrayList<>();
             }
@@ -249,10 +257,15 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
 
 	/* 用户指示 */
 
-    private ITaskIndicator indicator;
+    private List<ITaskIndicator> indicators;
 
-    public final CoreTask<Params, Progress, Result> setIndicator(ITaskIndicator indicator) {
-        this.indicator = indicator;
+    public final CoreTask<Params, Progress, Result> addIndicator(ITaskIndicator indicator) {
+        if (indicator != null) {
+            if (this.indicators == null) {
+                this.indicators = new ArrayList<>();
+            }
+            this.indicators.add(indicator);
+        }
         return this;
     }
 
@@ -318,17 +331,20 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     }
 
     /**
-     * 清理外部的引用，包括{@link #listeners}和{@link #indicator}，
+     * 清理外部的引用，包括{@link #listeners}和{@link #indicators}，
      * 然后取消任务。
      *
      * @param mayInterruptIfRunning
      */
     public final void clear(boolean mayInterruptIfRunning) {
-        if (indicator != null) {
-            if (indicator.isProgressing()) {
-                indicator.hideProgress();
+        if (indicators != null) {
+            for (ITaskIndicator indicator : indicators) {
+                if (indicator.isProgressing()) {
+                    indicator.hideProgress();
+                }
             }
-            indicator = null;
+            indicators.clear();
+            indicators = null;
         }
         if (listeners != null) {
             listeners.clear();
