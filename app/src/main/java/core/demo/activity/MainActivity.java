@@ -1,62 +1,79 @@
 package core.demo.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.TextView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import java.util.List;
 
 import core.demo.R;
-import core.demo.async.ReadAssetsMgr;
-import core.mate.adapter.CoreRecyclerAdapter;
-import core.mate.adapter.SimpleRecyclerAdapter;
-import core.mate.adapter.SimpleRecyclerViewHolder;
-import core.mate.async.AsyncManager;
-import core.mate.util.ToastUtil;
+import core.demo.activity.main.ResDlgFrag;
+import core.mate.app.CoreActivity;
+import core.mate.app.CoreFrag;
+import core.mate.util.ClassUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends CoreActivity {
 
     /*继承*/
 
-    private static final String ITEM_ASYNC_MGR_TEST = "AsyncManager Test";
+    private TabLayout tabLayout;
+    private Fragment curFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout_main_tabs);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView_main);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new SimpleRecyclerAdapter<String>(TextView.class, ITEM_ASYNC_MGR_TEST) {
+        //反射获取指定包下的子类
+        List<Class> frags = null;
+        try {
+            frags = ClassUtil.getSubClassUnderPackage(CoreFrag.class, "core.demo.activity.main");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //填充TabLayout
+        for (Class clz : frags) {
+            tabLayout.addTab(tabLayout.newTab().setText(clz.getSimpleName()).setTag(clz));
+        }
+        TabLayout.OnTabSelectedListener listener;
+        tabLayout.addOnTabSelectedListener(listener = new TabLayout.OnTabSelectedListener() {
             @Override
-            protected void bindViewData(SimpleRecyclerViewHolder viewHolder, int position, String data, int viewType) {
-                TextView textView = viewHolder.getCastView();
-                textView.setBackgroundColor(Color.RED);
-                textView.setText(data);
+            public void onTabSelected(TabLayout.Tab tab) {
+                //使用FragHelper快速切换Fragment
+                //CoreFrag已经处理了重建Activity后Frag重叠的问题
+                Class clz = (Class) tab.getTag();
+                curFrag = getFragHelper().switchFragment(R.id.frameLayout_main_fragContaienr, curFrag, clz);
             }
-        }.setOnItemClickListener(new CoreRecyclerAdapter.OnItemClickListener<String>() {
+
             @Override
-            public void onItemClick(View v, int adapterPosition, String s) {
-                switch (s) {
-                    case ITEM_ASYNC_MGR_TEST:
-                        testAsyncMgr();
-                        break;
-                }
+            public void onTabUnselected(TabLayout.Tab tab) {
+
             }
-        }));
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        //选中第一个tab
+        tabLayout.getTabAt(0).select();
+        listener.onTabSelected(tabLayout.getTabAt(0));
     }
 
-    private void testAsyncMgr() {
-        new ReadAssetsMgr().setUp("test.txt", getFilesDir()).setOnAsyncListener(new AsyncManager.OnAsyncListener<ReadAssetsMgr>() {
-            @Override
-            public void onAsyncStateChanged(ReadAssetsMgr readAssetsMgr, int state) {
-                if (state == AsyncManager.STATE_FINISH) {
-                    String content = readAssetsMgr.getResult();
-                    ToastUtil.toastShort(content);
-                }
-            }
-        }).start();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("查看资源");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        new ResDlgFrag().show(this);
+        return true;
     }
 }

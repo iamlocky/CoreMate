@@ -6,10 +6,14 @@
     android:orientation="vertical"
     tools:context="core.demo.activity.MainActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView_main"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabLayout_main_tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/core_black_alpha_2" />
+        android:layout_height="48dp" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout_main_fragContaienr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

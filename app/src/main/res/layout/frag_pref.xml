@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="16dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/editText_frag_pref"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="原始数据" />
+
+    <Button
+        android:id="@+id/button_frag_pref_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="加密保存到SP中" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="读取数据如下：" />
+
+    <TextView
+        android:id="@+id/textView_frag_pref_reuslt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
