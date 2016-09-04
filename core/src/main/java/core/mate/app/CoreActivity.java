@@ -466,7 +466,7 @@ public abstract class CoreActivity extends AppCompatActivity {
         this.clearAllOnPauseEnable = clearAllOnPauseEnable;
     }
 
-    protected final <T> T addClearableEx(T t) {
+    public final <T> T addClearableEx(T t) {
         if (t instanceof Clearable) {
             addClearable((Clearable) t);
         } else if (t instanceof AsyncTask) {
