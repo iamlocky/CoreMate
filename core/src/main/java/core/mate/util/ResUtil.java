@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,14 +126,64 @@ public final class ResUtil {
         return context.getResources().getDimension(dimenId);
     }
 
-    public int getDimensionPixelOffset(@DimenRes int id) {
+    public static int getDimensionPixelOffset(@DimenRes int id) {
         Context context = Core.getInstance().getAppContext();
         return context.getResources().getDimensionPixelOffset(id);
     }
 
-    public int getDimensionPixelSize(@DimenRes int id) {
+    public static int getDimensionPixelSize(@DimenRes int id) {
         Context context = Core.getInstance().getAppContext();
         return context.getResources().getDimensionPixelSize(id);
+    }
+
+    /*目录*/
+
+    public static File getFilesDir() {
+        return Core.getInstance().getAppContext().getFilesDir();
+    }
+
+    /**
+     * 获取{@link #getFilesDir()}下的子目录。
+     * <p>
+     * 这里通过{@link FileUtil#confirmDir(File)}方法来创建目录。
+     * 如果目录无法创建则返回null。
+     *
+     * @param dir
+     * @return
+     */
+    public static File getDirUnderFiles(String dir) {
+        try {
+            return FileUtil.confirmDir(new File(getFilesDir(), dir));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static File getCacheDir() {
+        return Core.getInstance().getAppContext().getCacheDir();
+    }
+
+    /**
+     * 获取{@link #getCacheDir()}下的子目录。
+     * <p>
+     * 这里通过{@link FileUtil#confirmDir(File)}方法来创建目录。
+     * 如果目录无法创建则返回null。
+     *
+     * @param dir
+     * @return
+     */
+    public static File getDirUnderCache(String dir) {
+        try {
+            return FileUtil.confirmDir(new File(getCacheDir(), dir));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static File getDatabasePath(String dbName) {
+        return Core.getInstance().getAppContext().getDatabasePath(dbName);
     }
 
 	/*Attr*/
