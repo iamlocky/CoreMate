@@ -39,6 +39,10 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
 
     private LayoutInflater inflater;
 
+    public LayoutInflater getInflater() {
+        return inflater;
+    }
+
     @Override
     public final int getCount() {
         return data.size();

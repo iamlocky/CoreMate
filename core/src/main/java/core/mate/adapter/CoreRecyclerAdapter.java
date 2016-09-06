@@ -44,6 +44,10 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
     private LayoutInflater inflater;
 
+    public LayoutInflater getInflater() {
+        return inflater;
+    }
+
     @Override
     public final int getItemCount() {
         return data.size();
