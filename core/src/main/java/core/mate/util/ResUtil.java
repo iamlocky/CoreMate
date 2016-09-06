@@ -10,6 +10,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.AnimRes;
+import android.support.annotation.ArrayRes;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
@@ -90,6 +91,18 @@ public final class ResUtil {
         return Core.getInstance().getAppContext().getString(strId);
     }
 
+    public CharSequence[] getTextArray(@ArrayRes int arrayId) {
+        return getResources().getTextArray(arrayId);
+    }
+
+    public String[] getStringArray(@ArrayRes int arrayId) {
+        return getResources().getStringArray(arrayId);
+    }
+
+    public int[] getIntArray(@ArrayRes int arrayId) {
+        return getResources().getIntArray(arrayId);
+    }
+
     public static int getColor(@ColorRes int colorId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return Core.getInstance().getAppContext().getColor(colorId);
@@ -121,7 +134,6 @@ public final class ResUtil {
         Context context = Core.getInstance().getAppContext();
         return context.getResources().getDimensionPixelSize(id);
     }
-
 
 	/*Attr*/
 
