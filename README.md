@@ -210,8 +210,6 @@ textView.setText(result);
 ### 常用资源
 本框架带有一些基础的资源，并且都以“core_”打头，包括常见的anim、color、drawable等，具体内容请到源码中查看。
 
-![](https://raw.githubusercontent.com/DrkCore/CoreMate/master/doc/img/资源演示.jpg)
-
 ## 联系作者
 QQ：178456643
 邮箱：178456643@qq.com
