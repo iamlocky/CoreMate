@@ -20,7 +20,7 @@
 Android Studio用户可有在模块的build.gradle中于dependencies下添加如下依赖：
 
 ```
-compile 'core.mate:core:1.0.3'
+compile 'core.mate:core:1.0.4'
 ```
 
 Eclipse用户的话可以将源码down下来手动导入成Lib工程，具体过程不再赘述。
@@ -28,14 +28,14 @@ Eclipse用户的话可以将源码down下来手动导入成Lib工程，具体过
 之后在你的Application中进行初始化：
 
 ```
-//使用Application的Context初始化CoreMate框架
+//使用Application的Context初始化CoreMate库
 Core.getInstance().init(this);
 //开启debug日志输出
 Core.getInstance().setDevModeEnable(true);
 ```
 
 ## 功能使用
-你可以在源码的app模块中查看如何使用本框架，这里只作简要介绍。
+你可以在源码的app模块中查看如何使用本库，这里只作简要介绍。
 
 ### 万能Adapter
 创建Adapter实例
@@ -90,7 +90,7 @@ public class ExportAssetsTask extends CoreTask<ExportAssetsTask.Params, Void, Fi
 
     @Override
     public File doInBack(Params params) throws Exception {
-        //ResUtil提供了获取资源的大部分方法，因为使用了初始化框架时的Application，
+        //ResUtil提供了获取资源的大部分方法，因为使用了初始化库时的Application，
         //所以你可以在任何地方获取资源
         return ResUtil.exportAssetFile(params.fromAssets, params.toDir, true);
     }
@@ -208,7 +208,7 @@ textView.setText(result);
 具体使用请参阅其中源码。
 
 ### 常用资源
-本框架带有一些基础的资源，并且都以“core_”打头，包括常见的anim、color、drawable等，具体内容请到源码中查看。
+本库带有一些基础的资源，并且都以“core_”打头，包括常见的anim、color、drawable等，具体内容请到源码中查看。
 
 ## 联系作者
 QQ：178456643
