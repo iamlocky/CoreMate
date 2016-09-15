@@ -2,6 +2,8 @@ package core.mate.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
@@ -49,6 +51,25 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
 	}
 
 	/*控件处理*/
+
+	public final void setBackgroundColor(@IdRes int id, @ColorInt int color){
+		View view = getViewById(id);
+		view.setBackgroundColor(color);
+	}
+
+	public final void setBackgroundResource(@IdRes int id, @DrawableRes int drawableRes){
+		View view = getViewById(id);
+		view.setBackgroundResource(drawableRes);
+	}
+
+	public final void setBackgroundDrawable(@IdRes int id, Drawable drawable){
+		View view = getViewById(id);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			view.setBackground(drawable);
+		}else {
+			view.setBackgroundDrawable(drawable);
+		}
+	}
 
 	public final void setImageDrawable (@IdRes int id, Drawable drawable) {
 		ImageView imageView = getViewById(id);
@@ -101,20 +122,14 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
 		}
 	}
 
-	@IntDef({
-
-			View.VISIBLE,
-			View.INVISIBLE,
-			View.GONE,
-
-	})
-	@Retention(RetentionPolicy.SOURCE)
-	public @interface Visibility {
-	}
-
-	public final void setVisibility (@IdRes int id, @Visibility int visibility) {
+	public final void setVisibility (@IdRes int id, int visibility) {
 		View view = getViewById(id);
 		view.setVisibility(visibility);
+	}
+
+	public final void setVisible(@IdRes int id, boolean visible) {
+		View view = getViewById(id);
+		view.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
 
 }

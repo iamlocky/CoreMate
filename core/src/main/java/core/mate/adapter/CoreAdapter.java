@@ -32,14 +32,16 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
     }
 
     public CoreAdapter(Collection<Item> items) {
-        this.data.addAll(items);
+        if(items != null){
+            this.data.addAll(items);
+        }
     }
 
 	/* 继承 */
 
     private LayoutInflater inflater;
 
-    public LayoutInflater getInflater() {
+    public final LayoutInflater getInflater() {
         return inflater;
     }
 
@@ -149,7 +151,9 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
     @SafeVarargs
     public final void display(Item... items) {
         this.data.clear();
-        Collections.addAll(this.data, items);
+        if(items != null){
+            Collections.addAll(this.data, items);
+        }
         notifyDataSetChanged();
     }
 

@@ -44,7 +44,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
     private LayoutInflater inflater;
 
-    public LayoutInflater getInflater() {
+    public final LayoutInflater getInflater() {
         return inflater;
     }
 

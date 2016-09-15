@@ -70,8 +70,14 @@ public abstract class SimpleRecyclerAdapter<Item> extends CoreRecyclerAdapter<It
 			}
 		}
 		if (view != null) {
-			return new SimpleRecyclerViewHolder(view);
+			SimpleRecyclerViewHolder viewHolder =new SimpleRecyclerViewHolder(view);
+            onViewHolderCreated(viewHolder,type);
+			return viewHolder;
 		}
 		throw new IllegalStateException("无法实例化项目视图");
+	}
+
+	protected void onViewHolderCreated(SimpleRecyclerViewHolder holder, int viewType) {
+
 	}
 }
