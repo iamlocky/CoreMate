@@ -20,7 +20,7 @@ import core.mate.util.ClassUtil;
  * @author DrkCore
  * @since 2015年10月13日17:59:29
  */
-public final class FlexibleAdapter extends CoreAdapter<Object, CoreAdapter.AbsViewHolder<Object>> {
+public class FlexibleAdapter extends CoreAdapter<Object, CoreAdapter.AbsViewHolder<Object>> {
 
     /**
      * 用于创建ViewType指定的布局以及绑定对应的数据的接口，设计上而言，一种ViewType应当对应着一种Operator。
@@ -85,17 +85,26 @@ public final class FlexibleAdapter extends CoreAdapter<Object, CoreAdapter.AbsVi
 
     }
 
-    private final List<AbsItemType> operators = new ArrayList<>();
+    private final List<AbsItemType> itemTypes = new ArrayList<>();
+
+    public final AbsItemType getItemType(Class clz) {
+        for (AbsItemType itemType : itemTypes) {
+            if (itemType.getClass() == clz) {
+                return itemType;
+            }
+        }
+        return null;
+    }
 
     public FlexibleAdapter() {
     }
 
-    public FlexibleAdapter(AbsItemType<?, ?>... operators) {
-        Collections.addAll(this.operators, operators);
+    public FlexibleAdapter(AbsItemType<?, ?>... itemTypes) {
+        Collections.addAll(this.itemTypes, itemTypes);
     }
 
-    public FlexibleAdapter(Collection<AbsItemType> operators) {
-        this.operators.addAll(operators);
+    public FlexibleAdapter(Collection<AbsItemType> itemTypes) {
+        this.itemTypes.addAll(itemTypes);
     }
 
 	/* 继承 */
@@ -103,23 +112,23 @@ public final class FlexibleAdapter extends CoreAdapter<Object, CoreAdapter.AbsVi
     @NonNull
     @SuppressWarnings("unchecked")
     @Override
-    protected AbsViewHolder<Object> createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        return (AbsViewHolder<Object>) operators.get(viewType).createViewHolder(inflater, parent);
+    protected final AbsViewHolder<Object> createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+        return (AbsViewHolder<Object>) itemTypes.get(viewType).createViewHolder(inflater, parent);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void bindViewData(CoreAdapter.AbsViewHolder<Object> viewHolder, int position, Object data, int viewType) {
-        AbsItemType operator = operators.get(viewType);
+    protected final void bindViewData(CoreAdapter.AbsViewHolder<Object> viewHolder, int position, Object data, int viewType) {
+        AbsItemType operator = itemTypes.get(viewType);
         operator.adapterCount = getCount();
         operator.bindViewData(viewHolder, position, data);
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         Object obj = getItem(position);
-        for (int i = 0, count = operators.size(); i < count; i++) {
-            if (operators.get(i).canHandleObject(obj)) {
+        for (int i = 0, count = itemTypes.size(); i < count; i++) {
+            if (itemTypes.get(i).canHandleObject(obj)) {
                 return i;// 可处理
             }
         }
@@ -128,8 +137,8 @@ public final class FlexibleAdapter extends CoreAdapter<Object, CoreAdapter.AbsVi
     }
 
     @Override
-    public int getViewTypeCount() {
-        return operators.size();
+    public final int getViewTypeCount() {
+        return itemTypes.size();
     }
 
 }

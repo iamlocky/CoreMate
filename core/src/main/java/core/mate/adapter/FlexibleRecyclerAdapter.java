@@ -20,7 +20,7 @@ import core.mate.util.ClassUtil;
  * @author DrkCore
  * @since 2016年1月31日23:40:34
  */
-public final class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, RecyclerView.ViewHolder> {
+public class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, RecyclerView.ViewHolder> {
 
     /**
      * 用于创建ViewType指定的布局以及绑定对应的数据的接口，设计上而言，一种ViewType应当对应着一种Operator。
@@ -85,40 +85,49 @@ public final class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, R
 
     }
 
-    private final List<AbsRecyclerItemType> operators = new ArrayList<>();
+    private final List<AbsRecyclerItemType> itemTypes = new ArrayList<>();
+
+    public final AbsRecyclerItemType getItemType(Class clz) {
+        for (AbsRecyclerItemType itemType : itemTypes) {
+            if (itemType.getClass() == clz) {
+                return itemType;
+            }
+        }
+        return null;
+    }
 
     public FlexibleRecyclerAdapter() {
     }
 
-    public FlexibleRecyclerAdapter(AbsRecyclerItemType<?, ?>... operators) {
-        Collections.addAll(this.operators, operators);
+    public FlexibleRecyclerAdapter(AbsRecyclerItemType<?, ?>... itemTypes) {
+        Collections.addAll(this.itemTypes, itemTypes);
     }
 
-    public FlexibleRecyclerAdapter(Collection<AbsRecyclerItemType> operators) {
-        this.operators.addAll(operators);
+    public FlexibleRecyclerAdapter(Collection<AbsRecyclerItemType> itemTypes) {
+        this.itemTypes.addAll(itemTypes);
     }
 
 	/*继承*/
 
     @NonNull
     @Override
-    protected RecyclerView.ViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent, int type) {
-        AbsRecyclerItemType operator = operators.get(type);
+    protected final RecyclerView.ViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent, int type) {
+        AbsRecyclerItemType operator = itemTypes.get(type);
         return operator.createViewHolder(inflater, parent);
     }
 
     @Override
-    protected void bindViewData(RecyclerView.ViewHolder viewHolder, int position, Object data, int viewType) {
-        AbsRecyclerItemType operator = operators.get(viewType);
+    protected final void bindViewData(RecyclerView.ViewHolder viewHolder, int position, Object data, int viewType) {
+        AbsRecyclerItemType operator = itemTypes.get(viewType);
         operator.adapterCount = getItemCount();
         operator.bindViewData(viewHolder, position, data);
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         Object obj = getItem(position);
-        for (int i = 0, count = operators.size(); i < count; i++) {
-            if (operators.get(i).canHandleObject(obj)) {
+        for (int i = 0, count = itemTypes.size(); i < count; i++) {
+            if (itemTypes.get(i).canHandleObject(obj)) {
                 return i;// 可处理
             }
         }
