@@ -46,12 +46,12 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
     }
 
     @Override
-    public final int getCount() {
+    public int getCount() {
         return data.size();
     }
 
     @Override
-    public final Item getItem(int position) {
+    public Item getItem(int position) {
         return data.get(position);
     }
 

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> extends RecyclerView.Adapter<Holder> implements OnClickListener, OnLongClickListener {
 
-    private final List<Item> data = new ArrayList<>();
+    private final ArrayList<Item> data = new ArrayList<>();
 
     public CoreRecyclerAdapter() {
     }
@@ -49,7 +49,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
     @Override
-    public final int getItemCount() {
+    public int getItemCount() {
         return data.size();
     }
 
@@ -100,7 +100,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
     @Override
-    public final boolean onLongClick(View v) {
+    public boolean onLongClick(View v) {
         Object tag = v.getTag();
         if (tag instanceof RecyclerView.ViewHolder && onItemLongClickListener != null) {
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) tag;
