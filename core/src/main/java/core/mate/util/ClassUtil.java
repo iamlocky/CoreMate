@@ -19,7 +19,8 @@ import dalvik.system.DexFile;
  */
 public final class ClassUtil {
 
-	private ClassUtil () {}
+	private ClassUtil() {
+	}
 
 	/* 类属性属性获取 */
 
@@ -30,7 +31,7 @@ public final class ClassUtil {
 	 * @param object
 	 * @return
 	 */
-	public static String getTypeName (Object object) {
+	public static String getTypeName(Object object) {
 		return getTypeName(object instanceof Class ? (Class) object : object.getClass());
 	}
 	
@@ -41,7 +42,7 @@ public final class ClassUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public static String getTypeName (Class clazz) {
+	public static String getTypeName(Class clazz) {
 		String typeName = clazz.getName();
 		int idx = typeName.lastIndexOf("$");
 		if (idx != -1 && TextUtils.isDigitsOnly(typeName.substring(idx + 1))) {// 匿名内部类，逻辑上$必定不会出现在类路径的末尾
@@ -67,7 +68,7 @@ public final class ClassUtil {
 	 * @param clz
 	 * @return
 	 */
-	public static Type[] getGenericParametersType (Class clz) {
+	public static Type[] getGenericParametersType(Class clz) {
 		ParameterizedType paramType = (ParameterizedType) clz.getGenericSuperclass();
 		return paramType.getActualTypeArguments();
 	}
@@ -83,7 +84,7 @@ public final class ClassUtil {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public static List<Class> getSubClassUnderPackage (Class superClass, String pkgPath)
+	public static List<Class> getSubClassUnderPackage(Class superClass, String pkgPath)
 			throws IOException, ClassNotFoundException {
 		List<String> paths = getClassPathsUnderPackage(pkgPath);
 		return getSubClassFromPaths(superClass, paths);
@@ -98,7 +99,7 @@ public final class ClassUtil {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public static List<Class> getSubClassFromPaths (Class superClass, List<String> paths) throws ClassNotFoundException {
+	public static List<Class> getSubClassFromPaths(Class superClass, List<String> paths) throws ClassNotFoundException {
 		return getSubClassFromPaths(superClass, paths, false);
 	}
 
@@ -111,7 +112,7 @@ public final class ClassUtil {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public static List<Class> getSubClassFromPaths (Class superClass, List<String> paths, boolean needAbstract)
+	public static List<Class> getSubClassFromPaths(Class superClass, List<String> paths, boolean needAbstract)
 			throws ClassNotFoundException {
 
 		List<Class> classes = new ArrayList<>();
@@ -134,7 +135,7 @@ public final class ClassUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static List<String> getClassPathsUnderPackage (String pkgPath) throws IOException {
+	public static List<String> getClassPathsUnderPackage(String pkgPath) throws IOException {
 		return getClassPathsUnderPackage(pkgPath, false, false, false);
 	}
 
@@ -147,12 +148,23 @@ public final class ClassUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static List<String> getClassPathsUnderPackage (String pkgPath, boolean needRecursive) throws IOException {
+	public static List<String> getClassPathsUnderPackage(String pkgPath, boolean needRecursive) throws IOException {
 		return getClassPathsUnderPackage(pkgPath, needRecursive, false, false);
 	}
 	
 	/**
-	 * 获取指定包路径下的类或者接口的路径
+	 * 获取指定包路径下的类或者接口的路径。
+	 * <p>
+	 * 值得注意的是，当你使用了新版的Android Studio并且开启Instant Run功能时，
+	 * 该方法无法正确获得Class路径名。
+	 * <p>
+	 * 具体细节请参阅
+	 * <a href="http://stackoverflow.com/questions/36572515/dexfile-in-2-0-versions-of-android-studio-and-gradle/36594966#36594966">
+	 * StackOverFlow：DexFile in 2.0 versions of Android Studio and Gradle
+	 * <a/>
+	 * <p>
+	 * 由于Instant Run只在开发环境下有效因而正式打包时该方法还是可以用的，
+	 * 如果你希望在使用Android Studio开发中也能使用该方法的话也可以暂时在设置中关闭Instant Run功能。
 	 *
 	 * @param pkgPath       起始的包路径
 	 * @param needRecursive 是否递归获取子包
@@ -161,8 +173,8 @@ public final class ClassUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	private static List<String> getClassPathsUnderPackage (String pkgPath, boolean needRecursive, boolean needInner,
-	                                                       boolean needAnonymous) throws IOException {
+	private static List<String> getClassPathsUnderPackage(String pkgPath, boolean needRecursive, boolean needInner,
+	                                                      boolean needAnonymous) throws IOException {
 		DexFile dexFile = new DexFile(Core.getInstance().getAppContext().getPackageCodePath());
 		Enumeration<String> entries = dexFile.entries();
 		
@@ -190,7 +202,7 @@ public final class ClassUtil {
 		}
 		return paths;
 	}
-	
+
 	/* 反射创建对象 */
 	
 	/**
@@ -204,7 +216,7 @@ public final class ClassUtil {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	public static <Result> List<Result> createInstancesUnderPackage (String pkgPath, Class<Result> superClass)
+	public static <Result> List<Result> createInstancesUnderPackage(String pkgPath, Class<Result> superClass)
 			throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
 		List<Class> subClasses = getSubClassUnderPackage(superClass, pkgPath);
 		List<Class<Result>> classes = new ArrayList<>(subClasses.size());
@@ -222,7 +234,7 @@ public final class ClassUtil {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	public static <Result> List<Result> createInstances (List<Class<Result>> classes)
+	public static <Result> List<Result> createInstances(List<Class<Result>> classes)
 			throws InstantiationException, IllegalAccessException {
 		List<Result> results = new ArrayList<>();
 		for (Class<Result> tmp : classes) {
@@ -240,7 +252,7 @@ public final class ClassUtil {
 	 * @throws IllegalAccessException
 	 */
 	@SafeVarargs
-	public static <Result> List<Result> createInstances (Class<Result>... classes)
+	public static <Result> List<Result> createInstances(Class<Result>... classes)
 			throws InstantiationException, IllegalAccessException {
 		List<Result> results = new ArrayList<>();
 		for (Class<Result> tmp : classes) {
