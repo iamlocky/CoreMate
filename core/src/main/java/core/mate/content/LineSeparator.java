@@ -1,4 +1,4 @@
-package core.mate.text;
+package core.mate.content;
 
 public enum LineSeparator {
 	

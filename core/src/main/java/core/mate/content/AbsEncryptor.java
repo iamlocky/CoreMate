@@ -1,4 +1,4 @@
-package core.mate.helper;
+package core.mate.content;
 
 import android.text.TextUtils;
 

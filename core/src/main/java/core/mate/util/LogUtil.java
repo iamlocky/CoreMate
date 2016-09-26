@@ -3,7 +3,7 @@ package core.mate.util;
 import android.util.Log;
 
 import core.mate.Core;
-import core.mate.text.TextBuilder;
+import core.mate.content.TextBuilder;
 
 /**
  * 用于简化日志输出的静态工具类

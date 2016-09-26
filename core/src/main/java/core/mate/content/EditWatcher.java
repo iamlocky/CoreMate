@@ -1,4 +1,4 @@
-package core.mate.text;
+package core.mate.content;
 
 import android.text.Editable;
 import android.text.TextWatcher;

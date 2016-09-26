@@ -1,4 +1,4 @@
-package core.mate.file;
+package core.mate.content;
 
 import android.support.annotation.IntDef;
 

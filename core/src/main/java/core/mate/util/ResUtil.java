@@ -27,7 +27,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import core.mate.Core;
-import core.mate.text.TextBuilder;
+import core.mate.content.TextBuilder;
 
 /**
  * 用于获取应用信息的工具类

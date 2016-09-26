@@ -16,7 +16,6 @@ import android.view.Window;
 import core.mate.common.Clearable;
 import core.mate.common.ClearableHolder;
 import core.mate.common.ClearableWrapper;
-import core.mate.common.RefreshRate;
 import core.mate.util.ClassUtil;
 import core.mate.util.LogUtil;
 

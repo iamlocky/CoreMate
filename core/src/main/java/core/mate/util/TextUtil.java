@@ -17,9 +17,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.mate.text.AbsCharFilter;
-import core.mate.text.LineSeparator;
-import core.mate.text.NotCharFilter;
+import core.mate.content.AbsCharFilter;
+import core.mate.content.LineSeparator;
+import core.mate.content.NotCharFilter;
 
 /**
  * 处理文本文件读写等操作的工具类

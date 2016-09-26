@@ -1,6 +1,8 @@
-package core.mate.helper;
+package core.mate.util;
 
 import android.content.SharedPreferences;
+
+import core.mate.content.AbsEncryptor;
 
 /**
  * 带加密的{@link android.content.SharedPreferences}配置处理文件

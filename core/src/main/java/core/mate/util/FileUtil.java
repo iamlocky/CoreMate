@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 import core.mate.Core;
-import core.mate.file.FileExistsException;
+import core.mate.content.FileExistsException;
 
 /**
  * 文件系统工具集。

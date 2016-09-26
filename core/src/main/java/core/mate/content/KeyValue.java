@@ -1,4 +1,4 @@
-package core.mate.common;
+package core.mate.content;
 
 public final class KeyValue {
 

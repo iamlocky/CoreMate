@@ -3,8 +3,8 @@ package core.demo.helper;
 import android.preference.PreferenceManager;
 
 import core.demo.App;
-import core.mate.helper.AESEncryptor;
-import core.mate.helper.EncryptPrefHelper;
+import core.mate.content.AESEncryptor;
+import core.mate.util.EncryptPrefHelper;
 
 /**
  * App全局的配置辅助类

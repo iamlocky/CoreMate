@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import core.mate.common.Clearable;
 import core.mate.common.ClearableHolder;
 import core.mate.common.ClearableWrapper;
-import core.mate.common.RefreshRate;
 
 /**
  * 规范化fragment执行顺序的抽象fragment基类。

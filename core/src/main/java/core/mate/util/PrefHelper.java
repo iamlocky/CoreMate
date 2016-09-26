@@ -1,4 +1,4 @@
-package core.mate.helper;
+package core.mate.util;
 
 import android.content.SharedPreferences;
 

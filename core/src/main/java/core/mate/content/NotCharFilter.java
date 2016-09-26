@@ -1,4 +1,4 @@
-package core.mate.text;
+package core.mate.content;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;

@@ -1,4 +1,4 @@
-package core.mate.text;
+package core.mate.content;
 
 /**
  * 只有中文和中文标点能通过检验

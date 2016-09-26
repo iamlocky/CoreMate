@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import core.mate.text.TextBuilder;
+import core.mate.content.TextBuilder;
 import core.mate.util.ClassUtil;
 
 /**
