@@ -13,9 +13,9 @@ import java.util.List;
  * @author DrkCore
  * @since 2016年2月17日17:43:03
  */
-public final class ArrayUtil {
+public final class DataUtil {
 
-    private ArrayUtil() {
+    private DataUtil() {
     }
 
 	/*数组操作*/

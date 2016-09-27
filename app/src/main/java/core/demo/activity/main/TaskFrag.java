@@ -15,8 +15,6 @@ import core.demo.async.ReadTextTask;
 import core.mate.app.CoreFrag;
 import core.mate.app.ProgressDlgFrag;
 import core.mate.async.OnTaskListenerImpl;
-import core.mate.util.ArrayUtil;
-import core.mate.util.FileUtil;
 import core.mate.util.ToastUtil;
 
 /**
