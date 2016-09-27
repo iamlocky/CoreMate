@@ -118,10 +118,10 @@ public class FlexibleAdapter extends CoreAdapter<Object, CoreAdapter.AbsViewHold
 
     @SuppressWarnings("unchecked")
     @Override
-    protected final void bindViewData(CoreAdapter.AbsViewHolder<Object> viewHolder, int position, Object data, int viewType) {
+    protected final void bindViewData(CoreAdapter.AbsViewHolder<Object> holder, int position, Object data, int viewType) {
         AbsItemType operator = itemTypes.get(viewType);
         operator.adapterCount = getCount();
-        operator.bindViewData(viewHolder, position, data);
+        operator.bindViewData(holder, position, data);
     }
 
     @Override

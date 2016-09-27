@@ -83,9 +83,9 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
     @Override
-    public final void onBindViewHolder(Holder viewHolder, int position) {
+    public final void onBindViewHolder(Holder holder, int position) {
         Item item = getItem(position);
-        bindViewData(viewHolder, position, item, getItemViewType(position));
+        bindViewData(holder, position, item, getItemViewType(position));
     }
 
 	/* 内部回调 */
@@ -93,7 +93,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     @NonNull
     protected abstract Holder createViewHolder(LayoutInflater inflater, ViewGroup parent, int type);
 
-    protected abstract void bindViewData(Holder viewHolder, int position, Item data, int viewType);
+    protected abstract void bindViewData(Holder holder, int position, Item data, int viewType);
 
 	/* 接口实现 */
 
@@ -195,6 +195,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
     public final boolean remove(Item item) {
+
         int idx = this.data.indexOf(item);
         return remove(idx);
     }

@@ -52,7 +52,7 @@ public abstract class SimpleRecyclerType<Item> extends FlexibleRecyclerAdapter.A
         throw new IllegalStateException("无法实例化项目视图");
     }
 
-    protected void onViewHolderCreated(SimpleRecyclerViewHolder viewHolder) {
+    protected void onViewHolderCreated(SimpleRecyclerViewHolder holder) {
 
     }
 

@@ -53,7 +53,7 @@ public abstract class SimpleType<Item> extends AbsItemType<Item, SimpleViewHolde
         throw new IllegalStateException("无法实例化项目视图");
     }
 
-    protected void onViewHolderCreated(SimpleViewHolder<Item> viewHolder) {
+    protected void onViewHolderCreated(SimpleViewHolder<Item> holder) {
 
     }
 

@@ -117,10 +117,10 @@ public class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, Recycle
     }
 
     @Override
-    protected final void bindViewData(RecyclerView.ViewHolder viewHolder, int position, Object data, int viewType) {
+    protected final void bindViewData(RecyclerView.ViewHolder holder, int position, Object data, int viewType) {
         AbsRecyclerItemType operator = itemTypes.get(viewType);
         operator.adapterCount = getItemCount();
-        operator.bindViewData(viewHolder, position, data);
+        operator.bindViewData(holder, position, data);
     }
 
     @Override
