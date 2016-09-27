@@ -1,5 +1,6 @@
 package core.mate.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,18 +29,25 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
 
     @SuppressWarnings("unchecked")
     public CoreAdapter(Item... itemArr) {
-        Collections.addAll(this.data, itemArr);
+        if (itemArr != null) {
+            Collections.addAll(this.data, itemArr);
+        }
     }
 
     public CoreAdapter(Collection<Item> items) {
-        if(items != null){
+        if (items != null) {
             this.data.addAll(items);
         }
     }
 
 	/* 继承 */
 
+    private Context context;
     private LayoutInflater inflater;
+
+    public final Context getContext() {
+        return context;
+    }
 
     public final LayoutInflater getInflater() {
         return inflater;
@@ -63,7 +71,8 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
     @SuppressWarnings("unchecked")
     @Override
     public final View getView(int position, View convertView, ViewGroup parent) {
-        if (inflater == null) {
+        if (context == null) {
+            context = parent.getContext();
             inflater = LayoutInflater.from(parent.getContext());
         }
         int viewType = getItemViewType(position);
@@ -151,7 +160,7 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
     @SafeVarargs
     public final void display(Item... items) {
         this.data.clear();
-        if(items != null){
+        if (items != null) {
             Collections.addAll(this.data, items);
         }
         notifyDataSetChanged();
@@ -159,13 +168,15 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
 
     public final void display(Collection<? extends Item> items) {
         this.data.clear();
-        this.data.addAll(items);
+        if (items != null) {
+            this.data.addAll(items);
+        }
         notifyDataSetChanged();
     }
 
     @SafeVarargs
     public final boolean add(Item... items) {
-        if (Collections.addAll(this.data, items)) {
+        if (items != null && Collections.addAll(this.data, items)) {
             notifyDataSetChanged();
             return true;
         }
@@ -173,7 +184,7 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
     }
 
     public final boolean add(Collection<? extends Item> items) {
-        if (data.addAll(items)) {
+        if (items != null && data.addAll(items)) {
             notifyDataSetChanged();
             return true;
         }
@@ -207,24 +218,6 @@ public abstract class CoreAdapter<Item, Holder extends CoreAdapter.AbsViewHolder
     public final void clear() {
         this.data.clear();
         notifyDataSetChanged();
-    }
-
-	/* 数据事务 */
-
-    private AdapterTransaction<Item> transaction;
-
-    public final AdapterTransaction<Item> beginTransaction() {
-        return beginTransaction(true);
-    }
-
-    public final AdapterTransaction<Item> beginTransaction(boolean withSrc) {
-        if (transaction != null) {
-            // 清空上一个事务的痕迹
-            transaction.clear();
-            transaction = null;
-        }
-        transaction = new AdapterTransaction<>(this, withSrc ? data : null);
-        return transaction;
     }
 
 	/*拓展*/

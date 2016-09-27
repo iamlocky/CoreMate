@@ -1,5 +1,6 @@
 package core.mate.adapter;
 
+import android.content.Context;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
@@ -33,16 +34,25 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
     @SuppressWarnings("unchecked")
     public CoreRecyclerAdapter(Item... items) {
-        Collections.addAll(this.data, items);
+        if (items != null) {
+            Collections.addAll(this.data, items);
+        }
     }
 
     public CoreRecyclerAdapter(Collection<Item> items) {
-        this.data.addAll(items);
+        if (items != null) {
+            this.data.addAll(items);
+        }
     }
 
 	/* 继承 */
 
+    private Context context;
     private LayoutInflater inflater;
+
+    public final Context getContext() {
+        return context;
+    }
 
     public final LayoutInflater getInflater() {
         return inflater;
@@ -55,8 +65,9 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
     @Override
     public final Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (inflater == null) {
-            inflater = LayoutInflater.from(parent.getContext());
+        if (context == null) {
+            context = parent.getContext();
+            inflater = LayoutInflater.from(context);
         }
         Holder holder = createViewHolder(inflater, parent, viewType);
         // 绑定事件
@@ -152,19 +163,23 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     @SafeVarargs
     public final void display(Item... items) {
         this.data.clear();
-        Collections.addAll(this.data, items);
+        if(items != null){
+            Collections.addAll(this.data, items);
+        }
         notifyDataSetChanged();
     }
 
     public final void display(Collection<Item> items) {
         this.data.clear();
-        this.data.addAll(items);
+        if(items != null){
+            this.data.addAll(items);
+        }
         notifyDataSetChanged();
     }
 
     @SafeVarargs
     public final boolean add(Item... items) {
-        if (Collections.addAll(this.data, items)) {
+        if (items != null && Collections.addAll(this.data, items)) {
             notifyItemRangeInserted(this.data.size() - items.length, items.length);
             return true;
         }
@@ -172,7 +187,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
     public final boolean add(Collection<Item> items) {
-        if (this.data.addAll(items)) {
+        if (items != null && this.data.addAll(items)) {
             notifyItemRangeInserted(this.data.size() - items.size(), items.size());
             return true;
         }
@@ -195,24 +210,6 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     public final void clear() {
         this.data.clear();
         notifyDataSetChanged();
-    }
-
-	/* 数据事务 */
-
-    private AdapterTransaction<Item> transaction;
-
-    public final AdapterTransaction<Item> beginTransaction() {
-        return beginTransaction(true);
-    }
-
-    public final AdapterTransaction<Item> beginTransaction(boolean withSrc) {
-        if (transaction != null) {
-            // 清空上一个事务的痕迹
-            transaction.clear();
-            transaction = null;
-        }
-        transaction = new AdapterTransaction<>(this, withSrc ? data : null);
-        return transaction;
     }
 
 	/*拓展*/

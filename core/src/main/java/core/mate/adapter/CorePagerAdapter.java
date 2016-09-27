@@ -150,24 +150,6 @@ public abstract class CorePagerAdapter<Item> extends PagerAdapter {
 		notifyDataSetChanged();
 	}
 
-	/* 数据事务 */
-
-	private AdapterTransaction<Item> transaction;
-
-	public final AdapterTransaction<Item> beginTransaction () {
-		return beginTransaction(true);
-	}
-
-	public final AdapterTransaction<Item> beginTransaction (boolean withSrc) {
-		if (transaction != null) {
-			// 清空上一个事务的痕迹
-			transaction.clear();
-			transaction = null;
-		}
-		transaction = new AdapterTransaction<>(this, withSrc ? data : null);
-		return transaction;
-	}
-
 	/*拓展*/
 
 	/**
