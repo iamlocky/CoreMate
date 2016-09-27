@@ -5,18 +5,18 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ListView;
 
-public class NestListView extends ListView {
+public class NestedListView extends ListView {
 
-    public NestListView(Context context) {
+    public NestedListView(Context context) {
         super(context);
     }
 
-    public NestListView(Context context, AttributeSet attrs) {
+    public NestedListView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public NestListView(Context context, AttributeSet attrs,
-                        int defStyle) {
+    public NestedListView(Context context, AttributeSet attrs,
+                          int defStyle) {
         super(context, attrs, defStyle);
     }
 
