@@ -1,4 +1,4 @@
-package core.mate.common;
+package core.mate.async;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import core.mate.R;
 import core.mate.util.LogUtil;
-import core.mate.common.ITaskIndicator;
+import core.mate.view.ITaskIndicator;
 
 /**
  * 进度条对话框

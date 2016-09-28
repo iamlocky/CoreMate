@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import core.mate.R;
-import core.mate.common.Clearable;
-import core.mate.common.ClearableHolder;
-import core.mate.common.ClearableWrapper;
+import core.mate.async.Clearable;
+import core.mate.async.ClearableHolder;
+import core.mate.async.ClearableWrapper;
 
 /**
  * 封装了常用方法的Activity基类。

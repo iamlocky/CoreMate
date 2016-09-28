@@ -8,9 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
-import core.mate.common.Clearable;
-import core.mate.common.ClearableHolder;
-import core.mate.common.ClearableWrapper;
+import core.mate.async.Clearable;
+import core.mate.async.ClearableHolder;
+import core.mate.async.ClearableWrapper;
 
 /**
  * 规范化fragment执行顺序的抽象fragment基类。
