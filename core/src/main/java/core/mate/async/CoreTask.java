@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import core.mate.Core;
-import core.mate.common.Clearable;
-import core.mate.common.ITaskIndicator;
+import core.mate.view.ITaskIndicator;
 import core.mate.util.ClassUtil;
 import core.mate.util.LogUtil;
 

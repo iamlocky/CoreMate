@@ -1,4 +1,4 @@
-package core.mate.common;
+package core.mate.view;
 
 /**
  * 进度指示的接口

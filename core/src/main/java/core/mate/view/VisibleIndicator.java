@@ -1,4 +1,4 @@
-package core.mate.common;
+package core.mate.view;
 
 import android.view.View;
 

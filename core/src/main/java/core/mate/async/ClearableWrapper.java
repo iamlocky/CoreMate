@@ -1,4 +1,4 @@
-package core.mate.common;
+package core.mate.async;
 
 import android.os.AsyncTask;
 
