@@ -20,7 +20,7 @@
 Android Studio用户可有在模块的build.gradle中于dependencies下添加如下依赖：
 
 ```
-compile 'core.mate:core:1.0.5'
+compile 'core.mate:core:1.0.6'
 ```
 
 Eclipse用户的话可以将源码down下来手动导入成Lib工程，具体过程不再赘述。
