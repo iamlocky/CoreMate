@@ -317,10 +317,10 @@ public final class ResUtil {
 
             TextBuilder textBuilder = new TextBuilder(3 * assetDir.length() + 1);
             String[] itemAssets;
-            for (String item : assets) {//这里的item已经带有父目录的地址了，如"docs/home.html"
-
+            for (String item : assets) {
                 //检查assert中的子项目是目录还是文件
-                itemAssets = assetMgr.list(textBuilder.buildString(assetDir, '/', item));
+                item = textBuilder.buildString(assetDir, '/', item);
+                itemAssets = assetMgr.list(item);
                 if (itemAssets != null) {
                     if (itemAssets.length > 0) {// 子项目是目录
                         exportAssetDir(item, dstAssetDir, cover);// 递归
