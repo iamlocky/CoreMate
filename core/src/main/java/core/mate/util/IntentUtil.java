@@ -71,4 +71,15 @@ public class IntentUtil {
 		Uri uri = Uri.parse(url);
 		return new Intent(Intent.ACTION_VIEW, uri);
 	}
+
+	/**
+	 * 获取返回到系统桌面的Intent
+	 *
+	 * @return
+	 */
+	public static Intent getLauncherIntent(){
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.addCategory(Intent.CATEGORY_HOME);
+		return intent;
+	}
 }
