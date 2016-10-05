@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
+import android.widget.HeaderViewListAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 public abstract class ListFrag extends CoreFrag implements OnItemClickListener,
@@ -27,8 +29,39 @@ public abstract class ListFrag extends CoreFrag implements OnItemClickListener,
         return listView;
     }
 
-    protected <Adapter extends BaseAdapter> Adapter getAdapter() {
-        return (Adapter) adapter;
+    /**
+     * 获取{@link ListView#getAdapter()}。
+     *
+     * @return
+     */
+    protected ListAdapter getRawAdapter() {
+        return listView.getAdapter();
+    }
+
+    /**
+     * 获取通过{@link #setAdapter(BaseAdapter)}设置的适配器，
+     * 当从未通过上述方法设置适配器时，将会通过{@link #getRawAdapter()}
+     * 获取原始的适配器。若原始适配器是{@link HeaderViewListAdapter}
+     * 的子类的话，则返回{@link HeaderViewListAdapter#getWrappedAdapter()}。
+     *
+     * 你也可以通过{@link #getRawAdapter()}从ListView中获取适配器，
+     * 但由于Header或者第三方的ListView的原因导致二者的结果可能不一样。
+     *
+     * @param <T>
+     * @return
+     */
+    protected <T extends  ListAdapter> T getAdapter() {
+        if(adapter != null){
+            return (T) adapter;
+        }
+
+        ListAdapter adapter = getRawAdapter();
+        if(adapter instanceof HeaderViewListAdapter){
+            HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter) adapter;
+            return (T) headerAdapter.getWrappedAdapter();
+        }else {
+            return (T) listView.getAdapter();
+        }
     }
 
     protected final void configListViewId(@IdRes int listViewId) {
