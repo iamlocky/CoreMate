@@ -1,6 +1,8 @@
 package core.mate.app;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,9 +10,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
+import core.mate.util.BroadcastUtil;
 
 /**
  * 规范化fragment执行顺序的抽象fragment基类。
@@ -51,6 +57,38 @@ public abstract class CoreFrag extends Fragment {
         super.onResume();
         if (needRefreshOnResume()) {
             refresh();
+        }
+
+        if (resumeReceivers != null) {
+            for (Object[] item : resumeReceivers) {
+                BroadcastUtil.registerReceiver((BroadcastReceiver) item[0], (IntentFilter) item[1]);
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (clearAllOnPauseEnable) {
+            clearAllClearable();
+        }
+
+        if (resumeReceivers != null) {
+            for (Object[] item : resumeReceivers) {
+                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        clearAllClearable();
+
+        if (fullReceivers != null) {
+            for (Object[] item : fullReceivers) {
+                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
+            }
         }
     }
 
@@ -110,20 +148,6 @@ public abstract class CoreFrag extends Fragment {
     }
 
     public void refresh() {
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (clearAllOnPauseEnable) {
-            clearAllClearable();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        clearAllClearable();
     }
 
 	/* 线程 */
@@ -211,6 +235,32 @@ public abstract class CoreFrag extends Fragment {
             fragHelper = new FragHelper(getFragmentManager());
         }
         return fragHelper;
+    }
+
+    /*广播*/
+
+    private List<Object[]> fullReceivers;
+    private List<Object[]> resumeReceivers;
+
+    protected final void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        if (receiver == null || filter == null) {
+            throw new IllegalArgumentException();
+        }
+        if (fullReceivers == null) {
+            fullReceivers = new ArrayList<>();
+        }
+        fullReceivers.add(new Object[]{receiver, filter});
+        BroadcastUtil.registerReceiver(receiver,filter);
+    }
+
+    protected final void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        if (receiver == null || filter == null) {
+            throw new IllegalArgumentException();
+        }
+        if (resumeReceivers == null) {
+            resumeReceivers = new ArrayList<>();
+        }
+        resumeReceivers.add(new Object[]{receiver, filter});
     }
 
     /*Clearable*/

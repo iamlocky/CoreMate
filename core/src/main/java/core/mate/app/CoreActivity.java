@@ -1,5 +1,7 @@
 package core.mate.app;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +21,7 @@ import core.mate.R;
 import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
+import core.mate.util.BroadcastUtil;
 
 /**
  * 封装了常用方法的Activity基类。
@@ -38,10 +41,10 @@ public abstract class CoreActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        init(savedInstanceState);
         super.onCreate(savedInstanceState);
         // 回调各个初始化的方法
         // 如果某个初始化回调中调用了finish则不再进行后续的操作
-        init(savedInstanceState);
         if (!isFinishing()) {
             initView(savedInstanceState);
         }
@@ -62,6 +65,12 @@ public abstract class CoreActivity extends AppCompatActivity {
             refresh();
         }
         isInResumed = true;
+
+        if (resumeReceivers != null) {
+            for (Object[] item : resumeReceivers) {
+                BroadcastUtil.registerReceiver((BroadcastReceiver) item[0], (IntentFilter) item[1]);
+            }
+        }
     }
 
     @Override
@@ -72,12 +81,24 @@ public abstract class CoreActivity extends AppCompatActivity {
         if (clearAllOnPauseEnable) {
             clearAllClearable();
         }
+
+        if (resumeReceivers != null) {
+            for (Object[] item : resumeReceivers) {
+                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
+            }
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         clearAllClearable();
+
+        if (fullReceivers != null) {
+            for (Object[] item : fullReceivers) {
+                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
+            }
+        }
     }
 
     @Override
@@ -106,7 +127,7 @@ public abstract class CoreActivity extends AppCompatActivity {
 	/* 回调 */
 
     /**
-     * 在{@link #onCreate(Bundle)}中首先调用，建议在此初始化数据相关的成员变量，比如从intent接受数据。 <br>
+     * 在{@link #onCreate(Bundle)}中首先调用（在super.onCreate(Bundle)之前），建议在此初始化数据相关的成员变量，比如从intent接受数据。 <br>
      * <br/>
      * 如果调用了{@link #finish()}方法则后续的初始化操作都不会执行。
      *
@@ -454,6 +475,32 @@ public abstract class CoreActivity extends AppCompatActivity {
      */
     protected final boolean postAtFrontOfQueue(Runnable r) {
         return getHandler().postAtFrontOfQueue(r);
+    }
+
+    /*广播*/
+
+    private List<Object[]> fullReceivers;
+    private List<Object[]> resumeReceivers;
+
+    protected final void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        if (receiver == null || filter == null) {
+            throw new IllegalArgumentException();
+        }
+        if (fullReceivers == null) {
+            fullReceivers = new ArrayList<>();
+        }
+        fullReceivers.add(new Object[]{receiver, filter});
+        BroadcastUtil.registerReceiver(receiver,filter);
+    }
+
+    protected final void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        if (receiver == null || filter == null) {
+            throw new IllegalArgumentException();
+        }
+        if (resumeReceivers == null) {
+            resumeReceivers = new ArrayList<>();
+        }
+        resumeReceivers.add(new Object[]{receiver, filter});
     }
 
 	/*Clearable*/

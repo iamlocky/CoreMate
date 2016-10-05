@@ -2,7 +2,9 @@ package core.mate.app;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,11 +13,16 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.view.KeyEvent;
 import android.view.Window;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
+import core.mate.util.BroadcastUtil;
 import core.mate.util.ClassUtil;
 import core.mate.util.LogUtil;
 
@@ -25,7 +32,7 @@ import core.mate.util.LogUtil;
  * @author DrkCore
  * @since 2015年10月17日12:48:35
  */
-public abstract class CoreDlgFrag extends DialogFragment {
+public abstract class CoreDlgFrag extends DialogFragment implements DialogInterface.OnKeyListener{
 
 	/* 继承 */
 
@@ -51,6 +58,12 @@ public abstract class CoreDlgFrag extends DialogFragment {
         if (needRefreshOnResume()) {
             refresh();
         }
+
+        if (resumeReceivers != null) {
+            for (Object[] item : resumeReceivers) {
+                BroadcastUtil.registerReceiver((BroadcastReceiver) item[0], (IntentFilter) item[1]);
+            }
+        }
     }
 
     @Override
@@ -59,12 +72,24 @@ public abstract class CoreDlgFrag extends DialogFragment {
         if (clearAllOnPauseEnable) {
             clearAllClearable();
         }
+
+        if (resumeReceivers != null) {
+            for (Object[] item : resumeReceivers) {
+                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
+            }
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         clearAllClearable();
+
+        if (fullReceivers != null) {
+            for (Object[] item : fullReceivers) {
+                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
+            }
+        }
     }
 
     @Override
@@ -84,21 +109,13 @@ public abstract class CoreDlgFrag extends DialogFragment {
         }
     }
 
-    /* 模板方法 */
+    /* 回调 */
 
     private int winAnimStyle;
 
     protected final CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
         this.winAnimStyle = winAnimStyle;
         return this;
-    }
-
-    /**
-     * 配置DialogFragment的样式，在{@link #onCreate(Bundle)}中回调。
-     *
-     * @param savedInstanceState
-     */
-    protected void onPrepareDialogStyle(@Nullable Bundle savedInstanceState) {
     }
 
     /**
@@ -113,9 +130,15 @@ public abstract class CoreDlgFrag extends DialogFragment {
         if (winAnimStyle > 0) {
             dlgWin.setWindowAnimations(winAnimStyle);
         }
+        dlg.setOnKeyListener(this);
     }
 
-	/* 外部接口 */
+    @Override
+    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    /* 外部接口 */
 
     public interface OnDismissListener {
 
@@ -318,6 +341,32 @@ public abstract class CoreDlgFrag extends DialogFragment {
             fragHelper = new FragHelper(getFragmentManager());
         }
         return fragHelper;
+    }
+
+    /*广播*/
+
+    private List<Object[]> fullReceivers;
+    private List<Object[]> resumeReceivers;
+
+    protected final void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        if (receiver == null || filter == null) {
+            throw new IllegalArgumentException();
+        }
+        if (fullReceivers == null) {
+            fullReceivers = new ArrayList<>();
+        }
+        fullReceivers.add(new Object[]{receiver, filter});
+        BroadcastUtil.registerReceiver(receiver,filter);
+    }
+
+    protected final void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        if (receiver == null || filter == null) {
+            throw new IllegalArgumentException();
+        }
+        if (resumeReceivers == null) {
+            resumeReceivers = new ArrayList<>();
+        }
+        resumeReceivers.add(new Object[]{receiver, filter});
     }
 
     /*Clearable*/
