@@ -32,19 +32,8 @@ public class PrefHelper {
         return pref.getString(key, defValue);
     }
 
-    /**
-     * 返回key对应的可操作的集合
-     *
-     * @param key
-     * @param defValues
-     * @return
-     */
     public final Set<String> getStringSet(String key, Set<String> defValues) {
-        defValues = pref.getStringSet(key, defValues);
-        if (defValues != null) {
-            defValues = new HashSet<>(defValues);
-        }
-        return defValues;
+        return pref.getStringSet(key, defValues);
     }
 
     public final int getInt(String key, int defValue) {
@@ -73,7 +62,7 @@ public class PrefHelper {
     }
 
     public PrefHelper putStringSet(String key, Set<String> values) {
-        editor.putStringSet(key, values);
+        editor.putStringSet(key, values).commit();
         return this;
     }
 
