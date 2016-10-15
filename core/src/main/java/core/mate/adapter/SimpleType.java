@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import java.lang.reflect.Constructor;
 
-import core.mate.adapter.FlexibleAdapter.AbsItemType;
 import core.mate.util.LogUtil;
 
 /**

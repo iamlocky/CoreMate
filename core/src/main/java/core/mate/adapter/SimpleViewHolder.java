@@ -6,21 +6,17 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 /**
  * @author DrkCore
  * @since 2016年1月18日18:24:09
  */
-public class SimpleViewHolder<Item> extends CoreAdapter.AbsViewHolder<Item> {
+public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
 
     public SimpleViewHolder(View v) {
         super(v);
