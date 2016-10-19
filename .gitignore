@@ -3,6 +3,13 @@
 
 #gradle config
 /gradle
+*.properties
+.gradle
+
+#tmp file
+*.iml
+.idea
+build
 
 #Test
 app/src/androidTest

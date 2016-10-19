@@ -1,5 +1,6 @@
 package core.mate.app;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -7,7 +8,11 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+import java.util.Map;
 
 /**
  * 封装了WebView的Fragment
@@ -89,10 +94,6 @@ public class WebFrag extends CoreFrag {
     public void onResume() {
         super.onResume();
         webView.resumeTimers();
-
-        if (url != null) {
-            loadUrl(url);
-        }
     }
 
     @Override
@@ -114,19 +115,72 @@ public class WebFrag extends CoreFrag {
 
     /*拓展*/
 
-    private String url;
-
-    public String getUrl() {
-        if (webView != null) {
-            url = webView.getUrl();
-        }
-        return url;
+    public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
+        webView.loadUrl(url, additionalHttpHeaders);
     }
 
     public void loadUrl(String url) {
-        this.url = url;
-        if (webView != null && !url.equals(webView.getUrl())) {
-            webView.loadUrl(url);
-        }
+        webView.loadUrl(url);
+    }
+
+    public void reload() {
+        webView.reload();
+    }
+
+    public void stopLoading() {
+        webView.stopLoading();
+    }
+
+    public boolean canGoBack() {
+        return webView.canGoBack();
+    }
+
+    public void goBack() {
+        webView.goBack();
+    }
+
+    public boolean canGoForward() {
+        return webView.canGoForward();
+    }
+
+    public void goForward() {
+        webView.goForward();
+    }
+
+    public boolean canGoBackOrForward(int steps) {
+        return webView.canGoBackOrForward(steps);
+    }
+
+    public void goBackOrForward(int steps) {
+        webView.goBackOrForward(steps);
+    }
+
+    public boolean pageUp(boolean top) {
+        return webView.pageUp(top);
+    }
+
+    public boolean pageDown(boolean bottom) {
+        return webView.pageDown(bottom);
+    }
+
+    public void setWebChromeClient(WebChromeClient client) {
+        webView.setWebChromeClient(client);
+    }
+
+    public void setWebViewClient(WebViewClient client) {
+        webView.setWebViewClient(client);
+    }
+
+    @SuppressLint("JavascriptInterface")
+    public void addJavascriptInterface(Object object, String name) {
+        webView.addJavascriptInterface(object, name);
+    }
+
+    public void clearHistory() {
+        webView.clearHistory();
+    }
+
+    public void setWebViewVisible(boolean visible) {
+        webView.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
 }
