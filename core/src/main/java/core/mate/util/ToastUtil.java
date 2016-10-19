@@ -16,7 +16,7 @@ public class ToastUtil {
     private static WeakReference<Toast> lastToastRef;
 
     public static Toast toastShort(@StringRes int resId) {
-        return toastShort(ResUtil.getString(resId));
+        return toastShort(ContextUtil.getString(resId));
     }
 
     public static Toast toastShort(CharSequence tip) {
@@ -34,7 +34,7 @@ public class ToastUtil {
     }
 
     public static Toast toastLong(@StringRes int resId) {
-        return toastLong(ResUtil.getString(resId));
+        return toastLong(ContextUtil.getString(resId));
     }
 
     public static void cancelLastToast() {

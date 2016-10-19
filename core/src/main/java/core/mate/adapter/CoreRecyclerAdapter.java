@@ -213,6 +213,10 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
 	/*拓展*/
 
+	public final boolean isEmpty() {
+		return getItemCount() == 0;
+	}
+
 	/**
 	 * 浅复制一个和原始数据一样的列表。
 	 *

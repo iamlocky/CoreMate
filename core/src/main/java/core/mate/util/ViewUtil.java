@@ -32,7 +32,7 @@ public final class ViewUtil {
 	private static int heightPixels;
 
 	static {// 初始化
-		DisplayMetrics displayMetrics = ResUtil.getResources().getDisplayMetrics();
+		DisplayMetrics displayMetrics = ContextUtil.getResources().getDisplayMetrics();
 		density = displayMetrics.density;
 		scaledDensity = displayMetrics.scaledDensity;
 		widthPixels = displayMetrics.widthPixels;

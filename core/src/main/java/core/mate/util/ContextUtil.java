@@ -34,9 +34,9 @@ import core.mate.content.TextBuilder;
  *
  * @since 2014年11月26日17:36:38
  */
-public final class ResUtil {
+public final class ContextUtil {
 
-    private ResUtil() {
+    private ContextUtil() {
     }
 
 	/*版本*/
@@ -309,7 +309,7 @@ public final class ResUtil {
      * @throws IOException
      */
     public static File exportAssetDir(String assetDir, File dstDir, boolean cover) throws IOException {
-        AssetManager assetMgr = ResUtil.getAssets();
+        AssetManager assetMgr = ContextUtil.getAssets();
         String[] assets = assetMgr.list(assetDir);
         if (assets != null && assets.length > 0) {// assetsDir是目录且里面有东西
             // 在dstDir目录下创建assetDir目录
@@ -371,7 +371,7 @@ public final class ResUtil {
             return dstFile;
         }
 
-        AssetManager assetMgr = ResUtil.getAssets();
+        AssetManager assetMgr = ContextUtil.getAssets();
         InputStream in = null;
         OutputStream out = null;
         try {

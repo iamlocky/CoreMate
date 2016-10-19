@@ -3,3 +3,7 @@
 
 #gradle config
 /gradle
+
+#Test
+app/src/androidTest
+app/src/test
