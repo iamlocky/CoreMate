@@ -2,7 +2,6 @@ package core.mate.util;
 
 import android.content.SharedPreferences;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,13 +15,19 @@ public class PrefHelper {
 
     private final SharedPreferences pref;
     private final SharedPreferences.Editor editor;
+    private final boolean applyOrCommit;
 
     public PrefHelper(SharedPreferences pref) {
-        this.pref = pref;
-        this.editor = pref.edit();
+        this(pref, true);
     }
 
-	/*数据读写*/
+    public PrefHelper(SharedPreferences pref, boolean applyOrCommit) {
+        this.pref = pref;
+        this.editor = pref.edit();
+        this.applyOrCommit = applyOrCommit;
+    }
+
+    /*数据读写*/
 
     public final Map<String, ?> getAll() {
         return pref.getAll();
@@ -57,43 +62,59 @@ public class PrefHelper {
     }
 
     public final PrefHelper putString(String key, String value) {
-        editor.putString(key, value).commit();
+        editor.putString(key, value);
+        submitEdit();
         return this;
     }
 
     public PrefHelper putStringSet(String key, Set<String> values) {
-        editor.putStringSet(key, values).commit();
+        editor.putStringSet(key, values);
+        submitEdit();
         return this;
     }
 
     public final PrefHelper putBoolean(String key, boolean value) {
-        editor.putBoolean(key, value).commit();
+        editor.putBoolean(key, value);
+        submitEdit();
         return this;
     }
 
     public final PrefHelper putInt(String key, int value) {
-        editor.putInt(key, value).commit();
+        editor.putInt(key, value);
+        submitEdit();
         return this;
     }
 
     public final PrefHelper putLong(String key, long value) {
-        editor.putLong(key, value).commit();
+        editor.putLong(key, value);
+        submitEdit();
         return this;
     }
 
     public final PrefHelper putFloat(String key, float value) {
-        editor.putFloat(key, value).commit();
+        editor.putFloat(key, value);
+        submitEdit();
         return this;
     }
 
     public final PrefHelper remove(String key) {
-        editor.remove(key).commit();
+        editor.remove(key);
+        submitEdit();
         return this;
     }
 
     public final PrefHelper clear() {
-        editor.clear().commit();
+        editor.clear();
+        submitEdit();
         return this;
+    }
+
+    private void submitEdit() {
+        if (applyOrCommit) {
+            editor.apply();
+        } else {
+            editor.commit();
+        }
     }
 
 }
