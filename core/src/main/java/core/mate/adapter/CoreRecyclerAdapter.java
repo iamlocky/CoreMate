@@ -160,73 +160,70 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
 	/* 数据处理 */
 
-    @SafeVarargs
-    public final void display(Item... items) {
-        this.data.clear();
-        if(items != null){
-            Collections.addAll(this.data, items);
-        }
-        notifyDataSetChanged();
-    }
+	public void display(Item... items) {
+		this.data.clear();
+		if (items != null) {
+			Collections.addAll(this.data, items);
+		}
+		notifyDataSetChanged();
+	}
 
-    public final void display(Collection<Item> items) {
-        this.data.clear();
-        if(items != null){
-            this.data.addAll(items);
-        }
-        notifyDataSetChanged();
-    }
+	public void display(Collection<Item> items) {
+		this.data.clear();
+		if (items != null) {
+			this.data.addAll(items);
+		}
+		notifyDataSetChanged();
+	}
 
-    @SafeVarargs
-    public final boolean add(Item... items) {
-        if (items != null && Collections.addAll(this.data, items)) {
-            notifyItemRangeInserted(this.data.size() - items.length, items.length);
-            return true;
-        }
-        return false;
-    }
+	public boolean add(Item... items) {
+		if (items != null && Collections.addAll(this.data, items)) {
+			notifyItemRangeInserted(this.data.size() - items.length, items.length);
+			return true;
+		}
+		return false;
+	}
 
-    public final boolean add(Collection<Item> items) {
-        if (items != null && this.data.addAll(items)) {
-            notifyItemRangeInserted(this.data.size() - items.size(), items.size());
-            return true;
-        }
-        return false;
-    }
+	public boolean add(Collection<Item> items) {
+		if (items != null && this.data.addAll(items)) {
+			notifyItemRangeInserted(this.data.size() - items.size(), items.size());
+			return true;
+		}
+		return false;
+	}
 
-    public final boolean remove(Item item) {
+	public boolean remove(Item item) {
+		int idx = this.data.indexOf(item);
+		return remove(idx);
+	}
 
-        int idx = this.data.indexOf(item);
-        return remove(idx);
-    }
+	public boolean remove(int position) {
+		if (this.data.remove(position) != null) {
+			notifyItemRemoved(position);
+			return true;
+		}
+		return false;
+	}
 
-    public final boolean remove(int position) {
-        if (this.data.remove(position) != null) {
-            notifyItemRemoved(position);
-            return true;
-        }
-        return false;
-    }
-
-    public final void clear() {
-        this.data.clear();
-        notifyDataSetChanged();
-    }
+	public void clear() {
+		this.data.clear();
+		notifyDataSetChanged();
+	}
 
 	/*拓展*/
 
-    public final boolean isEmpty(){
-        return getItemCount() == 0;
-    }
+	public final boolean isEmpty() {
+		return getItemCount() == 0;
+	}
 
-    /**
-     * 浅复制一个和原始数据一样的列表。
-     *
-     * @return
-     */
-    public final List<Item> getData() {
-        return new ArrayList<>(data);
-    }
+	/**
+	 * 浅复制一个和原始数据一样的列表。
+	 *
+	 * @return
+	 */
+	public final List<Item> cloneData() {
+		return new ArrayList<>(data);
+	}
 
     public final Iterator<Item> getIterator() {
         return data.iterator();

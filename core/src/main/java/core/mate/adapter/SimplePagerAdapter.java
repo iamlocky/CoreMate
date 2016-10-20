@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import java.util.Collection;
 
-import core.mate.util.ResUtil;
+import core.mate.util.ContextUtil;
 
 /**
  * @author DrkCore
@@ -24,7 +24,7 @@ public class SimplePagerAdapter extends CorePagerAdapter<SimplePagerAdapter.Page
 		public final String title;
 
 		public PagerData (@LayoutRes int layoutId, @StringRes int titleId) {
-			this(layoutId, ResUtil.getString(titleId));
+			this(layoutId, ContextUtil.getString(titleId));
 		}
 
 		public PagerData (@LayoutRes int layoutId) {

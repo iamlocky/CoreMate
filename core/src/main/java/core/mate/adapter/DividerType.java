@@ -12,7 +12,7 @@ import android.widget.AbsListView;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class DividerType extends FlexibleAdapter.AbsItemType<Divider, SimpleViewHolder<Divider>> {
+public final class DividerType extends AbsItemType<Divider, SimpleViewHolder<Divider>> {
 
 	/* 继承 */
 

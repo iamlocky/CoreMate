@@ -10,7 +10,7 @@ import android.view.animation.Animation;
 import core.demo.R;
 import core.mate.app.PanelDlgFrag;
 import core.mate.util.RandomUtil;
-import core.mate.util.ResUtil;
+import core.mate.util.ContextUtil;
 
 /**
  * 从下方弹出对话框的Dlg
@@ -54,7 +54,7 @@ public class ResDlgFrag extends PanelDlgFrag {
                 //随机取出动画
                 int animId = RandomUtil.randomIn(anims);
                 //使用ResUtil实例化动画
-                Animation anim = ResUtil.getAnim(animId);
+                Animation anim = ContextUtil.getAnim(animId);
                 //播放动画
                 v.startAnimation(anim);
             }

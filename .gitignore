@@ -10,3 +10,7 @@
 *.iml
 .idea
 build
+
+#Test
+app/src/androidTest
+app/src/test

@@ -11,7 +11,7 @@ import android.widget.AbsListView;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class RecyclerDividerType extends FlexibleRecyclerAdapter.AbsRecyclerItemType<Divider, SimpleRecyclerViewHolder> {
+public final class RecyclerDividerType extends AbsRecyclerItemType<Divider, SimpleRecyclerViewHolder> {
 
 	/* 继承 */
 

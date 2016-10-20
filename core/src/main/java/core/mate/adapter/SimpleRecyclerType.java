@@ -14,7 +14,7 @@ import core.mate.util.LogUtil;
  * @author DrkCore
  * @since 2016年2月1日00:06:31
  */
-public abstract class SimpleRecyclerType<Item> extends FlexibleRecyclerAdapter.AbsRecyclerItemType<Item, SimpleRecyclerViewHolder> {
+public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item, SimpleRecyclerViewHolder> {
 
     private int layoutId;
     private final Class<? extends View> viewClass;
