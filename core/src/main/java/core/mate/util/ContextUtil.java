@@ -1,6 +1,7 @@
 package core.mate.util;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -29,6 +30,9 @@ import java.nio.charset.Charset;
 import core.mate.Core;
 import core.mate.content.TextBuilder;
 
+import static android.content.pm.PackageManager.GET_UNINSTALLED_PACKAGES;
+import static android.content.pm.PackageManager.MATCH_UNINSTALLED_PACKAGES;
+
 /**
  * 用于获取应用信息的工具类
  *
@@ -39,7 +43,7 @@ public final class ContextUtil {
     private ContextUtil() {
     }
 
-	/*版本*/
+	/*应用信息*/
 
     /**
      * 获取app的版本名
@@ -76,6 +80,27 @@ public final class ContextUtil {
         }
 
         return verCode;
+    }
+
+    /**
+     * 判断应用是否安装
+     *
+     * @param pkgName
+     * @return
+     */
+    public static boolean isAppInstalled(String pkgName) {
+        try {
+            PackageManager pkgMgr = Core.getInstance().getAppContext().getPackageManager();
+            ApplicationInfo info;
+            if (Build.VERSION.SDK_INT >= 24) {
+                info = pkgMgr.getApplicationInfo(pkgName, MATCH_UNINSTALLED_PACKAGES);
+            } else {
+                info = pkgMgr.getApplicationInfo(pkgName, GET_UNINSTALLED_PACKAGES);
+            }
+            return info != null;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
 	/* 资源获取 */
