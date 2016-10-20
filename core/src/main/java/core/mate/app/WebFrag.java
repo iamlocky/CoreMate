@@ -1,12 +1,14 @@
 package core.mate.app;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewDebug;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -114,6 +116,34 @@ public class WebFrag extends CoreFrag {
     }
 
     /*拓展*/
+
+    @ViewDebug.ExportedProperty(category = "webview")
+    public String getUrl() {
+        return webView.getUrl();
+    }
+
+    @ViewDebug.ExportedProperty(category = "webview")
+    public String getOriginalUrl() {
+        return webView.getOriginalUrl();
+    }
+
+    @ViewDebug.ExportedProperty(category = "webview")
+    public String getTitle() {
+        return webView.getTitle();
+    }
+
+    public Bitmap getFavicon() {
+        return webView.getFavicon();
+    }
+
+    public int getProgress() {
+        return webView.getProgress();
+    }
+
+    @ViewDebug.ExportedProperty(category = "webview")
+    public int getContentHeight() {
+        return webView.getContentHeight();
+    }
 
     public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
         webView.loadUrl(url, additionalHttpHeaders);
