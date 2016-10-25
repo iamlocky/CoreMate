@@ -229,7 +229,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         return data.iterator();
     }
 
-    public final Item getItem(int position) {
+    public Item getItem(int position) {
         return data.get(position);
     }
 
