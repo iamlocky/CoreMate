@@ -18,21 +18,29 @@ public abstract class ScrollBinder {
 	private float outY;
 	private float factor;
 
-	public ScrollBinder(View view) {
-		this(view, 1);
+	public ScrollBinder setFactor(float factor) {
+		if (factor <= 0) {
+			throw new IllegalArgumentException();
+		}
+		this.factor = factor;
+		return this;
 	}
 
-	public ScrollBinder(View view, float factor) {
-		this(view, -ViewUtil.getViewHeight(view), factor);
+	public ScrollBinder(View view) {
+		this(view, -ViewUtil.getViewHeight(view));
+	}
+
+	public ScrollBinder(View view, float outY) {
+		this(view, outY, 1);
 	}
 
 	public ScrollBinder(View view, float outY, float factor) {
 		this.view = view;
 		this.initY = view.getY();
 		this.outY = outY;
-		this.factor = factor;
+		setFactor(factor);
 
-		if (outY == initY || factor <= 0) {
+		if (outY == initY) {
 			throw new IllegalArgumentException();
 		}
 	}
