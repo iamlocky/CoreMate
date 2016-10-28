@@ -100,9 +100,28 @@ public class FragHelper {
         } else {
             fragTran.add(containerId, nextFrag, fragTag);
         }
-        fragTran.commit();
+        commotTran(fragTran);
 
         return nextFrag;
+    }
+
+    private boolean commitAllowingStateLossEnable;
+
+    public FragHelper setCommitAllowingStateLossEnable(boolean commitAllowingStateLossEnable) {
+        this.commitAllowingStateLossEnable = commitAllowingStateLossEnable;
+        return this;
+    }
+
+    public boolean isCommitAllowingStateLossEnable() {
+        return commitAllowingStateLossEnable;
+    }
+
+    private void commotTran(FragmentTransaction fragTran) {
+        if (commitAllowingStateLossEnable) {
+            fragTran.commitAllowingStateLoss();
+        } else {
+            fragTran.commit();
+        }
     }
 
 	/* 显示或者隐藏 */
@@ -143,7 +162,7 @@ public class FragHelper {
 
                 fragTran.hide(frag);
             }
-            fragTran.commit();
+            commotTran(fragTran);
             return true;
         }
         return false;
