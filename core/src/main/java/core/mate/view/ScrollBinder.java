@@ -13,106 +13,118 @@ import core.mate.util.ViewUtil;
  */
 public abstract class ScrollBinder {
 
-	private View view;
-	private float initY;
-	private float outY;
-	private float factor;
+    private View view;
+    private float initY;
+    private float outY;
+    private float factor;
 
-	public ScrollBinder(View view) {
-		this(view, 1);
-	}
+    public ScrollBinder setFactor(float factor) {
+        if (factor <= 0) {
+            throw new IllegalArgumentException();
+        }
+        this.factor = factor;
+        return this;
+    }
 
-	public ScrollBinder(View view, float factor) {
-		this(view, -ViewUtil.getViewHeight(view), factor);
-	}
+    public ScrollBinder(View view) {
+        this(view, -ViewUtil.getViewHeight(view));
+    }
 
-	public ScrollBinder(View view, float outY, float factor) {
-		this.view = view;
-		this.initY = view.getY();
-		this.outY = outY;
-		this.factor = factor;
+    public ScrollBinder(View view, float outY) {
+        this(view, outY, 1);
+    }
 
-		if (outY == initY || factor <= 0) {
-			throw new IllegalArgumentException();
-		}
-	}
+    public ScrollBinder(View view, float outY, float factor) {
+        this.view = view;
+        this.initY = view.getY();
+        this.outY = outY;
+        setFactor(factor);
+
+        if (outY == initY) {
+            throw new IllegalArgumentException();
+        }
+
+        if (initY == 0) {//为0很大可能是界面还没初始化好
+            view.post(() -> initY = view.getY());
+        }
+    }
 
 	/*回调*/
 
-	private static class AnimHandler extends WeakRefLastMsgHandler<ScrollBinder> {
+    private static class AnimHandler extends WeakRefLastMsgHandler<ScrollBinder> {
 
-		public AnimHandler(ScrollBinder ref) {
-			super(ref);
-		}
+        public AnimHandler(ScrollBinder ref) {
+            super(ref);
+        }
 
-		@Override
-		protected void onLastMessageLively(@NonNull ScrollBinder ref, Message msg) {
-			ref.onFinishScroll();
-		}
-	}
+        @Override
+        protected void onLastMessageLively(@NonNull ScrollBinder ref, Message msg) {
+            ref.onFinishScroll();
+        }
+    }
 
-	private AnimHandler animHandler;
+    private AnimHandler animHandler;
 
-	protected final void onDelayFinishScroll(long delay) {
-		if (delay <= 0) {
-			onFinishScroll();
-		} else {
-			if (animHandler == null) {
-				animHandler = new AnimHandler(this);
-			}
-			animHandler.sendMsgDelayed(delay);
-		}
-	}
+    protected final void onDelayFinishScroll(long delay) {
+        if (delay <= 0) {
+            onFinishScroll();
+        } else {
+            if (animHandler == null) {
+                animHandler = new AnimHandler(this);
+            }
+            animHandler.sendMsgDelayed(delay);
+        }
+    }
 
-	protected final void onFinishScroll() {
-		float y = view.getY();
-		if (y == initY || y == outY) {//处于稳定状态，不作处理
-			return;
-		}
+    protected final void onFinishScroll() {
+        float y = view.getY();
+        if (y == initY || y == outY) {//处于稳定状态，不作处理
+            return;
+        }
 
-		if (Math.abs(y - initY) / Math.abs(outY - initY) <= 0.5F || needShow()) {//临界之内，或者需要隐藏
-			view.animate().y(initY);
-		} else {//超过临界，隐藏
-			view.animate().y(outY);
-		}
-	}
+        if (Math.abs(y - initY) / Math.abs(outY - initY) <= 0.5F || needShow()) {//临界之内，或者需要隐藏
+            view.animate().y(initY);
+        } else {//超过临界，隐藏
+            view.animate().y(outY);
+        }
+    }
 
-	private float lastScrollY;
+    private float lastScrollY;
 
-	protected final void onScroll(float scrollY) {
-		float delta = scrollY - lastScrollY;
-		onScrollDelta(delta);
-		lastScrollY = scrollY;
-	}
+    protected final void onScroll(float scrollY) {
+        float delta = scrollY - lastScrollY;
+        onScrollDelta(delta);
+        lastScrollY = scrollY;
+    }
 
-	protected final void onScrollDelta(float delta) {
-		delta *= factor * (outY < initY ? -1 : 1);
-		//限制滚动范围
-		float curY = view.getY();
-		float toY = getLimitedY(curY + delta);
-		if (curY != toY) {
-			view.setY(toY);
-		}
-	}
+    protected final void onScrollDelta(float delta) {
+        delta *= factor * (outY < initY ? -1 : 1);
+        //限制滚动范围
+        float curY = view.getY();
+        float toY = getLimitedY(curY + delta);
+        if (curY != toY) {
+            view.setY(toY);
+        }
+    }
 
-	private float getLimitedY(float toY) {
-		if (outY < initY) {//随滚动布局一同滚动
-			if (toY < outY) {
-				toY = outY;
-			} else if (toY > initY) {
-				toY = initY;
-			}
-		} else {//反向滚动
-			if (toY < initY) {
-				toY = initY;
-			} else if (toY > outY) {
-				toY = outY;
-			}
-		}
-		return toY;
-	}
+    private float getLimitedY(float toY) {
+        if (outY < initY) {//随滚动布局一同滚动
+            if (toY < outY) {
+                toY = outY;
+            } else if (toY > initY) {
+                toY = initY;
+            }
+        } else {//反向滚动
+            if (toY < initY) {
+                toY = initY;
+            } else if (toY > outY) {
+                toY = outY;
+            }
+        }
+        return toY;
+    }
 
-	protected boolean needShow() {
-		return false;
-	}
+    protected boolean needShow() {
+        return false;
+    }
 }
