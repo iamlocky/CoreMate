@@ -105,7 +105,7 @@ public class FragHelper {
         return nextFrag;
     }
 
-    private boolean commitAllowingStateLossEnable;
+    private boolean commitAllowingStateLossEnable = true;
 
     public FragHelper setCommitAllowingStateLossEnable(boolean commitAllowingStateLossEnable) {
         this.commitAllowingStateLossEnable = commitAllowingStateLossEnable;
