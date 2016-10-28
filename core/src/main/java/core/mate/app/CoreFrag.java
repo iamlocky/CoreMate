@@ -232,7 +232,7 @@ public abstract class CoreFrag extends Fragment {
 
     protected final FragHelper getFragHelper() {
         if (fragHelper == null) {
-            fragHelper = new FragHelper(getFragmentManager());
+            fragHelper = new FragHelper(getChildFragmentManager());
         }
         return fragHelper;
     }

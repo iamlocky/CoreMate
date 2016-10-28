@@ -338,7 +338,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
 
     protected final FragHelper getFragHelper() {
         if (fragHelper == null) {
-            fragHelper = new FragHelper(getFragmentManager());
+            fragHelper = new FragHelper(getChildFragmentManager());
         }
         return fragHelper;
     }
