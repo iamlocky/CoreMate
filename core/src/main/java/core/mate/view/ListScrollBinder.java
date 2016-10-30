@@ -10,19 +10,34 @@ import android.widget.ListView;
  */
 public class ListScrollBinder extends ScrollBinder implements AbsListView.OnScrollListener {
 
-    public ListScrollBinder(View view) {
-        super(view);
+    private ListView listView;
+
+    public ListScrollBinder(Config config) {
+        this(config, null);
     }
 
-    public ListScrollBinder(View view, float outY, float factor) {
-        super(view, outY, factor);
+    public ListScrollBinder(Config config, ListView listView) {
+        super(config);
+        if (listView != null) {
+            bind(listView);
+        }
+
     }
 
     public void bind(ListView listView) {
+        this.listView = listView;
         listView.setOnScrollListener(this);
     }
 
-	/*回调滚动*/
+    @Override
+    protected boolean needShow() {
+        if (listView != null) {
+            return listView.getFirstVisiblePosition() == 0;
+        }
+        return super.needShow();
+    }
+
+    /*回调滚动*/
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -63,4 +78,5 @@ public class ListScrollBinder extends ScrollBinder implements AbsListView.OnScro
         }
         return scrollY;
     }
+
 }

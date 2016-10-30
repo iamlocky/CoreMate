@@ -10,21 +10,32 @@ import android.view.View;
  */
 public class NestedScrollerBinder extends ScrollBinder implements NestedScrollView.OnScrollChangeListener, View.OnTouchListener {
 
-    public NestedScrollerBinder(View view) {
-        super(view);
+
+    private NestedScrollView scrollView;
+
+    public NestedScrollerBinder(Config config) {
+        this(config, null);
     }
 
-    public NestedScrollerBinder(View view, float outY) {
-        super(view, outY);
-    }
-
-    public NestedScrollerBinder(View view, float outY, float factor) {
-        super(view, outY, factor);
+    public NestedScrollerBinder(Config config, NestedScrollView scrollView) {
+        super(config);
+        if (scrollView != null) {
+            bind(scrollView);
+        }
     }
 
     public void bind(NestedScrollView scrollView) {
+        this.scrollView = scrollView;
         scrollView.setOnScrollChangeListener(this);
         scrollView.setOnTouchListener(this);
+    }
+
+    @Override
+    protected boolean needShow() {
+        if (scrollView != null) {
+            return scrollView.getScrollY() == 0;
+        }
+        return super.needShow();
     }
 
     @Override
@@ -40,7 +51,6 @@ public class NestedScrollerBinder extends ScrollBinder implements NestedScrollVi
         this.touchUpFinishDelay = 0;
         return this;
     }
-
 
     /**
      * 设置touch事件up后用于调用{@link #onDelayFinishScroll(long)}的延迟。
