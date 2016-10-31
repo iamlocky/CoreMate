@@ -8,6 +8,11 @@ import android.view.ViewGroup;
 import core.mate.async.WeakRefLastMsgHandler;
 
 /**
+ * 用于在不使用CoordinatorLayout情况下进行简单地滚动的辅助类。
+ *
+ * 如果你在使用过程中发现滚动的位置不对，请通过{@link View#post(Runnable)}
+ * 方法在所有控件绘制完毕后再设置绑定 关系。
+ *
  * @author DrkCore
  * @since 2016-09-28
  */
@@ -57,25 +62,21 @@ public abstract class ScrollBinder {
             throw new IllegalArgumentException();
         }
 
-        view.post(() -> {//避免因为View还没初始化完成导致获取的Y为0
-            initY = view.getY();
 
-            if (config.topOrBottom != null) {
-                if (config.topOrBottom) {
-                    this.outY = -view.getHeight();
-                } else {
-                    ViewGroup parent = (ViewGroup) view.getParent();
-                    this.outY = parent.getHeight();
-                    if (this.outY == 0) {//界面还没初始化
-                        parent.post(() -> this.outY = parent.getHeight());
-                    }
-                }
-            } else if (config.outY != null) {
-                this.outY = config.outY;
+        initY = view.getY();
+
+        if (config.topOrBottom != null) {
+            if (config.topOrBottom) {
+                this.outY = -view.getHeight();
             } else {
-                throw new IllegalArgumentException();
+                ViewGroup parent = (ViewGroup) view.getParent();
+                this.outY = parent.getHeight();
             }
-        });
+        } else if (config.outY != null) {
+            this.outY = config.outY;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
 	/*回调*/
