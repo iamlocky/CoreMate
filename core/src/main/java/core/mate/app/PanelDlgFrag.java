@@ -135,8 +135,11 @@ public class PanelDlgFrag extends CoreDlgFrag {
     protected final PanelDlgFrag setDialogHeightDp(int dp) {
         if (dp < -2) {
             throw new IllegalArgumentException("dp 不允许小于-2");
+        } else if (dp < 0) {//LayoutParams的参数
+            this.dlgHeightPx = (float) dp;
+        } else {
+            this.dlgHeightPx = (float) ViewUtil.dpToPx(dp);
         }
-        this.dlgHeightPx = (float) ViewUtil.dpToPx(dp);
         return this;
     }
 
