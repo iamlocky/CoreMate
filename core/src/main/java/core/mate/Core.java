@@ -26,7 +26,7 @@ public final class Core {
 
     private Core() {// 禁止外部创建实例
     }
-	
+
 	/* 初始化 */
 
     private Context appContext;
@@ -37,11 +37,14 @@ public final class Core {
      * @param app
      * @return
      */
-    public Core init(Application app) {
+    public Core init(Context app) {
+        if (!(app instanceof Application)) {
+            throw new IllegalArgumentException("请使用Application的上下文初始化");
+        }
         this.appContext = app;
         return this;
     }
-	
+
 	/* Dev标志 */
 
     private boolean devModeEnable;
