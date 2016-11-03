@@ -37,10 +37,7 @@ public final class Core {
      * @param app
      * @return
      */
-    public Core init(Context app) {
-        if (!(app instanceof Application)) {
-            throw new IllegalArgumentException("请使用Application的上下文初始化");
-        }
+    public Core init(Application app) {
         this.appContext = app;
         return this;
     }
