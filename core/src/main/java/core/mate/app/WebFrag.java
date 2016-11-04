@@ -79,7 +79,7 @@ public class WebFrag extends CoreFrag {
             throw new IllegalStateException("可用的WebView不存在");
         }
 
-        onPrepareWebView(webView);
+        onPrepareWebView(webView, savedInstanceState);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class WebFrag extends CoreFrag {
 
     /*内部回调*/
 
-    protected void onPrepareWebView(WebView webView) {
+    protected void onPrepareWebView(WebView webView, @Nullable Bundle savedInstanceState) {
     }
 
     /*拓展*/
