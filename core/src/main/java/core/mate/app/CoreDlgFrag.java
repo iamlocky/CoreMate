@@ -32,7 +32,7 @@ import core.mate.util.LogUtil;
  * @author DrkCore
  * @since 2015年10月17日12:48:35
  */
-public abstract class CoreDlgFrag extends DialogFragment implements DialogInterface.OnKeyListener{
+public abstract class CoreDlgFrag extends DialogFragment implements DialogInterface.OnKeyListener {
 
 	/* 继承 */
 
@@ -104,7 +104,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public void dismiss() {
         try {
             super.dismiss();
-        }catch (Throwable e){
+        } catch (Throwable e) {
             LogUtil.e(e);
         }
     }
@@ -113,7 +113,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
 
     private int winAnimStyle;
 
-    protected final CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
+    protected CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
         this.winAnimStyle = winAnimStyle;
         return this;
     }
@@ -148,7 +148,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
 
     private OnDismissListener onDismissListener;
 
-    public final CoreDlgFrag setOnDismissListener(OnDismissListener onDismissListener) {
+    public CoreDlgFrag setOnDismissListener(OnDismissListener onDismissListener) {
         if (onDismissListener == this) {// 自己给自己设置监听？这并不好吧……
             throw new IllegalArgumentException("不允许将自己设为自己的监听器，这可能导致无限递归！如果你需要该方法，请直接重写。");
         }
@@ -161,11 +161,11 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     private RefreshRate refreshRate;
     private boolean onceRefreshed;
 
-    public final RefreshRate getRefreshRate() {
+    public RefreshRate getRefreshRate() {
         return refreshRate;
     }
 
-    public final void setRefreshRate(RefreshRate refreshRate) {
+    public void setRefreshRate(RefreshRate refreshRate) {
         this.refreshRate = refreshRate;
     }
 
@@ -199,7 +199,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      *
      * @param context
      */
-    public final void show(FragmentActivity context) {
+    public void show(FragmentActivity context) {
         show(context.getSupportFragmentManager(), ClassUtil.getTypeName(this));
     }
 
@@ -208,7 +208,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      *
      * @param fragMgr
      */
-    public final void show(FragmentManager fragMgr) {
+    public void show(FragmentManager fragMgr) {
         show(fragMgr, ClassUtil.getTypeName(this));
     }
 
@@ -217,7 +217,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      *
      * @param frag
      */
-    public final void show(Fragment frag) {
+    public void show(Fragment frag) {
         show(frag.getChildFragmentManager());
     }
 
@@ -238,7 +238,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      *
      * @return
      */
-    public final boolean isCancelOnTouchOutSideEnable() {
+    public boolean isCancelOnTouchOutSideEnable() {
         return cancelOnTouchOutSideEnable;
     }
 
@@ -248,7 +248,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * @param cancelOnTouchOutSideEnable
      * @return
      */
-    public final CoreDlgFrag setCancelOnTouchOutSideEnable(boolean cancelOnTouchOutSideEnable) {
+    public CoreDlgFrag setCancelOnTouchOutSideEnable(boolean cancelOnTouchOutSideEnable) {
         this.cancelOnTouchOutSideEnable = cancelOnTouchOutSideEnable;
         if (getDialog() != null) {
             getDialog().setCanceledOnTouchOutside(cancelOnTouchOutSideEnable);
@@ -266,7 +266,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      *
      * @return
      */
-    protected final Handler getHandler() {
+    public Handler getHandler() {
         if (handler == null) {
             handler = new Handler();
         }
@@ -280,7 +280,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * @return
      * @see #getHandler()
      */
-    protected final boolean post(Runnable r) {
+    public boolean post(Runnable r) {
         return getHandler().post(r);
     }
 
@@ -292,7 +292,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtTime(Runnable r, long uptimeMillis) {
+    public boolean postAtTime(Runnable r, long uptimeMillis) {
         return getHandler().postAtTime(r, uptimeMillis);
     }
 
@@ -305,7 +305,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
+    public boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
         return getHandler().postAtTime(r, token, uptimeMillis);
     }
 
@@ -317,7 +317,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * @return
      * @see #getHandler()
      */
-    protected final boolean postDelayed(Runnable r, long delayMillis) {
+    public boolean postDelayed(Runnable r, long delayMillis) {
         return getHandler().postDelayed(r, delayMillis);
     }
 
@@ -328,7 +328,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtFrontOfQueue(Runnable r) {
+    public boolean postAtFrontOfQueue(Runnable r) {
         return getHandler().postAtFrontOfQueue(r);
     }
 
@@ -336,7 +336,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
 
     private FragHelper fragHelper;
 
-    protected final FragHelper getFragHelper() {
+    public FragHelper getFragHelper() {
         if (fragHelper == null) {
             fragHelper = new FragHelper(getChildFragmentManager());
         }
@@ -348,7 +348,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     private List<Object[]> fullReceivers;
     private List<Object[]> resumeReceivers;
 
-    protected final void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+    public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
         }
@@ -356,10 +356,10 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
             fullReceivers = new ArrayList<>();
         }
         fullReceivers.add(new Object[]{receiver, filter});
-        BroadcastUtil.registerReceiver(receiver,filter);
+        BroadcastUtil.registerReceiver(receiver, filter);
     }
 
-    protected final void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+    public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
         }
@@ -374,11 +374,11 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     private ClearableHolder clearableHolder;
     private boolean clearAllOnPauseEnable;
 
-    protected final void setClearAllOnPauseEnable(boolean clearAllOnPauseEnable) {
+    public void setClearAllOnPauseEnable(boolean clearAllOnPauseEnable) {
         this.clearAllOnPauseEnable = clearAllOnPauseEnable;
     }
 
-    public final <T> T addClearableEx(T t) {
+    public <T> T addClearableEx(T t) {
 
         if (t instanceof Clearable) {
             addClearable((Clearable) t);
@@ -396,7 +396,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      *
      * @param clearable
      */
-    public final void addClearable(Clearable clearable) {
+    public void addClearable(Clearable clearable) {
         if (clearableHolder == null) {
             clearableHolder = new ClearableHolder();
         }
@@ -406,7 +406,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     /**
      * clear所有保存着的引用。在{@link #onDestroy()}时自动回调。
      */
-    public final void clearAllClearable() {
+    public void clearAllClearable() {
         if (clearableHolder != null) {
             clearableHolder.clear();
         }
@@ -421,7 +421,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * @param <T>
      * @return
      */
-    protected final <T> T getListenerFromParent(Class<?> listener) {
+    public <T> T getListenerFromParent(Class<?> listener) {
         if (!listener.isInterface()) {
             throw new IllegalArgumentException("getListenerFromParent()方法只允许获取接口");
         }
@@ -441,7 +441,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * @param enterAnim
      * @param exitAnim
      */
-    protected final void overridePendingTransition(int enterAnim, int exitAnim) {
+    public void overridePendingTransition(int enterAnim, int exitAnim) {
         getActivity().overridePendingTransition(enterAnim, exitAnim);
     }
 }

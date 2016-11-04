@@ -120,7 +120,7 @@ public abstract class CoreActivity extends AppCompatActivity {
     }
 
     @Override
-    public final void onBackPressed() {
+    public void onBackPressed() {
         super.onBackPressed();
     }
 
@@ -250,7 +250,7 @@ public abstract class CoreActivity extends AppCompatActivity {
         return refreshRate;
     }
 
-    protected final void setRefreshRate(RefreshRate refreshRate) {
+    public void setRefreshRate(RefreshRate refreshRate) {
         this.refreshRate = refreshRate;
     }
 
@@ -274,7 +274,7 @@ public abstract class CoreActivity extends AppCompatActivity {
         }
     }
 
-    protected void refresh() {
+    public void refresh() {
     }
 
 	/* Toolbar控制 */
@@ -282,7 +282,7 @@ public abstract class CoreActivity extends AppCompatActivity {
     private int toolbarId;
     private Toolbar toolbar;
 
-    protected final Toolbar getToolbar() {
+    public Toolbar getToolbar() {
         return toolbar;
     }
 
@@ -291,7 +291,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @param toolbarId
      */
-    protected final void configToolbarId(@IdRes int toolbarId) {
+    protected void configToolbarId(@IdRes int toolbarId) {
         this.toolbarId = toolbarId;
     }
 
@@ -303,7 +303,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @param iconId          导航的图标，为0则不设置图标
      * @param onClickListener
      */
-    protected final void configToolbarNav(Toolbar toolbar, int iconId, OnClickListener onClickListener) {
+    protected void configToolbarNav(Toolbar toolbar, int iconId, OnClickListener onClickListener) {
         if (iconId > 0) {
             toolbar.setNavigationIcon(iconId);
         }
@@ -318,7 +318,7 @@ public abstract class CoreActivity extends AppCompatActivity {
     /**
      * 具体实现请参阅{@link #configToolbarNavToFinish(Toolbar, int)}
      */
-    protected final void configToolbarNavToFinish(Toolbar toolbar) {
+    protected void configToolbarNavToFinish(Toolbar toolbar) {
         configToolbarNavToFinish(toolbar, 0);
     }
 
@@ -329,7 +329,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @param toolbar 导航的按钮
      * @param iconId  导航的图标
      */
-    protected final void configToolbarNavToFinish(Toolbar toolbar, int iconId) {
+    protected void configToolbarNavToFinish(Toolbar toolbar, int iconId) {
         configToolbarNav(toolbar, iconId, new OnClickListener() {
 
             @Override
@@ -348,7 +348,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @param view
      */
-    public final void addContentView(View view) {
+    public void addContentView(View view) {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         super.addContentView(view, params);
     }
@@ -358,7 +358,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @param view
      */
-    public final void removeContentView(View view) {
+    public void removeContentView(View view) {
         getContentViewContainer().removeView(view);
     }
 
@@ -367,7 +367,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @return
      */
-    public final View getContentView() {
+    public View getContentView() {
         return getContentViewContainer().getChildAt(0);
     }
 
@@ -376,7 +376,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @return
      */
-    public final ViewGroup getContentViewContainer() {
+    public ViewGroup getContentViewContainer() {
         return (ViewGroup) getDecorViewContainer().findViewById(Window.ID_ANDROID_CONTENT);
     }
 
@@ -386,7 +386,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @return
      */
-    public final ViewGroup getDecorViewContainer() {
+    public ViewGroup getDecorViewContainer() {
         return (ViewGroup) getWindow().getDecorView();
     }
 
@@ -394,7 +394,7 @@ public abstract class CoreActivity extends AppCompatActivity {
 
     private FragHelper fragHelper;
 
-    protected final FragHelper getFragHelper() {
+    protected FragHelper getFragHelper() {
         if (fragHelper == null) {
             fragHelper = new FragHelper(getSupportFragmentManager());
         }
@@ -411,7 +411,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @return
      */
-    protected final Handler getHandler() {
+    public Handler getHandler() {
         if (handler == null) {
             handler = new Handler();
         }
@@ -425,7 +425,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @return
      * @see #getHandler()
      */
-    protected final boolean post(Runnable r) {
+    public boolean post(Runnable r) {
         return getHandler().post(r);
     }
 
@@ -437,7 +437,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtTime(Runnable r, long uptimeMillis) {
+    public boolean postAtTime(Runnable r, long uptimeMillis) {
         return getHandler().postAtTime(r, uptimeMillis);
     }
 
@@ -450,7 +450,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
+    public boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
         return getHandler().postAtTime(r, token, uptimeMillis);
     }
 
@@ -462,7 +462,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @return
      * @see #getHandler()
      */
-    protected final boolean postDelayed(Runnable r, long delayMillis) {
+    public boolean postDelayed(Runnable r, long delayMillis) {
         return getHandler().postDelayed(r, delayMillis);
     }
 
@@ -473,7 +473,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtFrontOfQueue(Runnable r) {
+    public boolean postAtFrontOfQueue(Runnable r) {
         return getHandler().postAtFrontOfQueue(r);
     }
 
@@ -482,7 +482,7 @@ public abstract class CoreActivity extends AppCompatActivity {
     private List<Object[]> fullReceivers;
     private List<Object[]> resumeReceivers;
 
-    protected final void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+    public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
         }
@@ -490,10 +490,10 @@ public abstract class CoreActivity extends AppCompatActivity {
             fullReceivers = new ArrayList<>();
         }
         fullReceivers.add(new Object[]{receiver, filter});
-        BroadcastUtil.registerReceiver(receiver,filter);
+        BroadcastUtil.registerReceiver(receiver, filter);
     }
 
-    protected final void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+    public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
         }
@@ -508,11 +508,11 @@ public abstract class CoreActivity extends AppCompatActivity {
     private ClearableHolder clearableHolder;
     private boolean clearAllOnPauseEnable;
 
-    protected final void setClearAllOnPauseEnable(boolean clearAllOnPauseEnable) {
+    public void setClearAllOnPauseEnable(boolean clearAllOnPauseEnable) {
         this.clearAllOnPauseEnable = clearAllOnPauseEnable;
     }
 
-    public final <T> T addClearableEx(T t) {
+    public <T> T addClearableEx(T t) {
         if (t instanceof Clearable) {
             addClearable((Clearable) t);
         } else if (t instanceof AsyncTask) {
@@ -529,7 +529,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @param clearable
      */
-    public final void addClearable(Clearable clearable) {
+    public void addClearable(Clearable clearable) {
         if (clearableHolder == null) {
             clearableHolder = new ClearableHolder();
         }
@@ -539,7 +539,7 @@ public abstract class CoreActivity extends AppCompatActivity {
     /**
      * clear所有保存着的引用。在{@link #onDestroy()}时自动回调。
      */
-    public final void clearAllClearable() {
+    public void clearAllClearable() {
         if (clearableHolder != null) {
             clearableHolder.clear();
         }

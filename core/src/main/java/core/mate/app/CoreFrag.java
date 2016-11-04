@@ -106,7 +106,7 @@ public abstract class CoreFrag extends Fragment {
     private boolean refreshOnVisibleEnable = true;
     private boolean onceRefreshed;
 
-    public final CoreFrag setRefreshOnVisibleEnable(boolean refreshOnVisibleEnable) {
+    public CoreFrag setRefreshOnVisibleEnable(boolean refreshOnVisibleEnable) {
         this.refreshOnVisibleEnable = refreshOnVisibleEnable;
         return this;
     }
@@ -116,11 +116,11 @@ public abstract class CoreFrag extends Fragment {
      *
      * @return
      */
-    public final RefreshRate getRefreshRate() {
+    public RefreshRate getRefreshRate() {
         return refreshRate;
     }
 
-    public final void setRefreshRate(RefreshRate refreshRate) {
+    public void setRefreshRate(RefreshRate refreshRate) {
         this.refreshRate = refreshRate;
     }
 
@@ -160,7 +160,7 @@ public abstract class CoreFrag extends Fragment {
      *
      * @return
      */
-    protected final Handler getHandler() {
+    public Handler getHandler() {
         if (handler == null) {
             handler = new Handler();
         }
@@ -174,7 +174,7 @@ public abstract class CoreFrag extends Fragment {
      * @return
      * @see #getHandler()
      */
-    protected final boolean post(Runnable r) {
+    public boolean post(Runnable r) {
         return getHandler().post(r);
     }
 
@@ -186,7 +186,7 @@ public abstract class CoreFrag extends Fragment {
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtTime(Runnable r, long uptimeMillis) {
+    public boolean postAtTime(Runnable r, long uptimeMillis) {
         return getHandler().postAtTime(r, uptimeMillis);
     }
 
@@ -199,7 +199,7 @@ public abstract class CoreFrag extends Fragment {
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
+    public boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
         return getHandler().postAtTime(r, token, uptimeMillis);
     }
 
@@ -211,7 +211,7 @@ public abstract class CoreFrag extends Fragment {
      * @return
      * @see #getHandler()
      */
-    protected final boolean postDelayed(Runnable r, long delayMillis) {
+    public boolean postDelayed(Runnable r, long delayMillis) {
         return getHandler().postDelayed(r, delayMillis);
     }
 
@@ -222,7 +222,7 @@ public abstract class CoreFrag extends Fragment {
      * @return
      * @see #getHandler()
      */
-    protected final boolean postAtFrontOfQueue(Runnable r) {
+    public boolean postAtFrontOfQueue(Runnable r) {
         return getHandler().postAtFrontOfQueue(r);
     }
 
@@ -230,7 +230,7 @@ public abstract class CoreFrag extends Fragment {
 
     private FragHelper fragHelper;
 
-    protected final FragHelper getFragHelper() {
+    public FragHelper getFragHelper() {
         if (fragHelper == null) {
             fragHelper = new FragHelper(getChildFragmentManager());
         }
@@ -242,7 +242,7 @@ public abstract class CoreFrag extends Fragment {
     private List<Object[]> fullReceivers;
     private List<Object[]> resumeReceivers;
 
-    protected final void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+    public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
         }
@@ -250,10 +250,10 @@ public abstract class CoreFrag extends Fragment {
             fullReceivers = new ArrayList<>();
         }
         fullReceivers.add(new Object[]{receiver, filter});
-        BroadcastUtil.registerReceiver(receiver,filter);
+        BroadcastUtil.registerReceiver(receiver, filter);
     }
 
-    protected final void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+    public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
         }
@@ -268,11 +268,11 @@ public abstract class CoreFrag extends Fragment {
     private ClearableHolder clearableHolder;
     private boolean clearAllOnPauseEnable;
 
-    protected final void setClearAllOnPauseEnable(boolean clearAllOnPauseEnable) {
+    public void setClearAllOnPauseEnable(boolean clearAllOnPauseEnable) {
         this.clearAllOnPauseEnable = clearAllOnPauseEnable;
     }
 
-    public final <T> T addClearableEx(T t) {
+    public <T> T addClearableEx(T t) {
         if (t instanceof Clearable) {
             addClearable((Clearable) t);
         } else if (t instanceof AsyncTask) {
@@ -289,7 +289,7 @@ public abstract class CoreFrag extends Fragment {
      *
      * @param clearable
      */
-    public final void addClearable(Clearable clearable) {
+    public void addClearable(Clearable clearable) {
         if (clearableHolder == null) {
             clearableHolder = new ClearableHolder();
         }
@@ -299,7 +299,7 @@ public abstract class CoreFrag extends Fragment {
     /**
      * clear所有保存着的引用。在{@link #onDestroy()}时自动回调。
      */
-    public final void clearAllClearable() {
+    public void clearAllClearable() {
         if (clearableHolder != null) {
             clearableHolder.clear();
         }
@@ -323,7 +323,7 @@ public abstract class CoreFrag extends Fragment {
      * @param enterAnim
      * @param exitAnim
      */
-    protected final void overridePendingTransition(int enterAnim, int exitAnim) {
+    public void overridePendingTransition(int enterAnim, int exitAnim) {
         getActivity().overridePendingTransition(enterAnim, exitAnim);
     }
 
@@ -334,7 +334,7 @@ public abstract class CoreFrag extends Fragment {
      * @param <T>
      * @return
      */
-    protected final <T> T getListenerFromParent(Class<?> listener) {
+    protected <T> T getListenerFromParent(Class<?> listener) {
         if (!listener.isInterface()) {
             throw new IllegalArgumentException("getListenerFromParent()方法只允许获取接口");
         }

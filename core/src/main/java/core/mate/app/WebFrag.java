@@ -31,11 +31,11 @@ public class WebFrag extends CoreFrag {
 
     private WebView webView;
 
-    protected final WebView getWebView() {
+    public WebView getWebView() {
         return webView;
     }
 
-    public final int getWebViewId() {
+    public int getWebViewId() {
         return webViewId;
     }
 
