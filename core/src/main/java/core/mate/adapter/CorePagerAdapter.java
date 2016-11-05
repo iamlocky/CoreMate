@@ -129,16 +129,16 @@ public abstract class CorePagerAdapter<Item> extends PagerAdapter {
         this.data.clear();
         if (!DataUtil.isEmpty(items)) {
             Collections.addAll(this.data, items);
-            notifyDataSetChanged();
         }
+        notifyDataSetChanged();
     }
 
     public void display(Collection<? extends Item> items) {
         this.data.clear();
         if (!DataUtil.isEmpty(items)) {
             this.data.addAll(items);
-            notifyDataSetChanged();
         }
+        notifyDataSetChanged();
     }
 
     public boolean add(Item... items) {
