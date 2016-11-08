@@ -7,9 +7,13 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.StringRes;
+import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Checkable;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -26,7 +30,7 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
 
     private SparseArray<View> viewArray;
 
-    public final <V extends View> V getViewById(@IdRes int id) {
+    public <V extends View> V getViewById(@IdRes int id) {
         if (viewArray == null) {
             viewArray = new SparseArray<>();
         }
@@ -43,46 +47,46 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
 
 	/*控件处理*/
 
-    public final void setBackgroundColor(@IdRes int id, @ColorInt int color){
+    public void setBackgroundColor(@IdRes int id, @ColorInt int color) {
         View view = getViewById(id);
         view.setBackgroundColor(color);
     }
 
-    public final void setBackgroundResource(@IdRes int id, @DrawableRes int drawableRes){
+    public void setBackgroundResource(@IdRes int id, @DrawableRes int drawableRes) {
         View view = getViewById(id);
         view.setBackgroundResource(drawableRes);
     }
 
-    public final void setBackgroundDrawable(@IdRes int id, Drawable drawable){
+    public void setBackgroundDrawable(@IdRes int id, Drawable drawable) {
         View view = getViewById(id);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             view.setBackground(drawable);
-        }else {
+        } else {
             view.setBackgroundDrawable(drawable);
         }
     }
 
-    public final void setImageDrawable(@IdRes int id, Drawable drawable) {
+    public void setImageDrawable(@IdRes int id, Drawable drawable) {
         ImageView imageView = getViewById(id);
         imageView.setImageDrawable(drawable);
     }
 
-    public final void setImageBitmap(@IdRes int id, Bitmap bmp) {
+    public void setImageBitmap(@IdRes int id, Bitmap bmp) {
         ImageView imageView = getViewById(id);
         imageView.setImageBitmap(bmp);
     }
 
-    public final void setImageResource(@IdRes int id, @DrawableRes int drawableRes) {
+    public void setImageResource(@IdRes int id, @DrawableRes int drawableRes) {
         ImageView imageView = getViewById(id);
         imageView.setImageResource(drawableRes);
     }
 
-    public final void setText(@IdRes int id, @StringRes int stringRes) {
+    public void setText(@IdRes int id, @StringRes int stringRes) {
         TextView textView = getViewById(id);
         textView.setText(stringRes);
     }
 
-    public final void setText(@IdRes int id, CharSequence string) {
+    public void setText(@IdRes int id, CharSequence string) {
         TextView textView = getViewById(id);
         textView.setText(string);
     }
@@ -94,7 +98,7 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
      * @param id
      * @param listener
      */
-    public final void setOnClickListener(@IdRes int id, View.OnClickListener listener) {
+    public void setOnClickListener(@IdRes int id, View.OnClickListener listener) {
         setOnClickListener(id, listener, true);
     }
 
@@ -105,7 +109,7 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
      * @param listener
      * @param autoTag
      */
-    public final void setOnClickListener(@IdRes int id, View.OnClickListener listener, boolean autoTag) {
+    public void setOnClickListener(@IdRes int id, View.OnClickListener listener, boolean autoTag) {
         View view = getViewById(id);
         view.setOnClickListener(listener);
         if (autoTag) {
@@ -113,13 +117,48 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
         }
     }
 
-    public final void setVisibility(@IdRes int id, int visibility) {
+    public void setVisibility(@IdRes int id, int visibility) {
         View view = getViewById(id);
         view.setVisibility(visibility);
     }
 
-    public final void setVisible(@IdRes int id, boolean visible) {
+    public void setVisible(@IdRes int id, boolean visible) {
         View view = getViewById(id);
         view.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    public void setChecked(@IdRes int id, boolean checked) {
+        Checkable checkable = getViewById(id);
+        checkable.setChecked(checked);
+    }
+
+    public boolean isChecked(@IdRes int id) {
+        Checkable checkable = getViewById(id);
+        return checkable.isChecked();
+    }
+
+    public void setHolderSize(int width, int height) {
+        View itemView = getView();
+        ListView.LayoutParams params = (ListView.LayoutParams) itemView.getLayoutParams();
+        if (params == null) {
+            params = new ListView.LayoutParams(width, height);
+        } else {
+            params.width = width;
+            params.height = height;
+        }
+        itemView.setLayoutParams(params);
+    }
+
+    public void setViewSize(@IdRes int id, int width, int height) {
+        View view = getViewById(id);
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+
+        if (params == null) {
+            throw new IllegalStateException("无法获取控件的LayoutParams");
+        }
+
+        params.width = width;
+        params.height = height;
+        view.setLayoutParams(params);
     }
 }
