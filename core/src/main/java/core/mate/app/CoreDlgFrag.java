@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 import android.view.Window;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,6 @@ import core.mate.util.LogUtil;
  */
 public abstract class CoreDlgFrag extends DialogFragment implements DialogInterface.OnKeyListener {
 
-	/* 继承 */
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +49,10 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         Dialog dlg = getDialog();
         Window dlgWin = dlg.getWindow();
         onPrepareDialogWindow(savedInstanceState, dlg, dlgWin);
+
+        if (onDlgListener != null) {
+            onDlgListener.onShow(this);
+        }
     }
 
     @Override
@@ -95,8 +98,8 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        if (onDismissListener != null) {
-            onDismissListener.onDismiss(this);
+        if (onDlgListener != null) {
+            onDlgListener.onDismiss(this);
         }
     }
 
@@ -109,9 +112,53 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         }
     }
 
-    /* 回调 */
+    /* 配置 */
 
-    private int winAnimStyle;
+    private Integer winAnimStyle;
+
+    private Integer gravity;
+    private Integer width;
+    private Integer height;
+
+    public CoreDlgFrag setGravity(int gravity) {
+        this.gravity = gravity;
+        return this;
+    }
+
+    public CoreDlgFrag setWidth(int width) {
+        this.width = width;
+        return this;
+    }
+
+    public CoreDlgFrag setHeight(int height) {
+        this.height = height;
+        return this;
+    }
+
+    public CoreDlgFrag setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        return this;
+    }
+
+    private Integer x;
+    private Integer y;
+
+    public CoreDlgFrag setX(int x) {
+        this.x = x;
+        return this;
+    }
+
+    public CoreDlgFrag setY(int y) {
+        this.y = y;
+        return this;
+    }
+
+    public CoreDlgFrag setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
 
     protected CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
         this.winAnimStyle = winAnimStyle;
@@ -127,33 +174,36 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      */
     protected void onPrepareDialogWindow(@Nullable Bundle savedInstanceState, Dialog dlg, Window dlgWin) {
         setCancelOnTouchOutSideEnable(cancelOnTouchOutSideEnable);
-        if (winAnimStyle > 0) {
+        dlg.setOnKeyListener(this);
+
+        if (winAnimStyle != null) {
             dlgWin.setWindowAnimations(winAnimStyle);
         }
-        dlg.setOnKeyListener(this);
+
+        if (gravity != null || width != null || height != null || x != null || y != null) {
+            WindowManager.LayoutParams params = dlgWin.getAttributes();
+            if (gravity != null) {
+                params.gravity = gravity;
+            }
+            if (width != null) {
+                params.width = width;
+            }
+            if (height != null) {
+                params.height = height;
+            }
+            if (x != null) {
+                params.x = x;
+            }
+            if (y != null) {
+                params.y = y;
+            }
+            dlgWin.setAttributes(params);
+        }
     }
 
     @Override
     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
         return false;
-    }
-
-    /* 外部接口 */
-
-    public interface OnDismissListener {
-
-        void onDismiss(CoreDlgFrag dlgFrag);
-
-    }
-
-    private OnDismissListener onDismissListener;
-
-    public CoreDlgFrag setOnDismissListener(OnDismissListener onDismissListener) {
-        if (onDismissListener == this) {// 自己给自己设置监听？这并不好吧……
-            throw new IllegalArgumentException("不允许将自己设为自己的监听器，这可能导致无限递归！如果你需要该方法，请直接重写。");
-        }
-        this.onDismissListener = onDismissListener;
-        return this;
     }
 
 	/* 刷新 */
@@ -193,6 +243,24 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     }
 
 	/* 显示 */
+
+    public interface OnDlgListener {
+
+        void onShow(CoreDlgFrag dlgFrag);
+
+        void onDismiss(CoreDlgFrag dlgFrag);
+
+    }
+
+    private OnDlgListener onDlgListener;
+
+    public CoreDlgFrag setOnDlgListener(OnDlgListener onDlgListener) {
+        if (onDlgListener == this) {// 自己给自己设置监听？这并不好吧……
+            throw new IllegalArgumentException("不允许将自己设为自己的监听器，这可能导致无限递归！如果你需要该方法，请直接重写。");
+        }
+        this.onDlgListener = onDlgListener;
+        return this;
+    }
 
     /**
      * 显示对话框，使用类名作为tag<br>
