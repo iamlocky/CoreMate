@@ -9,7 +9,7 @@ import core.mate.async.WeakRefLastMsgHandler;
 
 /**
  * 用于在不使用CoordinatorLayout情况下进行简单地滚动的辅助类。
- *
+ * <p>
  * 如果你在使用过程中发现滚动的位置不对，请通过{@link View#post(Runnable)}
  * 方法在所有控件绘制完毕后再设置绑定 关系。
  *
@@ -17,30 +17,30 @@ import core.mate.async.WeakRefLastMsgHandler;
  * @since 2016-09-28
  */
 public abstract class ScrollBinder {
-
+    
     public static class Config {
-
+        
         final View view;
         final Float outY;
         final Boolean topOrBottom;
         final float factor;
-
+        
         public Config(View view, float outY) {
             this(view, outY, 1);
         }
-
+        
         public Config(View view, float outY, float factor) {
             this.view = view;
             this.outY = outY;
             this.topOrBottom = null;
             this.factor = factor;
-
+            
         }
-
+        
         public Config(View view, boolean topOrBottom) {
             this(view, topOrBottom, 1);
         }
-
+        
         public Config(View view, boolean topOrBottom, float factor) {
             this.view = view;
             this.outY = null;
@@ -48,53 +48,53 @@ public abstract class ScrollBinder {
             this.factor = factor;
         }
     }
-
+    
     private View view;
     private float initY;
     private float outY;
     private float factor;
-
+    
     public ScrollBinder(Config config) {
         this.view = config.view;
         this.factor = config.factor;
-
+        
         if (factor <= 0) {
             throw new IllegalArgumentException();
         }
-
-
-        initY = view.getY();
-
-        if (config.topOrBottom != null) {
-            if (config.topOrBottom) {
-                this.outY = -view.getHeight();
+        
+        view.post(() -> {
+            initY = view.getY();
+            if (config.topOrBottom != null) {
+                if (config.topOrBottom) {//到顶部消失
+                    this.outY = -view.getHeight();
+                } else {//到底部消失
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    parent.post(() -> this.outY = parent.getHeight());
+                }
+            } else if (config.outY != null) {
+                this.outY = config.outY;
             } else {
-                ViewGroup parent = (ViewGroup) view.getParent();
-                this.outY = parent.getHeight();
+                throw new IllegalArgumentException();
             }
-        } else if (config.outY != null) {
-            this.outY = config.outY;
-        } else {
-            throw new IllegalArgumentException();
-        }
+        });
     }
 
 	/*回调*/
-
+    
     private static class AnimHandler extends WeakRefLastMsgHandler<ScrollBinder> {
-
+        
         public AnimHandler(ScrollBinder ref) {
             super(ref);
         }
-
+        
         @Override
         protected void onLastMessageLively(@NonNull ScrollBinder ref, Message msg) {
             ref.onFinishScroll();
         }
     }
-
+    
     private AnimHandler animHandler;
-
+    
     protected void onDelayFinishScroll(long delay) {
         if (delay <= 0) {
             onFinishScroll();
@@ -105,36 +105,36 @@ public abstract class ScrollBinder {
             animHandler.sendMsgDelayed(delay);
         }
     }
-
+    
     protected void onFinishScroll() {
         if (!enable) {
             return;
         }
-
+        
         float y = view.getY();
         if (y == initY || y == outY) {//处于稳定状态，不作处理
             return;
         }
-
+        
         if (Math.abs(y - initY) / Math.abs(outY - initY) <= 0.5F || needShow()) {//临界之内，或者需要显示
             view.animate().y(initY);
         } else {//超过临界，隐藏
             view.animate().y(outY);
         }
     }
-
+    
     private float lastScrollY;
     private boolean enable = true;
-
+    
     public boolean isEnable() {
         return enable;
     }
-
+    
     public ScrollBinder setEnable(boolean enable) {
         this.enable = enable;
         return this;
     }
-
+    
     /**
      * 将控件回复到初始的位置。
      */
@@ -145,7 +145,7 @@ public abstract class ScrollBinder {
         if (view.getY() == initY) {//已经显示
             return;
         }
-
+        
         if (anim) {
             view.animate().y(initY);
         } else {
@@ -153,7 +153,7 @@ public abstract class ScrollBinder {
             view.setY(initY);
         }
     }
-
+    
     /**
      * 将控件隐藏到outY的位置。
      *
@@ -166,7 +166,7 @@ public abstract class ScrollBinder {
         if (view.getY() == outY) {//已经隐藏
             return;
         }
-
+        
         if (anim) {
             view.animate().y(outY);
         } else {
@@ -174,22 +174,22 @@ public abstract class ScrollBinder {
             view.setY(outY);
         }
     }
-
+    
     protected void onScroll(float scrollY) {
         if (!enable) {
             return;
         }
-
+        
         float delta = scrollY - lastScrollY;
         onScrollDelta(delta);
         lastScrollY = scrollY;
     }
-
+    
     protected void onScrollDelta(float delta) {
         if (!enable) {
             return;
         }
-
+        
         delta *= factor * (outY < initY ? -1 : 1);
         //限制滚动范围
         float curY = view.getY();
@@ -198,7 +198,7 @@ public abstract class ScrollBinder {
             view.setY(toY);
         }
     }
-
+    
     private float getLimitedY(float toY) {
         if (outY < initY) {//随滚动布局一同滚动
             if (toY < outY) {
@@ -215,7 +215,7 @@ public abstract class ScrollBinder {
         }
         return toY;
     }
-
+    
     protected boolean needShow() {
         return false;
     }

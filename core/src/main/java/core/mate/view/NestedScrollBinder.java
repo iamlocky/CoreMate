@@ -8,16 +8,16 @@ import android.view.View;
  * @author DrkCore
  * @since 2016-10-27
  */
-public class NestedScrollerBinder extends ScrollBinder implements NestedScrollView.OnScrollChangeListener, View.OnTouchListener {
+public class NestedScrollBinder extends ScrollBinder implements NestedScrollView.OnScrollChangeListener, View.OnTouchListener {
 
 
     private NestedScrollView scrollView;
 
-    public NestedScrollerBinder(Config config) {
+    public NestedScrollBinder(Config config) {
         this(config, null);
     }
 
-    public NestedScrollerBinder(Config config, NestedScrollView scrollView) {
+    public NestedScrollBinder(Config config, NestedScrollView scrollView) {
         super(config);
         if (scrollView != null) {
             bind(scrollView);
@@ -47,7 +47,7 @@ public class NestedScrollerBinder extends ScrollBinder implements NestedScrollVi
 
     private long touchUpFinishDelay = DEFAULT_FINISH_DELAY;
 
-    public NestedScrollerBinder disableTouchUpFinish() {
+    public NestedScrollBinder disableTouchUpFinish() {
         this.touchUpFinishDelay = 0;
         return this;
     }
@@ -60,7 +60,7 @@ public class NestedScrollerBinder extends ScrollBinder implements NestedScrollVi
      * @param touchUpFinishDelay
      * @return
      */
-    public NestedScrollerBinder setTouchUpFinish(long touchUpFinishDelay) {
+    public NestedScrollBinder setTouchUpFinish(long touchUpFinishDelay) {
         this.touchUpFinishDelay = touchUpFinishDelay;
         return this;
     }
