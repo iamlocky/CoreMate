@@ -118,11 +118,17 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     /* 配置 */
 
     private Integer winAnimStyle;
+    private Float dimAmount;
     private Drawable winBgDrawable;
     private Integer winBgResource;
 
     protected CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
         this.winAnimStyle = winAnimStyle;
+        return this;
+    }
+
+    public CoreDlgFrag setDimAmount(float dimAmount) {
+        this.dimAmount = dimAmount;
         return this;
     }
 
@@ -204,6 +210,9 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
             dlgWin.setBackgroundDrawable(winBgDrawable);
         } else if (winBgResource != null) {
             dlgWin.setBackgroundDrawableResource(winBgResource);
+        }
+        if(dimAmount != null){
+            dlgWin.setDimAmount(dimAmount);
         }
 
         if (gravity != null || width != null || height != null || x != null || y != null) {

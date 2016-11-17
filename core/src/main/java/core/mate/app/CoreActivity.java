@@ -3,7 +3,6 @@ package core.mate.app;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +16,6 @@ import android.view.Window;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.mate.R;
 import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
@@ -38,25 +36,6 @@ public abstract class CoreActivity extends AppCompatActivity {
     }
 
 	/* 继承 */
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        init(savedInstanceState);
-        super.onCreate(savedInstanceState);
-        // 回调各个初始化的方法
-        // 如果某个初始化回调中调用了finish则不再进行后续的操作
-        if (!isFinishing()) {
-            initView(savedInstanceState);
-        }
-        if (!isFinishing()) {
-            // 获取toolbar
-            toolbarId = toolbarId != 0 ? toolbarId : R.id.toolbar;
-            toolbar = (Toolbar) findViewById(toolbarId);
-            if (toolbar != null) {//仅当toolbar存在时回调
-                initToolbar(savedInstanceState, toolbar);
-            }
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -125,37 +104,6 @@ public abstract class CoreActivity extends AppCompatActivity {
     }
 
 	/* 回调 */
-
-    /**
-     * 在{@link #onCreate(Bundle)}中首先调用（在super.onCreate(Bundle)之前），建议在此初始化数据相关的成员变量，比如从intent接受数据。 <br>
-     * <br/>
-     * 如果调用了{@link #finish()}方法则后续的初始化操作都不会执行。
-     *
-     * @param savedInstanceState
-     */
-    protected void init(Bundle savedInstanceState) {
-    }
-
-    /**
-     * 在{@link #onCreate(Bundle)}之中于 {@link #init(Bundle)} 之后调用。建议在此初始化视图相关的操作，比如设置界面和绑定事件等。<br/>
-     * <br/>
-     * 如果调用了{@link #finish()}方法则后续的操作都不会执行。
-     *
-     * @param savedInstanceState
-     */
-    protected void initView(Bundle savedInstanceState) {
-    }
-
-    /**
-     * 在{@link #onCreate(Bundle)}中于{@link #initView(Bundle)} 之后调用。<br/>
-     * <br/>
-     * {@link #configToolbarId(int)}在{@link #init(Bundle)}中提前设置用于查找toolbar的id；
-     *
-     * @param savedInstanceState
-     * @param toolbar
-     */
-    protected void initToolbar(Bundle savedInstanceState, Toolbar toolbar) {
-    }
 
     protected boolean onBackKey() {
         if (backKeyListeners != null && !backKeyListeners.isEmpty()) {
@@ -283,6 +231,10 @@ public abstract class CoreActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     public Toolbar getToolbar() {
+        // 获取toolbar
+        if (toolbar == null && toolbarId != 0) {
+            toolbar = (Toolbar) findViewById(toolbarId);
+        }
         return toolbar;
     }
 

@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import core.mate.R;
 import core.mate.util.LogUtil;
 import core.mate.util.ViewUtil;
 import core.mate.view.ITaskIndicator;
