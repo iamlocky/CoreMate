@@ -212,6 +212,17 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
 	/*拓展*/
 
+    public boolean refresh(Item item) {
+        int pos = data.indexOf(item);
+        if (pos >= 0) {
+            data.set(pos, item);
+            notifyItemChanged(pos);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 	public final boolean isEmpty() {
 		return getItemCount() == 0;
 	}
