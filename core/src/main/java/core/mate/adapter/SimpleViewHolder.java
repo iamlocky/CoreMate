@@ -45,7 +45,41 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
         return (V) view;
     }
 
-	/*控件处理*/
+    /*Holder处理*/
+
+
+    public void setHolderSize(int width, int height) {
+        View itemView = getView();
+        ListView.LayoutParams params = (ListView.LayoutParams) itemView.getLayoutParams();
+        if (params == null) {
+            params = new ListView.LayoutParams(width, height);
+        } else {
+            params.width = width;
+            params.height = height;
+        }
+        itemView.setLayoutParams(params);
+    }
+
+    public void setHolderBackgroundColor(@ColorInt int color) {
+        View view = getView();
+        view.setBackgroundColor(color);
+    }
+
+    public void setHolderBackgroundResource(@DrawableRes int drawableRes) {
+        View view = getView();
+        view.setBackgroundResource(drawableRes);
+    }
+
+    public void setHolderBackgroundDrawable(Drawable drawable) {
+        View view = getView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackground(drawable);
+        } else {
+            view.setBackgroundDrawable(drawable);
+        }
+    }
+
+	/*子控件处理*/
 
     public void setBackgroundColor(@IdRes int id, @ColorInt int color) {
         View view = getViewById(id);
@@ -137,19 +171,7 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
         return checkable.isChecked();
     }
 
-    public void setHolderSize(int width, int height) {
-        View itemView = getView();
-        ListView.LayoutParams params = (ListView.LayoutParams) itemView.getLayoutParams();
-        if (params == null) {
-            params = new ListView.LayoutParams(width, height);
-        } else {
-            params.width = width;
-            params.height = height;
-        }
-        itemView.setLayoutParams(params);
-    }
-
-    public void setViewSize(@IdRes int id, int width, int height) {
+    public void setSize(@IdRes int id, int width, int height) {
         View view = getViewById(id);
         ViewGroup.LayoutParams params = view.getLayoutParams();
 

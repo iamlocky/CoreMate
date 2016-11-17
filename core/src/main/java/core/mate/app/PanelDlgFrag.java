@@ -1,18 +1,18 @@
 package core.mate.app;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.WindowManager.LayoutParams;
 
-import core.mate.R;
 import core.mate.util.ViewUtil;
 
 /**
  * 面板对话框。
- *
+ * <p>
  * 否则将默认使用{@link LayoutParams#WRAP_CONTENT}作为高度。
  * 这将导致的结果就是所加载的布局的高度全部转为wrap_content，
  * 尽管其layout_height属性可能是match_parent或者是某个具体的dp数值。
@@ -27,7 +27,7 @@ public class PanelDlgFrag extends CoreDlgFrag {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        onPrepareDialogStyle(savedInstanceState);
+        onPreparePanelStyle(savedInstanceState);
     }
 
     @Override
@@ -37,15 +37,14 @@ public class PanelDlgFrag extends CoreDlgFrag {
     }
 
     /**
-     * 配置DialogFragment的样式，在{@link #onCreate(Bundle)}中回调。
-     * 默认将会设置样式为{@link #STYLE_NO_FRAME}，并且style为
-     * {@link core.mate.R.style#PanelDlgStyle}
+     * 配置PanelDlgFrag的样式，在{@link #onCreate(Bundle)}中回调。
      *
      * @param savedInstanceState
      */
-    protected void onPrepareDialogStyle(@Nullable Bundle savedInstanceState) {
-        setStyle(STYLE_NO_FRAME, R.style.PanelDlgStyle);
-        setWinAnimStyle(R.style.CoreWindowAnimSlideTopStyle);
+    protected void onPreparePanelStyle(@Nullable Bundle savedInstanceState) {
+        setStyle(STYLE_NO_FRAME, 0);
+        setWinAnimStyle(0);
+        setWinBgColor(Color.WHITE);
         setWidth(LayoutParams.MATCH_PARENT);
         setGravity(Gravity.BOTTOM);
     }

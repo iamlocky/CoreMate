@@ -52,7 +52,36 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
         return (V) view;
     }
 
-	/*控件处理*/
+    /*Holder处理*/
+
+    public void setHolderSize(int width, int height) {
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+        if (params == null) {
+            params = new RecyclerView.LayoutParams(width, height);
+        } else {
+            params.width = width;
+            params.height = height;
+        }
+        itemView.setLayoutParams(params);
+    }
+
+    public void setHolderBackgroundColor(@ColorInt int color) {
+        itemView.setBackgroundColor(color);
+    }
+
+    public void setHolderBackgroundResource(@DrawableRes int drawableRes) {
+        itemView.setBackgroundResource(drawableRes);
+    }
+
+    public void setHolderBackgroundDrawable(Drawable drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            itemView.setBackground(drawable);
+        } else {
+            itemView.setBackgroundDrawable(drawable);
+        }
+    }
+
+	/*子控件处理*/
 
     public final void setBackgroundColor(@IdRes int id, @ColorInt int color) {
         View view = getViewById(id);
@@ -144,18 +173,7 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
         return checkable.isChecked();
     }
 
-    public void setHolderSize(int width, int height) {
-        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
-        if (params == null) {
-            params = new RecyclerView.LayoutParams(width, height);
-        } else {
-            params.width = width;
-            params.height = height;
-        }
-        itemView.setLayoutParams(params);
-    }
-
-    public void setViewSize(@IdRes int id, int width, int height) {
+    public void setSize(@IdRes int id, int width, int height) {
         View view = getViewById(id);
         ViewGroup.LayoutParams params = view.getLayoutParams();
 

@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -115,6 +118,28 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     /* 配置 */
 
     private Integer winAnimStyle;
+    private Drawable winBgDrawable;
+    private Integer winBgResource;
+
+    protected CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
+        this.winAnimStyle = winAnimStyle;
+        return this;
+    }
+
+    public CoreDlgFrag setWinBgDrawable(Drawable winBgDrawable) {
+        this.winBgDrawable = winBgDrawable;
+        return this;
+    }
+
+    public CoreDlgFrag setWinBgColor(@ColorInt int color) {
+        this.winBgDrawable = new ColorDrawable(color);
+        return this;
+    }
+
+    public CoreDlgFrag setWinBgResource(int winBgResource) {
+        this.winBgResource = winBgResource;
+        return this;
+    }
 
     private Integer gravity;
     private Integer width;
@@ -160,11 +185,6 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         return this;
     }
 
-    protected CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
-        this.winAnimStyle = winAnimStyle;
-        return this;
-    }
-
     /**
      * 配置对话框的window，将在{@link #onActivityCreated(Bundle)}中回调。
      *
@@ -178,6 +198,12 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
 
         if (winAnimStyle != null) {
             dlgWin.setWindowAnimations(winAnimStyle);
+        }
+
+        if (winBgDrawable != null) {
+            dlgWin.setBackgroundDrawable(winBgDrawable);
+        } else if (winBgResource != null) {
+            dlgWin.setBackgroundDrawableResource(winBgResource);
         }
 
         if (gravity != null || width != null || height != null || x != null || y != null) {

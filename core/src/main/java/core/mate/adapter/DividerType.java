@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 
 /**
  * 封装了分隔符处理的ItemOperator
@@ -16,17 +15,15 @@ public final class DividerType extends AbsItemType<Divider, SimpleViewHolder<Div
 
 	/* 继承 */
 
-	@NonNull
-	@Override
-	public SimpleViewHolder<Divider> createViewHolder (LayoutInflater inflater, ViewGroup parent) {
-		return new SimpleViewHolder<>(new View(parent.getContext()));
-	}
+    @NonNull
+    @Override
+    public SimpleViewHolder<Divider> createViewHolder(LayoutInflater inflater, ViewGroup parent) {
+        return new SimpleViewHolder<>(new View(parent.getContext()));
+    }
 
-	@Override
-	public void bindViewData(SimpleViewHolder<Divider> holder, int position, Divider data) {
-		AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, data.getHeightPx());
-		holder.getView().setLayoutParams(layoutParams);
-
-		holder.getView().setBackgroundResource(data.getBackgroundResource());
-	}
+    @Override
+    public void bindViewData(SimpleViewHolder<Divider> holder, int position, Divider data) {
+        holder.setHolderSize(ViewGroup.LayoutParams.MATCH_PARENT,data.getHeightPx());
+        holder.setHolderBackgroundDrawable(data.getDrawable());
+    }
 }

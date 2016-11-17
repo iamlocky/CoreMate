@@ -22,9 +22,7 @@ public final class RecyclerDividerType extends AbsRecyclerItemType<Divider, Simp
 
 	@Override
 	public void bindViewData(SimpleRecyclerViewHolder holder, int position, Divider data) {
-		AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, data.getHeightPx());
-		holder.itemView.setLayoutParams(layoutParams);
-
-		holder.itemView.setBackgroundResource(data.getBackgroundResource());
+		holder.setHolderSize(ViewGroup.LayoutParams.MATCH_PARENT,data.getHeightPx());
+		holder.setHolderBackgroundDrawable(data.getDrawable());
 	}
 }
