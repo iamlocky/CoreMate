@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="core.demo.activity.MainActivity">
+    tools:context="core.demo.ui.MainActivity">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayout_main_tabs"

@@ -1,4 +1,4 @@
-package core.demo.activity.main;
+package core.demo.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import java.io.File;
 
 import core.demo.R;
-import core.demo.async.DeleteFileTask;
-import core.demo.async.ExportAssetsTask;
-import core.demo.async.ReadTextTask;
+import core.demo.task.DeleteFileTask;
+import core.demo.task.ExportAssetsTask;
+import core.demo.task.ReadTextTask;
 import core.mate.app.CoreFrag;
 import core.mate.app.ProgressDlgFrag;
 import core.mate.async.OnTaskListenerImpl;

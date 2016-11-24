@@ -1,4 +1,4 @@
-package core.demo.activity.main;
+package core.demo.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +25,7 @@ public class ResDlgFrag extends PanelDlgFrag {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setWinAnimStyle(R.style.CoreWindowAnimSlideTopStyle);
         //必须设置高度才能使用
         setDialogHeightPercent(0.7F);//设置高度为屏幕的70%
         //setDialogHeightDp(128);//设置高度为128dp

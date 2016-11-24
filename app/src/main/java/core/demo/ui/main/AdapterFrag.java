@@ -1,4 +1,4 @@
-package core.demo.activity.main;
+package core.demo.ui.main;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +24,7 @@ public class AdapterFrag extends ListFrag {
         super.onPrepareListView(listView);
         //创建Adapter，这里可以通过资源id或者类名来自动创建item布局，并处理好ViewHolder的逻辑
         setAdapter(new SimpleAdapter<String>(android.R.layout.simple_list_item_1/*TextView.class*/) {
+
             @Override
             protected void bindViewData(SimpleViewHolder<String> holder, int position, String data, int viewType) {
                 //设置数据可以通过id直接setText
@@ -41,7 +42,7 @@ public class AdapterFrag extends ListFrag {
         SimpleAdapter<String> adapter = getAdapter();
         //刷新数据
         adapter.display(
-                "\\(^o^)/",
+                "\\(^o^)/阿萨德撒的萨达哀伤",
                 "b(￣▽￣)d",
                 "ヾ(≧▽≦*)o",
                 "(づ￣3￣)づ╭❤～",

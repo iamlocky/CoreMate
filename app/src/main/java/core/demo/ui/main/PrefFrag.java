@@ -1,4 +1,4 @@
-package core.demo.activity.main;
+package core.demo.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
