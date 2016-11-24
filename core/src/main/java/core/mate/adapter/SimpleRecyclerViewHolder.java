@@ -6,19 +6,14 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 import core.mate.util.ViewUtil;
 
@@ -57,12 +52,31 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
 
     /*Holder处理*/
 
-    public void setHolderHeight(int height) {
-        ViewUtil.setHeight(itemView, height);
+    public void setHolderWidth(int width) {
+        setHolderSize(width, null);
     }
 
+    public void setHolderHeight(int height) {
+        setHolderSize(null, height);
+    }
+
+
     public void setHolderSize(@Nullable Integer width, @Nullable Integer height) {
-        ViewUtil.setSize(itemView, width, height);
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+        if (params == null) {
+            params = new RecyclerView.LayoutParams(
+                    RecyclerView.LayoutParams.WRAP_CONTENT,
+                    RecyclerView.LayoutParams.WRAP_CONTENT);
+        }
+
+        if (width != null) {
+            params.width = width;
+        }
+        if (height != null) {
+            params.height = height;
+        }
+
+        itemView.setLayoutParams(params);
     }
 
     public void setHolderBackgroundColor(@ColorInt int color) {
@@ -173,8 +187,20 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
         return checkable.isChecked();
     }
 
-    public void setSize(@IdRes int id, int width, int height) {
+    public void setHeight(@IdRes int id, int height) {
+        setSize(id, null, height);
+    }
+
+    public void setWidth(@IdRes int id, int width) {
+        setSize(id, width, null);
+    }
+
+    public void setSize(@IdRes int id, @Nullable Integer width, @Nullable Integer height) {
         View view = getViewById(id);
-        ViewUtil.setSize(view, width, height);
+        if (view != itemView) {
+            ViewUtil.setSize(view, width, height);
+        } else {
+            setHolderSize(width, height);
+        }
     }
 }

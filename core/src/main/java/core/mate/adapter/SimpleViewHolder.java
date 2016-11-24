@@ -8,13 +8,10 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import core.mate.util.ViewUtil;
@@ -50,8 +47,12 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
 
     /*Holder处理*/
 
+    public void setHolderWidth(int width) {
+        setHolderSize(width, null);
+    }
+
     public void setHolderHeight(int height) {
-        ViewUtil.setHeight(getView(), height);
+        setHolderSize(null, height);
     }
 
     public void setHolderSize(@Nullable Integer width, @Nullable Integer height) {
@@ -169,7 +170,15 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
         return checkable.isChecked();
     }
 
-    public void setSize(@IdRes int id, int width, int height) {
+    public void setHeight(@IdRes int id, int height) {
+        setSize(id, null, height);
+    }
+
+    public void setWidth(@IdRes int id, int width) {
+        setSize(id, width, null);
+    }
+
+    public void setSize(@IdRes int id, @Nullable Integer width, @Nullable Integer height) {
         View view = getViewById(id);
         ViewUtil.setSize(view, width, height);
     }
