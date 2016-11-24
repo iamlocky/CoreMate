@@ -26,43 +26,51 @@ public class FragHelper {
 
 	/* 获取或添加 */
 
-    public Fragment findOrAddFragment(int containerId, Class fragClazz) {
-        return findOrAddFragment(containerId, fragClazz, fragClazz.getCanonicalName());
+    public Fragment findFrag(Class clz) {
+        return clz != null ? fragMgr.findFragmentByTag(clz.getCanonicalName()) : null;
     }
 
-    public Fragment findOrAddFragment(int containerId, Class fragClazz, String fragTag) {
-        Fragment frag = fragMgr.findFragmentByTag(fragTag);
+    public Fragment findFrag(String tag) {
+        return tag != null ? fragMgr.findFragmentByTag(tag) : null;
+    }
+
+    public Fragment findOrAddFrag(int containerId, Class fragClazz) {
+        return findOrAddFrag(containerId, fragClazz, null);
+    }
+
+    public Fragment findOrAddFrag(int containerId, Class clz, String tag) {
+        Fragment frag = !TextUtils.isEmpty(tag) ? findFrag(tag) : findFrag(clz);
         if (frag == null) {
             try {
-                frag = (Fragment) fragClazz.newInstance();
+                frag = (Fragment) clz.newInstance();
             } catch (Exception e) {
                 LogUtil.e(e);
-                throw new IllegalArgumentException("指定的fragClazz必须存在可见的默认构造函数");
+                throw new IllegalArgumentException("指定的clz必须存在可见的默认构造函数");
             }
-            fragMgr.beginTransaction().add(containerId, frag, fragTag).commit();
+            fragMgr.beginTransaction().add(containerId, frag, tag).commit();
         }
         return frag;
     }
 
 	/* 切换 */
 
-    public Fragment switchFragment(int containerId, Fragment curFrag, Class nextFragClass) {
-        return switchFragment(containerId, curFrag, null, nextFragClass, nextFragClass.getCanonicalName());
+    public Fragment switchFrag(int containerId, Fragment curFrag, Class nextFragClass) {
+        return switchFrag(containerId, curFrag, null, nextFragClass, nextFragClass.getCanonicalName());
     }
 
-    public Fragment switchFragment(int containerId, Fragment curFrag, Class nextFragClass, String fragTag) {
-        return switchFragment(containerId, curFrag, null, nextFragClass, fragTag);
+    public Fragment switchFrag(int containerId, Fragment curFrag, Class nextFragClass, String fragTag) {
+        return switchFrag(containerId, curFrag, null, nextFragClass, fragTag);
     }
 
-    public Fragment switchFragment(int containerId, Fragment curFrag, Fragment nextFrag) {
-        return switchFragment(containerId, curFrag, nextFrag, null, nextFrag.getClass().getCanonicalName());
+    public Fragment switchFrag(int containerId, Fragment curFrag, Fragment nextFrag) {
+        return switchFrag(containerId, curFrag, nextFrag, null, nextFrag.getClass().getCanonicalName());
     }
 
-    public Fragment switchFragment(int containerId, Fragment curFrag, Fragment nextFrag, String fragTag) {
-        return switchFragment(containerId, curFrag, nextFrag, null, fragTag);
+    public Fragment switchFrag(int containerId, Fragment curFrag, Fragment nextFrag, String fragTag) {
+        return switchFrag(containerId, curFrag, nextFrag, null, fragTag);
     }
 
-    private Fragment switchFragment(int containerId, Fragment curFrag, Fragment nextFrag, Class nextFragClass, String fragTag) {
+    private Fragment switchFrag(int containerId, Fragment curFrag, Fragment nextFrag, Class nextFragClass, String fragTag) {
         if (TextUtils.isEmpty(fragTag)) {
             throw new IllegalArgumentException("fragTag不允许为null或者空字符串");
         } else if (nextFrag == null && nextFragClass == null) {
@@ -100,7 +108,7 @@ public class FragHelper {
         } else {
             fragTran.add(containerId, nextFrag, fragTag);
         }
-        commotTran(fragTran);
+        commitTran(fragTran);
 
         return nextFrag;
     }
@@ -116,7 +124,7 @@ public class FragHelper {
         return commitAllowingStateLossEnable;
     }
 
-    private void commotTran(FragmentTransaction fragTran) {
+    private void commitTran(FragmentTransaction fragTran) {
         if (commitAllowingStateLossEnable) {
             fragTran.commitAllowingStateLoss();
         } else {
@@ -127,7 +135,7 @@ public class FragHelper {
 	/* 显示或者隐藏 */
 
     @SuppressWarnings("unchecked")
-    public boolean hideFragment(Class... fragClasses) {
+    public boolean hideFrag(Class... fragClasses) {
         int len = fragClasses.length;
         List<Fragment> frags = new ArrayList<>(len);
         Fragment frag;
@@ -138,10 +146,10 @@ public class FragHelper {
             }
         }
 
-        return hideFragment(frags.toArray(new Fragment[frags.size()]));
+        return hideFrag(frags.toArray(new Fragment[frags.size()]));
     }
 
-    public boolean hideFragment(String... fragTags) {
+    public boolean hideFrag(String... fragTags) {
         int len = fragTags.length;
         List<Fragment> frags = new ArrayList<>(len);
         Fragment frag;
@@ -152,17 +160,17 @@ public class FragHelper {
             }
         }
 
-        return hideFragment(frags.toArray(new Fragment[frags.size()]));
+        return hideFrag(frags.toArray(new Fragment[frags.size()]));
     }
 
-    private boolean hideFragment(Fragment... frags) {
+    private boolean hideFrag(Fragment... frags) {
         if (frags.length > 0) {
             FragmentTransaction fragTran = fragMgr.beginTransaction();
             for (Fragment frag : frags) {
 
                 fragTran.hide(frag);
             }
-            commotTran(fragTran);
+            commitTran(fragTran);
             return true;
         }
         return false;

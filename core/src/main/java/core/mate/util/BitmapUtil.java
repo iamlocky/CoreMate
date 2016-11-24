@@ -221,7 +221,7 @@ public class BitmapUtil {
 
         BitmapFactory.Options options = getImgOption(resId);
         float srcWidthVsHeight = (float) options.outWidth / (float) options.outHeight;//原图宽高比
-        int imgWidthPx = Math.round((float) options.outWidth / (float) designedScreenWidth * ViewUtil.getScreenWidthPx());
+        int imgWidthPx = Math.round((float) options.outWidth / (float) designedScreenWidth * ViewUtil.getScreenWidth());
         int imgHeightPx = Math.round(imgWidthPx / srcWidthVsHeight);
         return BitmapUtil.decodeImg(resId, imgWidthPx, imgHeightPx);
     }

@@ -7,6 +7,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import core.mate.util.ViewUtil;
 
 /**
  * @author DrkCore
@@ -54,15 +57,12 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
 
     /*Holder处理*/
 
-    public void setHolderSize(int width, int height) {
-        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
-        if (params == null) {
-            params = new RecyclerView.LayoutParams(width, height);
-        } else {
-            params.width = width;
-            params.height = height;
-        }
-        itemView.setLayoutParams(params);
+    public void setHolderHeight(int height) {
+        ViewUtil.setHeight(itemView, height);
+    }
+
+    public void setHolderSize(@Nullable Integer width, @Nullable Integer height) {
+        ViewUtil.setSize(itemView, width, height);
     }
 
     public void setHolderBackgroundColor(@ColorInt int color) {
@@ -175,14 +175,6 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
 
     public void setSize(@IdRes int id, int width, int height) {
         View view = getViewById(id);
-        ViewGroup.LayoutParams params = view.getLayoutParams();
-
-        if (params == null) {
-            throw new IllegalStateException("无法获取控件的LayoutParams");
-        }
-
-        params.width = width;
-        params.height = height;
-        view.setLayoutParams(params);
+        ViewUtil.setSize(view, width, height);
     }
 }

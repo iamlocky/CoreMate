@@ -27,26 +27,17 @@ public class PanelDlgFrag extends CoreDlgFrag {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        onPreparePanelStyle(savedInstanceState);
+        setStyle(STYLE_NO_FRAME, 0);
+        setWinAnimStyle(0);
+        setWinBgColor(Color.WHITE);
+        setWidth(LayoutParams.MATCH_PARENT);
+        setGravity(Gravity.BOTTOM);
     }
 
     @Override
     @NonNull
     public final Dialog onCreateDialog(Bundle savedInstanceState) {// 使用final修饰阻止重写该方法
         return super.onCreateDialog(savedInstanceState);
-    }
-
-    /**
-     * 配置PanelDlgFrag的样式，在{@link #onCreate(Bundle)}中回调。
-     *
-     * @param savedInstanceState
-     */
-    protected void onPreparePanelStyle(@Nullable Bundle savedInstanceState) {
-        setStyle(STYLE_NO_FRAME, 0);
-        setWinAnimStyle(0);
-        setWinBgColor(Color.WHITE);
-        setWidth(LayoutParams.MATCH_PARENT);
-        setGravity(Gravity.BOTTOM);
     }
 
     /**
@@ -60,7 +51,7 @@ public class PanelDlgFrag extends CoreDlgFrag {
         if (percent < 0 || percent > 1) {
             throw new IllegalArgumentException("percent " + percent + " 不合法");
         }
-        setHeight((int) (ViewUtil.getScreenHeightPx() * percent));
+        setHeight((int) (ViewUtil.getScreenHeight() * percent));
         return this;
     }
 
