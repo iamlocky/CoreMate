@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -56,7 +57,21 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
     }
 
     public void setHolderSize(@Nullable Integer width, @Nullable Integer height) {
-        ViewUtil.setSize(getView(), width, height);
+        AbsListView.LayoutParams params = (AbsListView.LayoutParams) getView().getLayoutParams();
+        if (params == null) {
+            params = new AbsListView.LayoutParams(
+                    AbsListView.LayoutParams.WRAP_CONTENT,
+                    AbsListView.LayoutParams.WRAP_CONTENT);
+        }
+    
+        if (width != null) {
+            params.width = width;
+        }
+        if (height != null) {
+            params.height = height;
+        }
+    
+        getView().setLayoutParams(params);
     }
 
     public void setHolderBackgroundColor(@ColorInt int color) {
@@ -180,6 +195,10 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
 
     public void setSize(@IdRes int id, @Nullable Integer width, @Nullable Integer height) {
         View view = getViewById(id);
-        ViewUtil.setSize(view, width, height);
+        if(view != getView()){
+            ViewUtil.setSize(view, width, height);
+        }else {
+            setHolderSize(width,height);
+        }
     }
 }
