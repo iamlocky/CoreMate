@@ -99,7 +99,7 @@ public class TaskFrag extends CoreFrag {
                 .addOnTaskListener(new OnTaskListenerImpl<String>() {
 
                     @Override
-                    public void onFailure(Exception e) {
+                    public void onFailure(Throwable e) {
                         super.onFailure(e);
                         ToastUtil.toastShort("读取文件失败，请先导出文件");
                     }

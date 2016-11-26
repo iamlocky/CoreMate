@@ -22,7 +22,7 @@ public class ExportAssetsTask extends CoreTask<ExportAssetsTask.Params, Void, Fi
     }
 
     @Override
-    public File doInBack(Params params) throws Exception {
+    public File doInBack(Params params) throws Throwable {
         Thread.sleep(3000L);//为了演示这里阻塞3秒
 
         //ResUtil提供了获取资源的大部分方法，因为使用了初始化框架时的Application，

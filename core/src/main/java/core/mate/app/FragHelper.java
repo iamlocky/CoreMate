@@ -19,7 +19,11 @@ import core.mate.util.LogUtil;
 public class FragHelper {
 
     private final FragmentManager fragMgr;
-
+    
+    public FragmentManager getManager() {
+        return fragMgr;
+    }
+    
     public FragHelper(FragmentManager fragMgr) {
         this.fragMgr = fragMgr;
     }

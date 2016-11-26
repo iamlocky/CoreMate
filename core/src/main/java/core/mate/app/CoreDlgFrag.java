@@ -121,8 +121,8 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     private Float dimAmount;
     private Drawable winBgDrawable;
     private Integer winBgResource;
-
-    protected CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
+    
+    public CoreDlgFrag setWinAnimStyle(int winAnimStyle) {
         this.winAnimStyle = winAnimStyle;
         return this;
     }

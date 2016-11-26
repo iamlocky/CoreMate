@@ -25,28 +25,28 @@ import java.util.Map;
 public class WebFrag extends CoreFrag {
 
 	/*成员*/
-
+    
     private int webViewId;
     private int layoutRes;
-
+    
     private WebView webView;
-
+    
     public WebView getWebView() {
         return webView;
     }
-
+    
     public int getWebViewId() {
         return webViewId;
     }
-
-    protected final void configWebViewId(@IdRes int webViewId) {
+    
+    public void configWebViewId(@IdRes int webViewId) {
         if (webView != null) {
             throw new IllegalStateException("WebView已经创建，此时无法设置webViewId");
         }
         this.webViewId = webViewId;
     }
-
-    protected final void configLayoutRes(@LayoutRes int layoutRes) {
+    
+    public void configLayoutRes(@LayoutRes int layoutRes) {
         if (webView != null) {
             throw new IllegalStateException("WebView已经创建，此时无法设置layoutRes");
         }
@@ -54,7 +54,7 @@ public class WebFrag extends CoreFrag {
     }
 
 	/* 继承 */
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View contentView;
@@ -65,7 +65,7 @@ public class WebFrag extends CoreFrag {
         }
         return contentView;
     }
-
+    
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -74,14 +74,14 @@ public class WebFrag extends CoreFrag {
         } else if (webViewId > 0) {// 指定了id
             webView = (WebView) view.findViewById(webViewId);
         }
-
+        
         if (webView == null) {// 不存在webView
             throw new IllegalStateException("可用的WebView不存在");
         }
-
+        
         onPrepareWebView(webView, savedInstanceState);
     }
-
+    
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -91,19 +91,19 @@ public class WebFrag extends CoreFrag {
             webView.resumeTimers();
         }
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();
         webView.resumeTimers();
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
         webView.pauseTimers();
     }
-
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -111,105 +111,105 @@ public class WebFrag extends CoreFrag {
     }
 
     /*内部回调*/
-
+    
     protected void onPrepareWebView(WebView webView, @Nullable Bundle savedInstanceState) {
     }
 
     /*拓展*/
-
+    
     @ViewDebug.ExportedProperty(category = "webview")
     public String getUrl() {
         return webView.getUrl();
     }
-
+    
     @ViewDebug.ExportedProperty(category = "webview")
     public String getOriginalUrl() {
         return webView.getOriginalUrl();
     }
-
+    
     @ViewDebug.ExportedProperty(category = "webview")
     public String getTitle() {
         return webView.getTitle();
     }
-
+    
     public Bitmap getFavicon() {
         return webView.getFavicon();
     }
-
+    
     public int getProgress() {
         return webView.getProgress();
     }
-
+    
     @ViewDebug.ExportedProperty(category = "webview")
     public int getContentHeight() {
         return webView.getContentHeight();
     }
-
+    
     public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
         webView.loadUrl(url, additionalHttpHeaders);
     }
-
+    
     public void loadUrl(String url) {
         webView.loadUrl(url);
     }
-
+    
     public void reload() {
         webView.reload();
     }
-
+    
     public void stopLoading() {
         webView.stopLoading();
     }
-
+    
     public boolean canGoBack() {
         return webView.canGoBack();
     }
-
+    
     public void goBack() {
         webView.goBack();
     }
-
+    
     public boolean canGoForward() {
         return webView.canGoForward();
     }
-
+    
     public void goForward() {
         webView.goForward();
     }
-
+    
     public boolean canGoBackOrForward(int steps) {
         return webView.canGoBackOrForward(steps);
     }
-
+    
     public void goBackOrForward(int steps) {
         webView.goBackOrForward(steps);
     }
-
+    
     public boolean pageUp(boolean top) {
         return webView.pageUp(top);
     }
-
+    
     public boolean pageDown(boolean bottom) {
         return webView.pageDown(bottom);
     }
-
+    
     public void setWebChromeClient(WebChromeClient client) {
         webView.setWebChromeClient(client);
     }
-
+    
     public void setWebViewClient(WebViewClient client) {
         webView.setWebViewClient(client);
     }
-
+    
     @SuppressLint("JavascriptInterface")
     public void addJavascriptInterface(Object object, String name) {
         webView.addJavascriptInterface(object, name);
     }
-
+    
     public void clearHistory() {
         webView.clearHistory();
     }
-
+    
     public void setWebViewVisible(boolean visible) {
         webView.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }

@@ -334,7 +334,7 @@ public abstract class CoreFrag extends Fragment {
      * @param <T>
      * @return
      */
-    protected <T> T getListenerFromParent(Class<?> listener) {
+    public <T> T getListenerFromParent(Class<?> listener) {
         if (!listener.isInterface()) {
             throw new IllegalArgumentException("getListenerFromParent()方法只允许获取接口");
         }

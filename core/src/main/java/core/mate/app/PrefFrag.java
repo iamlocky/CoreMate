@@ -6,14 +6,14 @@ import android.support.annotation.StringRes;
 import android.util.SparseArray;
 
 public abstract class PrefFrag extends PreferenceFragment {
-
-    protected final boolean equal(@StringRes int strRes, String prefKey) {
+    
+    protected boolean equal(@StringRes int strRes, String prefKey) {
         return getString(strRes).equals(prefKey);
     }
-
+    
     private SparseArray<Preference> prefs;
-
-    protected final <T extends Preference> T findPreference(@StringRes int keyId) {
+    
+    protected <T extends Preference> T findPreference(@StringRes int keyId) {
         Preference pref = prefs != null ? prefs.get(keyId) : null;
         if (pref == null) {
             pref = findPreference(getString(keyId));
@@ -26,5 +26,5 @@ public abstract class PrefFrag extends PreferenceFragment {
         }
         return (T) pref;
     }
-
+    
 }

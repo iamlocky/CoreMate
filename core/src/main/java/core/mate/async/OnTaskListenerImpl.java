@@ -12,7 +12,7 @@ public abstract class OnTaskListenerImpl<Result> implements CoreTask.OnTaskListe
 	}
 
 	@Override
-	public void onFailure (Exception e) {
+	public void onFailure (Throwable e) {
 	}
 
 	@Override

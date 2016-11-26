@@ -243,7 +243,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *
      * @param toolbarId
      */
-    protected void configToolbarId(@IdRes int toolbarId) {
+    public void configToolbarId(@IdRes int toolbarId) {
         this.toolbarId = toolbarId;
     }
 
@@ -255,7 +255,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @param iconId          导航的图标，为0则不设置图标
      * @param onClickListener
      */
-    protected void configToolbarNav(Toolbar toolbar, int iconId, OnClickListener onClickListener) {
+    public void configToolbarNav(Toolbar toolbar, int iconId, OnClickListener onClickListener) {
         if (iconId > 0) {
             toolbar.setNavigationIcon(iconId);
         }
@@ -270,7 +270,7 @@ public abstract class CoreActivity extends AppCompatActivity {
     /**
      * 具体实现请参阅{@link #configToolbarNavToFinish(Toolbar, int)}
      */
-    protected void configToolbarNavToFinish(Toolbar toolbar) {
+    public void configToolbarNavToFinish(Toolbar toolbar) {
         configToolbarNavToFinish(toolbar, 0);
     }
 
@@ -281,7 +281,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      * @param toolbar 导航的按钮
      * @param iconId  导航的图标
      */
-    protected void configToolbarNavToFinish(Toolbar toolbar, int iconId) {
+    public void configToolbarNavToFinish(Toolbar toolbar, int iconId) {
         configToolbarNav(toolbar, iconId, new OnClickListener() {
 
             @Override
@@ -346,7 +346,7 @@ public abstract class CoreActivity extends AppCompatActivity {
 
     private FragHelper fragHelper;
 
-    protected FragHelper getFragHelper() {
+    public FragHelper getFragHelper() {
         if (fragHelper == null) {
             fragHelper = new FragHelper(getSupportFragmentManager());
         }

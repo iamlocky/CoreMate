@@ -13,7 +13,7 @@ import core.mate.util.FileUtil;
  */
 public class DeleteFileTask extends CoreTask<File[], Void, boolean[]> {
     @Override
-    public boolean[] doInBack(File[] files) throws Exception {
+    public boolean[] doInBack(File[] files) throws Throwable {
         Thread.sleep(3000L);//为了演示这里阻塞3秒
 
         //使用FileUtil删除文件或者文件夹

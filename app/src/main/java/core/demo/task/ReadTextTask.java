@@ -11,7 +11,7 @@ import core.mate.util.TextUtil;
 public class ReadTextTask extends CoreTask<File, Void, String> {
 
     @Override
-    public String doInBack(File file) throws Exception {
+    public String doInBack(File file) throws Throwable {
         Thread.sleep(3000L);//为了演示这里阻塞3秒
 
         //使用TextUtil读取文本

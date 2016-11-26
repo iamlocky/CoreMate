@@ -23,7 +23,7 @@ import core.mate.util.ViewUtil;
 public class PanelDlgFrag extends CoreDlgFrag {
 
 	/* 继承 */
-
+    
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,13 +33,13 @@ public class PanelDlgFrag extends CoreDlgFrag {
         setWidth(LayoutParams.MATCH_PARENT);
         setGravity(Gravity.BOTTOM);
     }
-
+    
     @Override
     @NonNull
     public final Dialog onCreateDialog(Bundle savedInstanceState) {// 使用final修饰阻止重写该方法
         return super.onCreateDialog(savedInstanceState);
     }
-
+    
     /**
      * 设置对话框的高度相对于设备高度的百分比。
      *
@@ -47,12 +47,12 @@ public class PanelDlgFrag extends CoreDlgFrag {
      * @return
      * @throws IllegalArgumentException 当percent大于1或者小于0时抛出该异常
      */
-    protected final PanelDlgFrag setDialogHeightPercent(float percent) {
+    protected PanelDlgFrag setDialogHeightPercent(float percent) {
         if (percent < 0 || percent > 1) {
             throw new IllegalArgumentException("percent " + percent + " 不合法");
         }
         setHeight((int) (ViewUtil.getScreenHeight() * percent));
         return this;
     }
-
+    
 }

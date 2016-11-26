@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import core.mate.Core;
-import core.mate.view.ITaskIndicator;
 import core.mate.util.ClassUtil;
 import core.mate.util.LogUtil;
+import core.mate.view.ITaskIndicator;
 
 /**
  * 初步封装的异步任务基类。<br/>
@@ -24,27 +24,27 @@ import core.mate.util.LogUtil;
  * @since 2015年9月29日10:28:34
  */
 public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Params, Progress, CoreTask.ResultHolder<Result>> implements Clearable {
-
+    
     protected static class ResultHolder<Result> {
-
+        
         public final Result result;
-        public final Exception e;
-
-        private ResultHolder(Result result, Exception e) {
+        public final Throwable e;
+        
+        private ResultHolder(Result result, Throwable e) {
             this.result = result;
             this.e = e;
         }
-
+        
     }
 
 	/* 继承 */
-
+    
     @Override
-    protected final void onPreExecute() {
+    protected void onPreExecute() {
         super.onPreExecute();
         taskState = TaskState.PRE;
         logTaskState();
-
+        
         if (indicators != null) {
             for (ITaskIndicator indicator : indicators) {
                 if (!indicator.isProgressing()) {
@@ -52,16 +52,16 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
                 }
             }
         }
-
+        
         onStart();
     }
-
+    
     @SuppressWarnings("unchecked")
     @Override
-    protected final ResultHolder<Result> doInBackground(Params... params) {
+    protected ResultHolder<Result> doInBackground(Params... params) {
         taskState = TaskState.DO;
         logTaskState();
-
+        
         try {
             Result result = doInBack(params != null && params.length >= 1 ? params[0] : null);
             if (listeners != null) {
@@ -70,16 +70,16 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
                 }
             }
             return new ResultHolder<>(result, null);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LogUtil.e(e);
             if (e instanceof RuntimeException) {
                 // 运行时异常通常是逻辑的问题的问题，为了可维护性这里重新抛出
-                throw new RuntimeException(e);
+                throw (RuntimeException) e;
             }
             return new ResultHolder<>(null, e);
         }
     }
-
+    
     @Override
     protected void onProgressUpdate(Progress... values) {
         super.onProgressUpdate(values);
@@ -92,9 +92,9 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
             }
         }
     }
-
+    
     @Override
-    protected final void onPostExecute(ResultHolder<Result> holder) {
+    protected void onPostExecute(ResultHolder<Result> holder) {
         super.onPostExecute(holder);
         if (indicators != null) {
             for (ITaskIndicator indicator : indicators) {
@@ -103,24 +103,24 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
                 }
             }
         }
-
+        
         resultHolder = holder;
-
+        
         // 检查任务可行性
         if (holder.e == null) {// 没有异常则认定为任务成功
             onSuccess(holder.result);
         } else {// 任务失败
             onFailure(holder.e);
         }
-
+        
         onDone();
-
+        
         //清理所有外部的引用
         clear();
     }
 
 	/* 内部回调 */
-
+    
     protected void onStart() {
         // 处理回调
         if (listeners != null) {
@@ -129,18 +129,18 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
             }
         }
     }
-
+    
     /**
      * 异步调用的方法。
      *
      * @param params
      * @return
-     * @throws Exception 该方法抛出任何异常都视为这个异步任务失败。
+     * @throws Throwable 该方法抛出任何异常都视为这个异步任务失败。
      *                   但是如果抛出的异常是{@link RuntimeException}或者其子类，
      *                   则将该异常重新抛出使程序崩溃。
      */
-    public abstract Result doInBack(Params params) throws Exception;
-
+    public abstract Result doInBack(Params params) throws Throwable;
+    
     protected void onSuccess(Result result) {
         taskState = TaskState.SUCCESS;
         logTaskState();
@@ -150,18 +150,18 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
             }
         }
     }
-
-    protected void onFailure(Exception e) {
+    
+    protected void onFailure(Throwable e) {
         taskState = TaskState.FAILURE;
         logTaskState();
-
+        
         if (listeners != null) {
             for (OnTaskListener<Result> onTaskListener : listeners) {
                 onTaskListener.onFailure(e);
             }
         }
     }
-
+    
     protected void onDone() {
         if (listeners != null) {
             for (OnTaskListener<Result> onTaskListener : listeners) {
@@ -171,14 +171,14 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     }
 
 	/* 外部接口 */
-
+    
     public interface OnTaskListener<Result> {
-
+        
         /**
          * 在任务开始之前回调
          */
         void onStart();
-
+        
         /**
          * 在{@link #doInBack(Object)}完成之后于异步线程之中回调。
          * 你可以在改回调之中处理一些耗时的操作。
@@ -187,40 +187,40 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
          */
         @WorkerThread
         void onPrepareResult(Result result);
-
+        
         /**
          * 当任务成功时回调该方法
          *
          * @param result
          */
         void onSuccess(Result result);
-
+        
         /**
          * 当判断任务失败时会调用该方法
          *
          * @param e 异步任务中抛出的异常，有可能为null
          */
-        void onFailure(@Nullable Exception e);
-
+        void onFailure(@Nullable Throwable e);
+        
         /**
          * 当任务结束时回调该方法
          */
         void onDone();
     }
-
+    
     public interface OnTaskProgressListener<Progress, Result> extends OnTaskListener<Result> {
-
+        
         void onUpdateProgress(Progress progress);
-
+        
     }
-
+    
     private List<OnTaskListener<Result>> listeners;
-
-    public final OnTaskListener<Result> removeOnTaskListener(OnTaskListener<Result> listener) {
+    
+    public OnTaskListener<Result> removeOnTaskListener(OnTaskListener<Result> listener) {
         return listeners != null && listeners.remove(listener) ? listener : null;
     }
-
-    public final CoreTask<Params, Progress, Result> addOnTaskListener(OnTaskListener<Result> listener) {
+    
+    public CoreTask<Params, Progress, Result> addOnTaskListener(OnTaskListener<Result> listener) {
         if (listener != null) {
             if (this.listeners == null) {
                 this.listeners = new ArrayList<>();
@@ -231,34 +231,34 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     }
 
 	/*任务记录*/
-
+    
     private enum TaskState {
-
+        
         INIT, PRE, DO, SUCCESS, FAILURE
-
+        
     }
-
+    
     private ResultHolder<Result> resultHolder;
-
+    
     private TaskState taskState = TaskState.INIT;
-
-    public final Result getPostedResult() {
+    
+    public Result getPostedResult() {
         return resultHolder != null ? resultHolder.result : null;
     }
-
-    public final Exception getPostedException() {
+    
+    public Throwable getPostedException() {
         return resultHolder != null ? resultHolder.e : null;
     }
-
-    public final TaskState getTaskState() {
+    
+    public TaskState getTaskState() {
         return taskState;
     }
 
 	/* 用户指示 */
-
+    
     private List<ITaskIndicator> indicators;
-
-    public final CoreTask<Params, Progress, Result> addIndicator(ITaskIndicator indicator) {
+    
+    public CoreTask<Params, Progress, Result> addIndicator(ITaskIndicator indicator) {
         if (indicator != null) {
             if (this.indicators == null) {
                 this.indicators = new ArrayList<>();
@@ -269,10 +269,10 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     }
 
     /* 开发模式 */
-
+    
     private Boolean isDevModeEnable;
     private LogUtil.Builder logBuilder;
-
+    
     private boolean isDevModeEnable() {
         if (isDevModeEnable == null) {
             //成员变量的速度比其他类的静态变量速度要快一点
@@ -280,25 +280,25 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
         }
         return isDevModeEnable;
     }
-
-    protected final void logDevMsg(Object... msgs) {
+    
+    protected void logDevMsg(Object... msgs) {
         if (isDevModeEnable()) {
             if (logBuilder == null) {
                 logBuilder = LogUtil.newBuilder();
                 logBuilder.setTag(ClassUtil.getTypeName(getClass()));
             }
-
+            
             logBuilder.append(msgs).log();
         }
     }
-
+    
     private void logException(Exception e) {
         if (isDevModeEnable()) {
             logDevMsg("抛出异常：");
             logDevMsg(e);
         }
     }
-
+    
     private void logTaskState() {
         if (isDevModeEnable()) {
             logDevMsg("Task状态：", taskState != null ? taskState.name() : null);
@@ -306,36 +306,36 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     }
 
 	/* 清空数据 */
-
+    
     private boolean cleared;
     private boolean clearMayInterruptIfRunning = false;
-
+    
     @Override
     public boolean isCleared() {
         return cleared;
     }
-
+    
     public CoreTask setClearMayInterruptIfRunning(boolean clearMayInterruptIfRunning) {
         this.clearMayInterruptIfRunning = clearMayInterruptIfRunning;
         return this;
     }
-
+    
     public boolean isClearMayInterruptIfRunning() {
         return clearMayInterruptIfRunning;
     }
-
+    
     @Override
-    public final void clear() {
+    public void clear() {
         clear(clearMayInterruptIfRunning);
     }
-
+    
     /**
      * 清理外部的引用，包括{@link #listeners}和{@link #indicators}，
      * 然后取消任务。
      *
      * @param mayInterruptIfRunning
      */
-    public final void clear(boolean mayInterruptIfRunning) {
+    public void clear(boolean mayInterruptIfRunning) {
         if (indicators != null) {
             for (ITaskIndicator indicator : indicators) {
                 if (indicator.isProgressing()) {
@@ -349,11 +349,11 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
             listeners.clear();
             listeners = null;
         }
-
+        
         if (!isCancelled()) {
             cancel(mayInterruptIfRunning);
         }
         cleared = true;
     }
-
+    
 }

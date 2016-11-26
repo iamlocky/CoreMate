@@ -20,7 +20,7 @@ public abstract class OnTaskProgressListenerImpl<Progress, Result> implements Co
     }
 
     @Override
-    public void onFailure(@Nullable Exception e) {
+    public void onFailure(@Nullable Throwable e) {
 
     }
 
