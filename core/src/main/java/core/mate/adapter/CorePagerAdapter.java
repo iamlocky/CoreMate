@@ -36,8 +36,7 @@ public abstract class CorePagerAdapter<Item> extends PagerAdapter {
         }
     }
 
-    @SafeVarargs
-    public CorePagerAdapter(Item... items) {
+    public CorePagerAdapter(Item[] items) {
         int size = DataUtil.getSize(items);
         data = new ArrayList<>(size);
         if (size > 0) {
@@ -125,7 +124,7 @@ public abstract class CorePagerAdapter<Item> extends PagerAdapter {
 
 	/*项目处理*/
 
-    public void display(Item... items) {
+    public void display(Item[] items) {
         this.data.clear();
         if (!DataUtil.isEmpty(items)) {
             Collections.addAll(this.data, items);
@@ -141,7 +140,7 @@ public abstract class CorePagerAdapter<Item> extends PagerAdapter {
         notifyDataSetChanged();
     }
 
-    public boolean add(Item... items) {
+    public boolean add(Item[] items) {
         if (!DataUtil.isEmpty(items) && Collections.addAll(this.data, items)) {
             notifyDataSetChanged();
             return true;

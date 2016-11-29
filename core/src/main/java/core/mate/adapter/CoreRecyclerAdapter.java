@@ -33,7 +33,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
     @SuppressWarnings("unchecked")
-    public CoreRecyclerAdapter(Item... items) {
+    public CoreRecyclerAdapter(Item[] items) {
         if (items != null) {
             Collections.addAll(this.data, items);
         }
@@ -50,11 +50,11 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     private Context context;
     private LayoutInflater inflater;
 
-    public final Context getContext() {
+    public Context getContext() {
         return context;
     }
 
-    public final LayoutInflater getInflater() {
+    public LayoutInflater getInflater() {
         return inflater;
     }
 
@@ -140,75 +140,75 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     private OnItemClickListener<Item> onItemClickListener;
     private OnItemLongClickListener<Item> onItemLongClickListener;
 
-    protected final OnItemClickListener<Item> getOnItemClickListener() {
+    protected OnItemClickListener<Item> getOnItemClickListener() {
         return onItemClickListener;
     }
 
-    protected final OnItemLongClickListener<Item> getOnItemLongClickListener() {
+    protected OnItemLongClickListener<Item> getOnItemLongClickListener() {
         return onItemLongClickListener;
     }
 
-    public final CoreRecyclerAdapter setOnItemClickListener(OnItemClickListener<Item> onItemClickListener) {
+    public CoreRecyclerAdapter setOnItemClickListener(OnItemClickListener<Item> onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
         return this;
     }
 
-    public final CoreRecyclerAdapter setOnItemLongClickListener(OnItemLongClickListener<Item> onItemLongClickListener) {
+    public CoreRecyclerAdapter setOnItemLongClickListener(OnItemLongClickListener<Item> onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
         return this;
     }
 
 	/* 数据处理 */
 
-	public void display(Item... items) {
-		this.data.clear();
-		if (items != null) {
-			Collections.addAll(this.data, items);
-		}
-		notifyDataSetChanged();
-	}
+    public void display(Item[] items) {
+        this.data.clear();
+        if (items != null) {
+            Collections.addAll(this.data, items);
+        }
+        notifyDataSetChanged();
+    }
 
-	public void display(Collection<Item> items) {
-		this.data.clear();
-		if (items != null) {
-			this.data.addAll(items);
-		}
-		notifyDataSetChanged();
-	}
+    public void display(Collection<Item> items) {
+        this.data.clear();
+        if (items != null) {
+            this.data.addAll(items);
+        }
+        notifyDataSetChanged();
+    }
 
-	public boolean add(Item... items) {
-		if (items != null && Collections.addAll(this.data, items)) {
-			notifyItemRangeInserted(this.data.size() - items.length, items.length);
-			return true;
-		}
-		return false;
-	}
+    public boolean add(Item[] items) {
+        if (items != null && Collections.addAll(this.data, items)) {
+            notifyItemRangeInserted(this.data.size() - items.length, items.length);
+            return true;
+        }
+        return false;
+    }
 
-	public boolean add(Collection<Item> items) {
-		if (items != null && this.data.addAll(items)) {
-			notifyItemRangeInserted(this.data.size() - items.size(), items.size());
-			return true;
-		}
-		return false;
-	}
+    public boolean add(Collection<Item> items) {
+        if (items != null && this.data.addAll(items)) {
+            notifyItemRangeInserted(this.data.size() - items.size(), items.size());
+            return true;
+        }
+        return false;
+    }
 
-	public boolean remove(Item item) {
-		int idx = this.data.indexOf(item);
-		return remove(idx);
-	}
+    public boolean remove(Item item) {
+        int idx = this.data.indexOf(item);
+        return remove(idx);
+    }
 
-	public boolean remove(int position) {
-		if (this.data.remove(position) != null) {
-			notifyItemRemoved(position);
-			return true;
-		}
-		return false;
-	}
+    public boolean remove(int position) {
+        if (this.data.remove(position) != null) {
+            notifyItemRemoved(position);
+            return true;
+        }
+        return false;
+    }
 
-	public void clear() {
-		this.data.clear();
-		notifyDataSetChanged();
-	}
+    public void clear() {
+        this.data.clear();
+        notifyDataSetChanged();
+    }
 
 	/*拓展*/
 
@@ -223,20 +223,24 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         }
     }
 
-	public final boolean isEmpty() {
-		return getItemCount() == 0;
-	}
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
 
-	/**
-	 * 浅复制一个和原始数据一样的列表。
-	 *
-	 * @return
-	 */
-	public final List<Item> cloneData() {
-		return new ArrayList<>(data);
-	}
+    protected List<Item> getSrcData() {
+        return data;
+    }
 
-    public final Iterator<Item> getIterator() {
+    /**
+     * 浅复制一个和原始数据一样的列表。
+     *
+     * @return
+     */
+    public List<Item> cloneData() {
+        return new ArrayList<>(data);
+    }
+
+    public Iterator<Item> getIterator() {
         return data.iterator();
     }
 
@@ -244,11 +248,11 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         return data.get(position);
     }
 
-    public final int indexOf(Item item) {
+    public int indexOf(Item item) {
         return data.indexOf(item);
     }
 
-    public final boolean contains(Item item) {
+    public boolean contains(Item item) {
         return data.contains(item);
     }
 }

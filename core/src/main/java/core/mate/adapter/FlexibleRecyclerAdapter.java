@@ -32,7 +32,7 @@ public class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, Recycle
 	public FlexibleRecyclerAdapter() {
 	}
 
-	public FlexibleRecyclerAdapter(AbsRecyclerItemType<?, ?>... itemTypes) {
+	public FlexibleRecyclerAdapter(AbsRecyclerItemType<?, ?>[] itemTypes) {
 		setTypes(itemTypes);
 	}
 
@@ -40,7 +40,7 @@ public class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, Recycle
 		setTypes(itemTypes);
 	}
 
-	public final FlexibleRecyclerAdapter setTypes(AbsRecyclerItemType<?, ?>... itemTypes) {
+	public final FlexibleRecyclerAdapter setTypes(AbsRecyclerItemType<?, ?>[] itemTypes) {
 		if (!this.itemTypes.isEmpty()) {
 			throw new IllegalStateException("Types无法重新初始化");
 		} else if (itemTypes == null || itemTypes.length == 0) {

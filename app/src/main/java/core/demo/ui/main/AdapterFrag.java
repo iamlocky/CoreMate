@@ -41,7 +41,7 @@ public class AdapterFrag extends ListFrag {
         super.refresh();
         SimpleAdapter<String> adapter = getAdapter();
         //刷新数据
-        adapter.display(
+        adapter.display(new String[]{
                 "\\(^o^)/阿萨德撒的萨达哀伤",
                 "b(￣▽￣)d",
                 "ヾ(≧▽≦*)o",
@@ -49,7 +49,7 @@ public class AdapterFrag extends ListFrag {
                 "_(:зゝ∠)_",
                 "(◑▽◐)",
                 "哼(ˉ(∞)ˉ)唧"
-        );
+        });
     }
 
     @Override

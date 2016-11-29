@@ -36,7 +36,7 @@ public class SimplePagerAdapter extends CorePagerAdapter<SimplePagerAdapter.Page
             this.title = title;
         }
 
-        public static PagerData[] asArray(@LayoutRes int... layoutIds) {
+        public static PagerData[] asArray(@LayoutRes int[] layoutIds) {
             int len = layoutIds.length;
             PagerData[] arr = new PagerData[len];
             for (int i = 0; i < len; i++) {
@@ -55,7 +55,7 @@ public class SimplePagerAdapter extends CorePagerAdapter<SimplePagerAdapter.Page
         super(pagerData);
     }
 
-    public SimplePagerAdapter(PagerData... pagerData) {
+    public SimplePagerAdapter(PagerData[] pagerData) {
         super(pagerData);
     }
 

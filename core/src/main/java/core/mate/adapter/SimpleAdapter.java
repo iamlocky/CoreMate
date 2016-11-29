@@ -20,8 +20,7 @@ public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHo
         this(new SimpleViewCreator(layoutId));
     }
 
-    @SafeVarargs
-    public SimpleAdapter(@LayoutRes int layoutId, Item... itemArr) {
+    public SimpleAdapter(@LayoutRes int layoutId, Item[] itemArr) {
         this(new SimpleViewCreator(layoutId), itemArr);
     }
 
@@ -33,8 +32,7 @@ public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHo
         this(new SimpleViewCreator(viewClass));
     }
 
-    @SafeVarargs
-    public SimpleAdapter(Class<? extends View> viewClass, Item... itemArr) {
+    public SimpleAdapter(Class<? extends View> viewClass, Item[] itemArr) {
         this(new SimpleViewCreator(viewClass), itemArr);
     }
 
@@ -46,8 +44,7 @@ public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHo
         this.viewCreator = viewCreator;
     }
 
-    @SafeVarargs
-    public SimpleAdapter(ViewCreator viewCreator, Item... itemArr) {
+    public SimpleAdapter(ViewCreator viewCreator, Item[] itemArr) {
         super(itemArr);
         this.viewCreator = viewCreator;
     }

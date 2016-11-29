@@ -23,7 +23,7 @@ public class FlexibleAdapter extends CoreAdapter<Object, AbsViewHolder<Object>> 
 	public FlexibleAdapter() {
 	}
 
-	public FlexibleAdapter(AbsItemType<?, ?>... itemTypes) {
+	public FlexibleAdapter(AbsItemType<?, ?>[] itemTypes) {
 		setTypes(itemTypes);
 	}
 
@@ -31,7 +31,7 @@ public class FlexibleAdapter extends CoreAdapter<Object, AbsViewHolder<Object>> 
 		setTypes(itemTypes);
 	}
 
-	public final FlexibleAdapter setTypes(AbsItemType<?, ?>... itemTypes) {
+	public final FlexibleAdapter setTypes(AbsItemType<?, ?>[] itemTypes) {
 		if (!this.itemTypes.isEmpty()) {
 			throw new IllegalStateException("Types无法重新初始化");
 		} else if (itemTypes == null || itemTypes.length == 0) {
