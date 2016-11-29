@@ -45,8 +45,6 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         }
     }
 
-	/* 继承 */
-
     private Context context;
     private LayoutInflater inflater;
 
@@ -159,7 +157,19 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
 	/* 数据处理 */
-
+    
+    /**
+     * 传递{@link #display(Object[])}方法。
+     * <p>
+     * 该方法是不定参数的，当item泛型为Object时容易造成歧义，
+     * 到时建议重写该方法直接抛出异常。
+     *
+     * @param items
+     */
+    public void displayEx(Item... items) {
+        display(items);
+    }
+	
     public void display(Item[] items) {
         this.data.clear();
         if (items != null) {
@@ -175,7 +185,19 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         }
         notifyDataSetChanged();
     }
-
+    
+    /**
+     * 传递{@link #add(Object[])} 方法。
+     * <p>
+     * 该方法是不定参数的，当item泛型为Object时容易造成歧义，
+     * 到时建议重写该方法直接抛出异常。
+     *
+     * @param items
+     */
+    public void addEx(Item... items) {
+        add(items);
+    }
+    
     public boolean add(Item[] items) {
         if (items != null && Collections.addAll(this.data, items)) {
             notifyItemRangeInserted(this.data.size() - items.length, items.length);

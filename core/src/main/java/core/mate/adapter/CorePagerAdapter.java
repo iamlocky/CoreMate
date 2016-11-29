@@ -72,7 +72,7 @@ public abstract class CorePagerAdapter<Item> extends PagerAdapter {
         View view = views.get(position);
         if (view == null) {
             Item data = getItem(position);
-            view = onCreateItemView(inflater, container, position, data);
+            view = createView(inflater, container, position, data);
 
             views.put(position, view);
 
@@ -120,10 +120,22 @@ public abstract class CorePagerAdapter<Item> extends PagerAdapter {
 	/*内部回调*/
 
     @NonNull
-    protected abstract View onCreateItemView(LayoutInflater inflater, ViewGroup container, int position, Item data);
+    protected abstract View createView(LayoutInflater inflater, ViewGroup container, int position, Item data);
 
 	/*项目处理*/
-
+    
+    /**
+     * 传递{@link #display(Object[])}方法。
+     * <p>
+     * 该方法是不定参数的，当item泛型为Object时容易造成歧义，
+     * 到时建议重写该方法直接抛出异常。
+     *
+     * @param items
+     */
+    public void displayEx(Item... items) {
+        display(items);
+    }
+    
     public void display(Item[] items) {
         this.data.clear();
         if (!DataUtil.isEmpty(items)) {
@@ -139,7 +151,19 @@ public abstract class CorePagerAdapter<Item> extends PagerAdapter {
         }
         notifyDataSetChanged();
     }
-
+    
+    /**
+     * 传递{@link #add(Object[])} 方法。
+     * <p>
+     * 该方法是不定参数的，当item泛型为Object时容易造成歧义，
+     * 到时建议重写该方法直接抛出异常。
+     *
+     * @param items
+     */
+    public void addEx(Item... items) {
+        add(items);
+    }
+    
     public boolean add(Item[] items) {
         if (!DataUtil.isEmpty(items) && Collections.addAll(this.data, items)) {
             notifyDataSetChanged();

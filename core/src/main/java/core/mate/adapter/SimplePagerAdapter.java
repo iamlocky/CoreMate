@@ -17,25 +17,25 @@ import core.mate.util.ContextUtil;
  * @since 2016年2月10日22:43:57
  */
 public class SimplePagerAdapter extends CorePagerAdapter<SimplePagerAdapter.PagerData> {
-
+    
     public static class PagerData {
-
+        
         public final int layoutId;
         public final String title;
-
+        
         public PagerData(@LayoutRes int layoutId, @StringRes int titleId) {
             this(layoutId, ContextUtil.getString(titleId));
         }
-
+        
         public PagerData(@LayoutRes int layoutId) {
             this(layoutId, null);
         }
-
+        
         public PagerData(@LayoutRes int layoutId, @Nullable String title) {
             this.layoutId = layoutId;
             this.title = title;
         }
-
+        
         public static PagerData[] asArray(@LayoutRes int[] layoutIds) {
             int len = layoutIds.length;
             PagerData[] arr = new PagerData[len];
@@ -45,31 +45,29 @@ public class SimplePagerAdapter extends CorePagerAdapter<SimplePagerAdapter.Page
             return arr;
         }
     }
-
-	/*构造*/
-
+    
     public SimplePagerAdapter() {
     }
-
+    
     public SimplePagerAdapter(Collection<PagerData> pagerData) {
         super(pagerData);
     }
-
+    
     public SimplePagerAdapter(PagerData[] pagerData) {
         super(pagerData);
     }
 
 	/*继承*/
-
+    
     @Override
-    public final CharSequence getPageTitle(int position) {
+    public CharSequence getPageTitle(int position) {
         return getItem(position).title;
     }
-
+    
     @NonNull
     @Override
-    protected final View onCreateItemView(LayoutInflater inflater, ViewGroup container, int position, PagerData data) {
+    protected View createView(LayoutInflater inflater, ViewGroup container, int position, PagerData data) {
         return inflater.inflate(data.layoutId, container, false);
     }
-
+    
 }
