@@ -1,83 +1,70 @@
 package core.mate.adapter;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.reflect.Constructor;
 import java.util.Collection;
 
-import core.mate.util.LogUtil;
+public abstract class SimpleRecyclerAdapter<Item> extends CoreRecyclerAdapter<Item, SimpleRecyclerViewHolder> {
 
-public abstract class SimpleRecyclerAdapter<Item> extends CoreRecyclerAdapter<Item,SimpleRecyclerViewHolder> {
+    private final ViewCreator viewCreator;
 
-	private final int layoutId;
-	private final Class<? extends View> viewClass;
+    public SimpleRecyclerAdapter(@LayoutRes int layoutId) {
+        this(new SimpleViewCreator(layoutId));
+    }
 
-	public SimpleRecyclerAdapter (@LayoutRes int layoutId) {
-		this.layoutId = layoutId;
-		this.viewClass = null;
-	}
+    @SafeVarargs
+    public SimpleRecyclerAdapter(@LayoutRes int layoutId, Item... itemArr) {
+        this(new SimpleViewCreator(layoutId), itemArr);
+    }
 
-	@SafeVarargs
-	public SimpleRecyclerAdapter (@LayoutRes int layoutId, Item... itemArr) {
-		super(itemArr);
-		this.layoutId = layoutId;
-		this.viewClass = null;
-	}
+    public SimpleRecyclerAdapter(@LayoutRes int layoutId, Collection<Item> items) {
+        this(new SimpleViewCreator(layoutId), items);
+    }
 
-	public SimpleRecyclerAdapter (@LayoutRes int layoutId, Collection<Item> items) {
-		super(items);
-		this.layoutId = layoutId;
-		this.viewClass = null;
-	}
+    public SimpleRecyclerAdapter(Class<? extends View> viewClass) {
+        this(new SimpleViewCreator(viewClass));
+    }
 
-	public SimpleRecyclerAdapter (Class<? extends View> viewClass) {
-		this.viewClass = viewClass;
-		this.layoutId = 0;
-	}
+    @SafeVarargs
+    public SimpleRecyclerAdapter(Class<? extends View> viewClass, Item... itemArr) {
+        this(new SimpleViewCreator(viewClass), itemArr);
+    }
 
-	@SafeVarargs
-	public SimpleRecyclerAdapter (Class<? extends View> viewClass, Item... itemArr) {
-		super(itemArr);
-		this.viewClass = viewClass;
-		this.layoutId = 0;
-	}
+    public SimpleRecyclerAdapter(Class<? extends View> viewClass, Collection<Item> items) {
+        this(new SimpleViewCreator(viewClass), items);
+    }
 
-	public SimpleRecyclerAdapter (Class<? extends View> viewClass, Collection<Item> items) {
-		super(items);
-		this.viewClass = viewClass;
-		this.layoutId = 0;
-	}
+    public SimpleRecyclerAdapter(ViewCreator viewCreator) {
+        this.viewCreator = viewCreator;
+    }
+
+    @SafeVarargs
+    public SimpleRecyclerAdapter(ViewCreator viewCreator, Item... itemArr) {
+        super(itemArr);
+        this.viewCreator = viewCreator;
+    }
+
+    public SimpleRecyclerAdapter(ViewCreator viewCreator, Collection<Item> items) {
+        super(items);
+        this.viewCreator = viewCreator;
+    }
 
 	/*继承*/
 
-	@NonNull
-	@Override
-	protected final SimpleRecyclerViewHolder createViewHolder (LayoutInflater inflater, ViewGroup parent, int type) {
-		View view = null;
-		if (layoutId > 0) {
-			view = inflater.inflate(layoutId, parent, false);
-		} else if (viewClass != null) {
-			try {
-				Constructor constructor = viewClass.getConstructor(Context.class);
-				view = (View) constructor.newInstance(inflater.getContext());
-			} catch (Exception e) {
-				LogUtil.e(e);
-			}
-		}
-		if (view != null) {
-			SimpleRecyclerViewHolder viewHolder =new SimpleRecyclerViewHolder(view);
-            onViewHolderCreated(viewHolder,type);
-			return viewHolder;
-		}
-		throw new IllegalStateException("无法实例化项目视图");
-	}
+    @NonNull
+    @Override
+    protected final SimpleRecyclerViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent, int type) {
+        View view = viewCreator.create(getContext(), inflater, parent);
+        SimpleRecyclerViewHolder viewHolder = new SimpleRecyclerViewHolder(view);
+        onViewHolderCreated(viewHolder, type);
+        return viewHolder;
+    }
 
-	protected void onViewHolderCreated(SimpleRecyclerViewHolder holder, int viewType) {
+    protected void onViewHolderCreated(SimpleRecyclerViewHolder holder, int viewType) {
 
-	}
+    }
 }

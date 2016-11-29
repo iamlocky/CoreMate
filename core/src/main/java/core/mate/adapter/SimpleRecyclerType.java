@@ -16,40 +16,42 @@ import core.mate.util.LogUtil;
  */
 public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item, SimpleRecyclerViewHolder> {
 
-    private int layoutId;
-    private final Class<? extends View> viewClass;
+    private final ViewCreator viewCreator;
 
     public SimpleRecyclerType(@LayoutRes int layoutId) {
-        this.layoutId = layoutId;
-        this.viewClass = null;
+        this(new SimpleViewCreator(layoutId));
     }
 
     public SimpleRecyclerType(Class<? extends View> viewClass) {
-        this.layoutId = 0;
-        this.viewClass = viewClass;
+        this(new SimpleViewCreator(viewClass));
     }
 
-	/*继承*/
+    public SimpleRecyclerType(ViewCreator viewCreator) {
+        this.viewCreator = viewCreator;
+    }
+
+    private Context context;
+    private LayoutInflater inflater;
+
+    public Context getContext() {
+        return context;
+    }
+
+    public LayoutInflater getInflater() {
+        return inflater;
+    }
 
     @Override
     public final SimpleRecyclerViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent) {
-        View view = null;
-        if (layoutId > 0) {
-            view = inflater.inflate(layoutId, parent, false);
-        } else if (viewClass != null) {
-            try {
-                Constructor constructor = viewClass.getConstructor(Context.class);
-                view = (View) constructor.newInstance(inflater.getContext());
-            } catch (Exception e) {
-                LogUtil.e(e);
-            }
+        if (this.context == null) {
+            context = inflater.getContext();
+            this.inflater = inflater;
         }
-        if (view != null) {
-            SimpleRecyclerViewHolder holder = new SimpleRecyclerViewHolder(view);
-            onViewHolderCreated(holder);
-            return holder;
-        }
-        throw new IllegalStateException("无法实例化项目视图");
+
+        View view = viewCreator.create(getContext(), inflater, parent);
+        SimpleRecyclerViewHolder holder = new SimpleRecyclerViewHolder(view);
+        onViewHolderCreated(holder);
+        return holder;
     }
 
     protected void onViewHolderCreated(SimpleRecyclerViewHolder holder) {

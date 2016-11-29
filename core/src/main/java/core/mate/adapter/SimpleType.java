@@ -7,49 +7,49 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.reflect.Constructor;
-
-import core.mate.util.LogUtil;
-
 /**
  * @author DrkCore
  * @since 2016年1月18日20:53:04
  */
 public abstract class SimpleType<Item> extends AbsItemType<Item, SimpleViewHolder<Item>> {
 
-    private int layoutId;
-    private final Class<? extends View> viewClass;
+    private final ViewCreator viewCreator;
 
     public SimpleType(@LayoutRes int layoutId) {
-        this.layoutId = layoutId;
-        this.viewClass = null;
+        this(new SimpleViewCreator(layoutId));
     }
 
     public SimpleType(Class<? extends View> viewClass) {
-        this.layoutId = 0;
-        this.viewClass = viewClass;
+        this(new SimpleViewCreator(viewClass));
+    }
+
+    public SimpleType(ViewCreator viewCreator) {
+        this.viewCreator = viewCreator;
+    }
+
+    private Context context;
+    private LayoutInflater inflater;
+
+    public Context getContext() {
+        return context;
+    }
+
+    public LayoutInflater getInflater() {
+        return inflater;
     }
 
     @NonNull
     @Override
     public final SimpleViewHolder<Item> createViewHolder(LayoutInflater inflater, ViewGroup parent) {
-        View view = null;
-        if (layoutId > 0) {
-            view = inflater.inflate(layoutId, parent, false);
-        } else if (viewClass != null) {
-            try {
-                Constructor constructor = viewClass.getConstructor(Context.class);
-                view = (View) constructor.newInstance(inflater.getContext());
-            } catch (Exception e) {
-                LogUtil.e(e);
-            }
+        if (this.context == null) {
+            context = inflater.getContext();
+            this.inflater = inflater;
         }
-        if (view != null) {
-            SimpleViewHolder<Item> viewHolder = new SimpleViewHolder<>(view);
-            onViewHolderCreated(viewHolder);
-            return viewHolder;
-        }
-        throw new IllegalStateException("无法实例化项目视图");
+
+        View view = viewCreator.create(getContext(), inflater, parent);
+        SimpleViewHolder<Item> viewHolder = new SimpleViewHolder<>(view);
+        onViewHolderCreated(viewHolder);
+        return viewHolder;
     }
 
     protected void onViewHolderCreated(SimpleViewHolder<Item> holder) {

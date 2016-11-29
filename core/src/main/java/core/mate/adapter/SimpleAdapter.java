@@ -1,16 +1,12 @@
 package core.mate.adapter;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.reflect.Constructor;
 import java.util.Collection;
-
-import core.mate.util.LogUtil;
 
 /**
  * @author DrkCore
@@ -18,67 +14,58 @@ import core.mate.util.LogUtil;
  */
 public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHolder<Item>> {
 
-    private final int layoutId;
-    private final Class<? extends View> viewClass;
+    private final ViewCreator viewCreator;
 
     public SimpleAdapter(@LayoutRes int layoutId) {
-        this.layoutId = layoutId;
-        this.viewClass = null;
+        this(new SimpleViewCreator(layoutId));
     }
 
     @SafeVarargs
     public SimpleAdapter(@LayoutRes int layoutId, Item... itemArr) {
-        super(itemArr);
-        this.layoutId = layoutId;
-        this.viewClass = null;
+        this(new SimpleViewCreator(layoutId), itemArr);
     }
 
     public SimpleAdapter(@LayoutRes int layoutId, Collection<Item> items) {
-        super(items);
-        this.layoutId = layoutId;
-        this.viewClass = null;
+        this(new SimpleViewCreator(layoutId), items);
     }
 
     public SimpleAdapter(Class<? extends View> viewClass) {
-        this.viewClass = viewClass;
-        this.layoutId = 0;
+        this(new SimpleViewCreator(viewClass));
     }
 
     @SafeVarargs
     public SimpleAdapter(Class<? extends View> viewClass, Item... itemArr) {
-        super(itemArr);
-        this.viewClass = viewClass;
-        this.layoutId = 0;
+        this(new SimpleViewCreator(viewClass), itemArr);
     }
 
     public SimpleAdapter(Class<? extends View> viewClass, Collection<Item> items) {
-        super(items);
-        this.viewClass = viewClass;
-        this.layoutId = 0;
+        this(new SimpleViewCreator(viewClass), items);
     }
 
-	/*继承*/
+    public SimpleAdapter(ViewCreator viewCreator) {
+        this.viewCreator = viewCreator;
+    }
+
+    @SafeVarargs
+    public SimpleAdapter(ViewCreator viewCreator, Item... itemArr) {
+        super(itemArr);
+        this.viewCreator = viewCreator;
+    }
+
+    public SimpleAdapter(ViewCreator viewCreator, Collection<Item> items) {
+        super(items);
+        this.viewCreator = viewCreator;
+    }
+
+    /*继承*/
 
     @NonNull
     @Override
     protected final SimpleViewHolder<Item> createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        View view = null;
-        if (layoutId > 0) {
-            view = inflater.inflate(layoutId, parent, false);
-        } else if (viewClass != null) {
-            try {
-                Constructor constructor = viewClass.getConstructor(Context.class);
-                view = (View) constructor.newInstance(inflater.getContext());
-            } catch (Exception e) {
-                LogUtil.e(e);
-            }
-        }
-        if (view != null) {
-            SimpleViewHolder<Item> viewHolder =new SimpleViewHolder<>(view);
-            onViewHolderCreated(viewHolder,viewType);
-            return viewHolder;
-        }
-        throw new IllegalStateException("无法实例化项目视图");
+        View view = viewCreator.create(getContext(), inflater, parent);
+        SimpleViewHolder<Item> viewHolder = new SimpleViewHolder<>(view);
+        onViewHolderCreated(viewHolder, viewType);
+        return viewHolder;
     }
 
     protected void onViewHolderCreated(SimpleViewHolder<Item> holder, int viewType) {
