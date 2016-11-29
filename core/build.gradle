@@ -6,13 +6,13 @@ apply plugin: 'me.tatarka.retrolambda'
 android {
 
     compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 7
-        versionName "1.0.7"
+        versionCode 8
+        versionName "1.0.8"
     }
 
     buildTypes {
@@ -24,6 +24,9 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -31,7 +34,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.0'
 }
 
-version = "1.0.7"
+version = "1.0.8"
 
 def siteUrl = 'https://github.com/DrkCore/CoreMate'
 def gitUrl = 'git@github.com:DrkCore/CoreMate.git'
