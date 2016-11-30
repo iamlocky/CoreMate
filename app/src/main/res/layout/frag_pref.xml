@@ -23,7 +23,7 @@
         android:text="读取数据如下：" />
 
     <TextView
-        android:id="@+id/textView_frag_pref_reuslt"
+        android:id="@+id/textView_frag_pref_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

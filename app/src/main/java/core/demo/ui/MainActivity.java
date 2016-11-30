@@ -47,7 +47,7 @@ public class MainActivity extends CoreActivity {
                 //使用FragHelper快速切换Fragment
                 //CoreFrag已经处理了重建Activity后Frag重叠的问题
                 Class clz = (Class) tab.getTag();
-                curFrag = getFragHelper().switchFrag(R.id.frameLayout_main_fragContaienr, curFrag, clz);
+                curFrag = getFragHelper().switchFrag(R.id.frameLayout_main_fragContainer, curFrag, clz);
             }
 
             @Override

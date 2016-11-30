@@ -3,7 +3,6 @@ package core.mate.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 
 /**
  * 封装了分隔符处理的Operator

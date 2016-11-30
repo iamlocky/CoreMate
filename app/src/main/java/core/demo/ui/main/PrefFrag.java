@@ -36,7 +36,7 @@ public class PrefFrag extends CoreFrag {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         editText = (EditText) view.findViewById(R.id.editText_frag_pref);
-        textView = (TextView) view.findViewById(R.id.textView_frag_pref_reuslt);
+        textView = (TextView) view.findViewById(R.id.textView_frag_pref_result);
 
         view.findViewById(R.id.button_frag_pref_start).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,10 +1,10 @@
 package core.mate.widget;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
-public class SquareImageView extends ImageView {
+public class SquareImageView extends AppCompatImageView {
 
 	public SquareImageView(Context context) {
 		super(context);
@@ -25,7 +25,6 @@ public class SquareImageView extends ImageView {
 		setMeasuredDimension(getDefaultSize(0, widthMeasureSpec), getDefaultSize(0, heightMeasureSpec));
 
 		int childWidth = getMeasuredWidth();
-		int childHeight = getMeasuredHeight();
 
 		// 使Layout的高度等于宽度
 		heightMeasureSpec = widthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.EXACTLY);

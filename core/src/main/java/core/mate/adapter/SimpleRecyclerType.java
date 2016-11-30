@@ -6,10 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.reflect.Constructor;
-
-import core.mate.util.LogUtil;
-
 /**
  * @author DrkCore
  * @since 2016年2月1日00:06:31

@@ -25,7 +25,7 @@ public final class IOUtil {
 
     /**
      * 静默关闭输入流。
-     * 如果clostable同时
+     * 如果closeable同时
      *
      * @param closeable
      */
