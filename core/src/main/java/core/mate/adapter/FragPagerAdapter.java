@@ -16,7 +16,7 @@ public class FragPagerAdapter extends FragmentPagerAdapter {
     private final Class[] fragClzs;
     private final Fragment[] frags;
 
-    public FragPagerAdapter(FragmentManager fm, Class[] fragClzs) {
+    public FragPagerAdapter(FragmentManager fm, Class... fragClzs) {
         super(fm);
         this.fragClzs = fragClzs;
         this.frags = new Fragment[fragClzs.length];

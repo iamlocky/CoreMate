@@ -53,7 +53,7 @@ public class SimplePagerAdapter extends CorePagerAdapter<SimplePagerAdapter.Page
         super(pagerData);
     }
     
-    public SimplePagerAdapter(PagerData[] pagerData) {
+    public SimplePagerAdapter(PagerData... pagerData) {
         super(pagerData);
     }
 

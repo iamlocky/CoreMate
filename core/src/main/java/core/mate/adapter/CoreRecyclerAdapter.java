@@ -258,7 +258,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
      *
      * @return
      */
-    public List<Item> cloneData() {
+    public List<Item> getData() {
         return new ArrayList<>(data);
     }
 

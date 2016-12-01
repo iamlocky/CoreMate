@@ -204,7 +204,7 @@ public abstract class CoreAdapter<Item, Holder extends AbsViewHolder<Item>> exte
      *
      * @return
      */
-    public List<Item> cloneData() {
+    public List<Item> getData() {
         return new ArrayList<>(data);
     }
     

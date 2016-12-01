@@ -20,7 +20,7 @@ public class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, Recycle
     
     private final List<AbsRecyclerItemType> itemTypes = new ArrayList<>();
     
-    public final AbsRecyclerItemType getItemType(Class clz) {
+    public final AbsRecyclerItemType findItemType(Class clz) {
         for (AbsRecyclerItemType itemType : itemTypes) {
             if (itemType.getClass() == clz) {
                 return itemType;
@@ -28,11 +28,15 @@ public class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, Recycle
         }
         return null;
     }
-    
+
+    public List<AbsRecyclerItemType> getItemTypes() {
+        return new ArrayList<>(itemTypes);
+    }
+
     public FlexibleRecyclerAdapter() {
     }
     
-    public FlexibleRecyclerAdapter(AbsRecyclerItemType<?, ?>[] itemTypes) {
+    public FlexibleRecyclerAdapter(AbsRecyclerItemType<?, ?>... itemTypes) {
         setTypes(itemTypes);
     }
     
@@ -40,7 +44,7 @@ public class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object, Recycle
         setTypes(itemTypes);
     }
     
-    public final FlexibleRecyclerAdapter setTypes(AbsRecyclerItemType<?, ?>[] itemTypes) {
+    public final FlexibleRecyclerAdapter setTypes(AbsRecyclerItemType<?, ?>... itemTypes) {
         if (!this.itemTypes.isEmpty()) {
             throw new IllegalStateException("Types无法重新初始化");
         } else if (itemTypes == null || itemTypes.length == 0) {

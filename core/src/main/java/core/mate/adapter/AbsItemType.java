@@ -40,7 +40,7 @@ public abstract class AbsItemType<Item, Holder extends AbsViewHolder<Item>> {
 				* 同时，因为FlexibleAdapter的适配泛型是Object，
 				* 会和add等方法冲突导致找不到可适配的ViewOperator。
 				*
-				* 如果必须要使用Collection的话，更建议使用一个JavaBean来包裹所需的数据。
+				* 如果必须要使用Collection的话，可以使用数组类型，或者使用一个JavaBean来包裹所需的数据。
 				*/
             TextBuilder textBuilder = new TextBuilder();
             textBuilder.append("obj = ", obj).appendNewLine("  type = ", obj.getClass())
