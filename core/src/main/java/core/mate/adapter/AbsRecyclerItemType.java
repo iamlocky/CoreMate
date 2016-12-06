@@ -31,6 +31,10 @@ public abstract class AbsRecyclerItemType<Item> {
         return this;
     }
 
+    public FlexibleRecyclerAdapter getAdapter() {
+        return adapter;
+    }
+
     public final boolean canHandleObject(Object obj) {
         if (type == null) {
             Type types[] = ClassUtil.getGenericParametersType(getClass());
