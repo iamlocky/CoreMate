@@ -11,18 +11,18 @@ import android.widget.AbsListView;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class RecyclerSpanType extends AbsRecyclerItemType<Span, SimpleRecyclerViewHolder> {
+public final class RecyclerSpanType extends AbsRecyclerItemType<Span> {
 
 	/* 继承 */
 
-	@Override
-	public SimpleRecyclerViewHolder createViewHolder (LayoutInflater inflater, ViewGroup parent) {
-		return new SimpleRecyclerViewHolder(new Space(parent.getContext()));
-	}
+    @Override
+    public SimpleRecyclerViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent) {
+        return new SimpleRecyclerViewHolder(new Space(parent.getContext()));
+    }
 
-	@Override
-	public void bindViewData(SimpleRecyclerViewHolder holder, int position, Span data) {
-		AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, data.getHeightPx());
-		holder.itemView.setLayoutParams(layoutParams);
-	}
+    @Override
+    public void bindViewData(SimpleRecyclerViewHolder holder, int position, Span data) {
+        AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, data.getHeightPx());
+        holder.itemView.setLayoutParams(layoutParams);
+    }
 }

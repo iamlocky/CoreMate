@@ -11,7 +11,7 @@ import android.view.ViewGroup;
  * @author DrkCore
  * @since 2016年1月18日20:53:04
  */
-public abstract class SimpleType<Item> extends AbsItemType<Item, SimpleViewHolder<Item>> {
+public abstract class SimpleType<Item> extends AbsItemType<Item> {
 
     private final ViewCreator viewCreator;
 
@@ -40,19 +40,19 @@ public abstract class SimpleType<Item> extends AbsItemType<Item, SimpleViewHolde
 
     @NonNull
     @Override
-    public final SimpleViewHolder<Item> createViewHolder(LayoutInflater inflater, ViewGroup parent) {
+    public final SimpleViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent) {
         if (this.context == null) {
             context = inflater.getContext();
             this.inflater = inflater;
         }
 
         View view = viewCreator.create(getContext(), inflater, parent);
-        SimpleViewHolder<Item> viewHolder = new SimpleViewHolder<>(view);
+        SimpleViewHolder viewHolder = new SimpleViewHolder(view);
         onViewHolderCreated(viewHolder);
         return viewHolder;
     }
 
-    protected void onViewHolderCreated(SimpleViewHolder<Item> holder) {
+    protected void onViewHolderCreated(SimpleViewHolder holder) {
 
     }
 

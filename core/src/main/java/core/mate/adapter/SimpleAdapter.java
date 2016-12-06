@@ -12,7 +12,7 @@ import java.util.Collection;
  * @author DrkCore
  * @since 2016年1月18日20:47:27
  */
-public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHolder<Item>> {
+public abstract class SimpleAdapter<Item> extends CoreAdapter<Item> {
 
     private final ViewCreator viewCreator;
 
@@ -20,7 +20,7 @@ public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHo
         this(new SimpleViewCreator(layoutId));
     }
 
-    public SimpleAdapter(@LayoutRes int layoutId, Item[] itemArr) {
+    public SimpleAdapter(@LayoutRes int layoutId, Item... itemArr) {
         this(new SimpleViewCreator(layoutId), itemArr);
     }
 
@@ -32,7 +32,7 @@ public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHo
         this(new SimpleViewCreator(viewClass));
     }
 
-    public SimpleAdapter(Class<? extends View> viewClass, Item[] itemArr) {
+    public SimpleAdapter(Class<? extends View> viewClass, Item... itemArr) {
         this(new SimpleViewCreator(viewClass), itemArr);
     }
 
@@ -44,7 +44,7 @@ public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHo
         this.viewCreator = viewCreator;
     }
 
-    public SimpleAdapter(ViewCreator viewCreator, Item[] itemArr) {
+    public SimpleAdapter(ViewCreator viewCreator, Item... itemArr) {
         super(itemArr);
         this.viewCreator = viewCreator;
     }
@@ -58,14 +58,14 @@ public abstract class SimpleAdapter<Item> extends CoreAdapter<Item, SimpleViewHo
 
     @NonNull
     @Override
-    protected final SimpleViewHolder<Item> createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+    protected final SimpleViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
         View view = viewCreator.create(getContext(), inflater, parent);
-        SimpleViewHolder<Item> viewHolder = new SimpleViewHolder<>(view);
+        SimpleViewHolder viewHolder = new SimpleViewHolder(view);
         onViewHolderCreated(viewHolder, viewType);
         return viewHolder;
     }
 
-    protected void onViewHolderCreated(SimpleViewHolder<Item> holder, int viewType) {
+    protected void onViewHolderCreated(SimpleViewHolder holder, int viewType) {
 
     }
 

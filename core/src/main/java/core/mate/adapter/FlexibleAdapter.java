@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ import java.util.List;
  * @author DrkCore
  * @since 2015年10月13日17:59:29
  */
-public class FlexibleAdapter extends CoreAdapter<Object, AbsViewHolder<Object>> {
+public class FlexibleAdapter extends CoreAdapter<Object> {
 
     private final List<AbsItemType> itemTypes = new ArrayList<>();
 
@@ -36,7 +35,7 @@ public class FlexibleAdapter extends CoreAdapter<Object, AbsViewHolder<Object>> 
     public FlexibleAdapter() {
     }
 
-    public FlexibleAdapter(AbsItemType<?, ?>... itemTypes) {
+    public FlexibleAdapter(AbsItemType<?>... itemTypes) {
         setTypes(itemTypes);
     }
 
@@ -44,14 +43,17 @@ public class FlexibleAdapter extends CoreAdapter<Object, AbsViewHolder<Object>> 
         setTypes(itemTypes);
     }
 
-    public final FlexibleAdapter setTypes(AbsItemType<?, ?>... itemTypes) {
+    public final FlexibleAdapter setTypes(AbsItemType<?>... itemTypes) {
         if (!this.itemTypes.isEmpty()) {
             throw new IllegalStateException("Types无法重新初始化");
         } else if (itemTypes == null || itemTypes.length == 0) {
             throw new IllegalArgumentException("Types不能为空");
         }
 
-        Collections.addAll(this.itemTypes, itemTypes);
+        for (int i = 0, len = itemTypes.length; i < len; i++) {
+            itemTypes[i].setAdapter(this);
+            this.itemTypes.add(itemTypes[i]);
+        }
         return this;
     }
 
@@ -62,6 +64,9 @@ public class FlexibleAdapter extends CoreAdapter<Object, AbsViewHolder<Object>> 
             throw new IllegalArgumentException("Types不能为空");
         }
 
+        for(AbsItemType itemType:itemTypes){
+            itemType.setAdapter(this);
+        }
         this.itemTypes.addAll(itemTypes);
         return this;
     }
@@ -71,13 +76,13 @@ public class FlexibleAdapter extends CoreAdapter<Object, AbsViewHolder<Object>> 
     @NonNull
     @SuppressWarnings("unchecked")
     @Override
-    protected final AbsViewHolder<Object> createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        return (AbsViewHolder<Object>) itemTypes.get(viewType).createViewHolder(inflater, parent);
+    protected final SimpleViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+        return itemTypes.get(viewType).createViewHolder(inflater, parent);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected final void bindViewData(AbsViewHolder<Object> holder, int position, Object data, int viewType) {
+    protected final void bindViewData(SimpleViewHolder holder, int position, Object data, int viewType) {
         AbsItemType operator = itemTypes.get(viewType);
         operator.bindViewData(holder, position, data);
     }
@@ -101,15 +106,5 @@ public class FlexibleAdapter extends CoreAdapter<Object, AbsViewHolder<Object>> 
             throw new IllegalStateException("Types未初始化");
         }
         return size;
-    }
-
-    @Override
-    public final void displayEx(Object... objects) {
-        throw new IllegalStateException("为了避免数组对象引起歧义不建议在" + getClass() + "中使用不定参数的方法");
-    }
-
-    @Override
-    public final void addEx(Object... objects) {
-        throw new IllegalStateException("为了避免数组对象引起歧义不建议在" + getClass() + "中使用不定参数的方法");
     }
 }

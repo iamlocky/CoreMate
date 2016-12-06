@@ -5,7 +5,6 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,11 +20,10 @@ import java.util.List;
 
 /**
  * @param <Item>
- * @param <Holder>
  * @author DrkCore
  * @since 2015年12月2日19:38:24
  */
-public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> extends RecyclerView.Adapter<Holder> implements OnClickListener, OnLongClickListener {
+public abstract class CoreRecyclerAdapter<Item> extends RecyclerView.Adapter<SimpleRecyclerViewHolder> implements OnClickListener, OnLongClickListener {
 
     private final ArrayList<Item> data = new ArrayList<>();
 
@@ -33,7 +31,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
     @SuppressWarnings("unchecked")
-    public CoreRecyclerAdapter(Item[] items) {
+    public CoreRecyclerAdapter(Item... items) {
         if (items != null) {
             Collections.addAll(this.data, items);
         }
@@ -47,6 +45,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
     private Context context;
     private LayoutInflater inflater;
+    private ViewGroup viewGroup;
 
     public Context getContext() {
         return context;
@@ -56,18 +55,23 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         return inflater;
     }
 
+    public ViewGroup getViewGroup() {
+        return viewGroup;
+    }
+
     @Override
     public int getItemCount() {
         return data.size();
     }
 
     @Override
-    public final Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final SimpleRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (context == null) {
             context = parent.getContext();
             inflater = LayoutInflater.from(context);
+            viewGroup = parent;
         }
-        Holder holder = createViewHolder(inflater, parent, viewType);
+        SimpleRecyclerViewHolder holder = createViewHolder(inflater, parent, viewType);
         // 绑定事件
         if (!(holder.itemView instanceof AdapterView)//不是AdapterView
                 && !(holder.itemView instanceof RecyclerView)//不是RecyclerView
@@ -81,7 +85,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
     }
 
     @Override
-    public final void onBindViewHolder(Holder holder, int position) {
+    public final void onBindViewHolder(SimpleRecyclerViewHolder holder, int position) {
         Item item = getItem(position);
         bindViewData(holder, position, item, getItemViewType(position));
     }
@@ -89,9 +93,9 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 	/* 内部回调 */
 
     @NonNull
-    protected abstract Holder createViewHolder(LayoutInflater inflater, ViewGroup parent, int type);
+    protected abstract SimpleRecyclerViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent, int type);
 
-    protected abstract void bindViewData(Holder holder, int position, Item data, int viewType);
+    protected abstract void bindViewData(SimpleRecyclerViewHolder holder, int position, Item data, int viewType);
 
 	/* 接口实现 */
 
@@ -103,7 +107,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) tag;
             int pos = viewHolder.getAdapterPosition();
             if (pos >= 0) {
-                onItemClickListener.onItemClick(v, pos, getItem(pos));
+                onItemClickListener.onItemClick(viewGroup, v, pos);
             }
         }
     }
@@ -115,7 +119,7 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) tag;
             int pos = viewHolder.getAdapterPosition();
             if (pos >= 0) {
-                return onItemLongClickListener.onItemLongClick(v, pos, getItem(pos));
+                return onItemLongClickListener.onItemLongClick(viewGroup, v, pos);
             }
         }
         return false;
@@ -123,54 +127,42 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
 
 	/* 外部接口 */
 
-    public interface OnItemClickListener<Item> {
+    public interface OnItemClickListener {
 
-        void onItemClick(View v, int adapterPosition, Item item);
-
-    }
-
-    public interface OnItemLongClickListener<Item> {
-
-        boolean onItemLongClick(View v, int adapterPosition, Item item);
+        void onItemClick(ViewGroup parent, View v, int adapterPosition);
 
     }
 
-    private OnItemClickListener<Item> onItemClickListener;
-    private OnItemLongClickListener<Item> onItemLongClickListener;
+    public interface OnItemLongClickListener {
 
-    protected OnItemClickListener<Item> getOnItemClickListener() {
+        boolean onItemLongClick(ViewGroup parent, View v, int adapterPosition);
+
+    }
+
+    private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onItemLongClickListener;
+
+    protected OnItemClickListener getOnItemClickListener() {
         return onItemClickListener;
     }
 
-    protected OnItemLongClickListener<Item> getOnItemLongClickListener() {
+    protected OnItemLongClickListener getOnItemLongClickListener() {
         return onItemLongClickListener;
     }
 
-    public CoreRecyclerAdapter setOnItemClickListener(OnItemClickListener<Item> onItemClickListener) {
+    public CoreRecyclerAdapter setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
         return this;
     }
 
-    public CoreRecyclerAdapter setOnItemLongClickListener(OnItemLongClickListener<Item> onItemLongClickListener) {
+    public CoreRecyclerAdapter setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
         return this;
     }
 
 	/* 数据处理 */
-    
-    /**
-     * 传递{@link #display(Object[])}方法。
-     * <p>
-     * 该方法是不定参数的，当item泛型为Object时容易造成歧义，
-     * 到时建议重写该方法直接抛出异常。
-     *
-     * @param items
-     */
-    public void displayEx(Item... items) {
-        display(items);
-    }
-	
-    public void display(Item[] items) {
+
+    public void display(Item... items) {
         this.data.clear();
         if (items != null) {
             Collections.addAll(this.data, items);
@@ -185,20 +177,8 @@ public abstract class CoreRecyclerAdapter<Item, Holder extends ViewHolder> exten
         }
         notifyDataSetChanged();
     }
-    
-    /**
-     * 传递{@link #add(Object[])} 方法。
-     * <p>
-     * 该方法是不定参数的，当item泛型为Object时容易造成歧义，
-     * 到时建议重写该方法直接抛出异常。
-     *
-     * @param items
-     */
-    public void addEx(Item... items) {
-        add(items);
-    }
-    
-    public boolean add(Item[] items) {
+
+    public boolean add(Item... items) {
         if (items != null && Collections.addAll(this.data, items)) {
             notifyItemRangeInserted(this.data.size() - items.length, items.length);
             return true;

@@ -20,7 +20,7 @@ import java.util.List;
  * @author DrkCore
  * @since 2015年10月31日23:37:53
  */
-public abstract class CoreAdapter<Item, Holder extends AbsViewHolder<Item>> extends BaseAdapter {
+public abstract class CoreAdapter<Item> extends BaseAdapter {
     
     private final List<Item> data = new ArrayList<>();
     
@@ -28,7 +28,7 @@ public abstract class CoreAdapter<Item, Holder extends AbsViewHolder<Item>> exte
     }
     
     @SuppressWarnings("unchecked")
-    public CoreAdapter(Item[] itemArr) {
+    public CoreAdapter(Item... itemArr) {
         if (itemArr != null) {
             Collections.addAll(this.data, itemArr);
         }
@@ -42,7 +42,8 @@ public abstract class CoreAdapter<Item, Holder extends AbsViewHolder<Item>> exte
     
     private Context context;
     private LayoutInflater inflater;
-    
+    private ViewGroup viewGroup;
+
     public Context getContext() {
         return context;
     }
@@ -50,7 +51,11 @@ public abstract class CoreAdapter<Item, Holder extends AbsViewHolder<Item>> exte
     public LayoutInflater getInflater() {
         return inflater;
     }
-    
+
+    public ViewGroup getViewGroup() {
+        return viewGroup;
+    }
+
     @Override
     public int getCount() {
         return data.size();
@@ -72,21 +77,21 @@ public abstract class CoreAdapter<Item, Holder extends AbsViewHolder<Item>> exte
         if (context == null) {
             context = parent.getContext();
             inflater = LayoutInflater.from(parent.getContext());
+            viewGroup= parent;
         }
         int viewType = getItemViewType(position);
         Item data = getItem(position);
         
-        Holder holder;
+        SimpleViewHolder holder;
         if (convertView == null) {
             holder = createViewHolder(inflater, parent, viewType);
             convertView = holder.getView();
             convertView.setTag(holder);// 绑定ViewHolder
         } else {
-            holder = (Holder) convertView.getTag();
+            holder = (SimpleViewHolder) convertView.getTag();
         }
         // 绑定视图数据
         holder.setPosition(position);
-        holder.setItem(data);
         bindViewData(holder, position, data, viewType);
         
         return convertView;
@@ -102,25 +107,13 @@ public abstract class CoreAdapter<Item, Holder extends AbsViewHolder<Item>> exte
 	/* 内部回调 */
     
     @NonNull
-    protected abstract Holder createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+    protected abstract SimpleViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
     
-    protected abstract void bindViewData(Holder holder, int position, Item data, int viewType);
+    protected abstract void bindViewData(SimpleViewHolder holder, int position, Item data, int viewType);
 
 	/* 数据展示 */
-    
-    /**
-     * 传递{@link #display(Object[])}方法。
-     * <p>
-     * 该方法是不定参数的，当item泛型为Object时容易造成歧义，
-     * 到时建议重写该方法直接抛出异常。
-     *
-     * @param items
-     */
-    public void displayEx(Item... items) {
-        display(items);
-    }
-    
-    public void display(Item[] items) {
+
+	public void display(Item... items) {
         this.data.clear();
         if (items != null) {
             Collections.addAll(this.data, items);
@@ -135,20 +128,8 @@ public abstract class CoreAdapter<Item, Holder extends AbsViewHolder<Item>> exte
         }
         notifyDataSetChanged();
     }
-    
-    /**
-     * 传递{@link #add(Object[])} 方法。
-     * <p>
-     * 该方法是不定参数的，当item泛型为Object时容易造成歧义，
-     * 到时建议重写该方法直接抛出异常。
-     *
-     * @param items
-     */
-    public void addEx(Item... items) {
-        add(items);
-    }
-    
-    public boolean add(Item[] items) {
+
+    public boolean add(Item... items) {
         if (items != null && Collections.addAll(this.data, items)) {
             notifyDataSetChanged();
             return true;

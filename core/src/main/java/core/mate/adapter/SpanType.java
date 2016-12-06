@@ -12,18 +12,18 @@ import android.widget.AbsListView;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class SpanType extends AbsItemType<Span, SimpleViewHolder<Span>> {
+public final class SpanType extends AbsItemType<Span> {
 
 	/* 继承 */
 
 	@NonNull
 	@Override
-	public SimpleViewHolder<Span> createViewHolder (LayoutInflater inflater, ViewGroup parent) {
-		return new SimpleViewHolder<>(new Space(parent.getContext()));
+	public SimpleViewHolder createViewHolder (LayoutInflater inflater, ViewGroup parent) {
+		return new SimpleViewHolder(new Space(parent.getContext()));
 	}
 
 	@Override
-	public void bindViewData(SimpleViewHolder<Span> viewHolder, int position, Span data) {
+	public void bindViewData(SimpleViewHolder viewHolder, int position, Span data) {
 		AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, data.getHeightPx());
 		viewHolder.getView().setLayoutParams(layoutParams);
 	}

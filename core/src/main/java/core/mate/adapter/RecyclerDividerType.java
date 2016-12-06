@@ -10,18 +10,18 @@ import android.view.ViewGroup;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class RecyclerDividerType extends AbsRecyclerItemType<Divider, SimpleRecyclerViewHolder> {
+public final class RecyclerDividerType extends AbsRecyclerItemType<Divider> {
 
 	/* 继承 */
 
-	@Override
-	public SimpleRecyclerViewHolder createViewHolder (LayoutInflater inflater, ViewGroup parent) {
-		return new SimpleRecyclerViewHolder(new View(parent.getContext()));
-	}
+    @Override
+    public SimpleRecyclerViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent) {
+        return new SimpleRecyclerViewHolder(new View(parent.getContext()));
+    }
 
-	@Override
-	public void bindViewData(SimpleRecyclerViewHolder holder, int position, Divider data) {
-		holder.setHolderSize(ViewGroup.LayoutParams.MATCH_PARENT,data.getHeightPx());
-		holder.setHolderBackgroundDrawable(data.getDrawable());
-	}
+    @Override
+    public void bindViewData(SimpleRecyclerViewHolder holder, int position, Divider data) {
+        holder.setHolderSize(ViewGroup.LayoutParams.MATCH_PARENT, data.getHeightPx());
+        holder.setHolderBackgroundDrawable(data.getDrawable());
+    }
 }

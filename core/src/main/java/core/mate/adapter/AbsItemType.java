@@ -22,9 +22,15 @@ import core.mate.util.ClassUtil;
  *
  * @param <Item>
  */
-public abstract class AbsItemType<Item, Holder extends AbsViewHolder<Item>> {
+public abstract class AbsItemType<Item> {
 
     private Type type;
+    private FlexibleAdapter adapter;
+
+    public AbsItemType setAdapter(FlexibleAdapter adapter) {
+        this.adapter = adapter;
+        return this;
+    }
 
     public final boolean canHandleObject(Object obj) {
         if (type == null) {
@@ -62,8 +68,8 @@ public abstract class AbsItemType<Item, Holder extends AbsViewHolder<Item>> {
     }
 
     @NonNull
-    public abstract Holder createViewHolder(LayoutInflater inflater, ViewGroup parent);
+    public abstract SimpleViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent);
 
-    public abstract void bindViewData(Holder holder, int position, Item data);
+    public abstract void bindViewData(SimpleViewHolder holder, int position, Item data);
 
 }

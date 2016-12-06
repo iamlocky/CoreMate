@@ -21,7 +21,7 @@ import core.mate.util.ViewUtil;
  * @author DrkCore
  * @since 2016年1月18日18:24:09
  */
-public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
+public class SimpleViewHolder extends AbsViewHolder {
 
     public SimpleViewHolder(View v) {
         super(v);
@@ -63,14 +63,14 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
                     AbsListView.LayoutParams.WRAP_CONTENT,
                     AbsListView.LayoutParams.WRAP_CONTENT);
         }
-    
+
         if (width != null) {
             params.width = width;
         }
         if (height != null) {
             params.height = height;
         }
-    
+
         getView().setLayoutParams(params);
     }
 
@@ -195,10 +195,10 @@ public class SimpleViewHolder<Item> extends AbsViewHolder<Item> {
 
     public void setSize(@IdRes int id, @Nullable Integer width, @Nullable Integer height) {
         View view = getViewById(id);
-        if(view != getView()){
+        if (view != getView()) {
             ViewUtil.setSize(view, width, height);
-        }else {
-            setHolderSize(width,height);
+        } else {
+            setHolderSize(width, height);
         }
     }
 }

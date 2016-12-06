@@ -1,6 +1,5 @@
 package core.mate.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -22,9 +21,15 @@ import core.mate.util.ClassUtil;
  *
  * @param <Item>
  */
-public abstract class AbsRecyclerItemType<Item, Holder extends RecyclerView.ViewHolder> {
+public abstract class AbsRecyclerItemType<Item> {
 
     private Type type;
+    private FlexibleRecyclerAdapter adapter;
+
+    public AbsRecyclerItemType setAdapter(FlexibleRecyclerAdapter adapter) {
+        this.adapter = adapter;
+        return this;
+    }
 
     public final boolean canHandleObject(Object obj) {
         if (type == null) {
@@ -62,8 +67,8 @@ public abstract class AbsRecyclerItemType<Item, Holder extends RecyclerView.View
         return true;
     }
 
-    public abstract Holder createViewHolder(LayoutInflater inflater, ViewGroup parent);
+    public abstract SimpleRecyclerViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent);
 
-    public abstract void bindViewData(Holder holder, int position, Item data);
+    public abstract void bindViewData(SimpleRecyclerViewHolder holder, int position, Item data);
 
 }

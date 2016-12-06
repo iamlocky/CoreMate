@@ -10,7 +10,7 @@ import android.view.ViewGroup;
  * @author DrkCore
  * @since 2016年2月1日00:06:31
  */
-public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item, SimpleRecyclerViewHolder> {
+public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item> {
 
     private final ViewCreator viewCreator;
 

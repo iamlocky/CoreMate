@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import java.util.Collection;
 
-public abstract class SimpleRecyclerAdapter<Item> extends CoreRecyclerAdapter<Item, SimpleRecyclerViewHolder> {
+public abstract class SimpleRecyclerAdapter<Item> extends CoreRecyclerAdapter<Item> {
 
     private final ViewCreator viewCreator;
 
@@ -16,7 +16,7 @@ public abstract class SimpleRecyclerAdapter<Item> extends CoreRecyclerAdapter<It
         this(new SimpleViewCreator(layoutId));
     }
 
-    public SimpleRecyclerAdapter(@LayoutRes int layoutId, Item[] itemArr) {
+    public SimpleRecyclerAdapter(@LayoutRes int layoutId, Item... itemArr) {
         this(new SimpleViewCreator(layoutId), itemArr);
     }
 
@@ -28,7 +28,7 @@ public abstract class SimpleRecyclerAdapter<Item> extends CoreRecyclerAdapter<It
         this(new SimpleViewCreator(viewClass));
     }
 
-    public SimpleRecyclerAdapter(Class<? extends View> viewClass, Item[] itemArr) {
+    public SimpleRecyclerAdapter(Class<? extends View> viewClass, Item... itemArr) {
         this(new SimpleViewCreator(viewClass), itemArr);
     }
 
@@ -40,7 +40,7 @@ public abstract class SimpleRecyclerAdapter<Item> extends CoreRecyclerAdapter<It
         this.viewCreator = viewCreator;
     }
 
-    public SimpleRecyclerAdapter(ViewCreator viewCreator, Item[] itemArr) {
+    public SimpleRecyclerAdapter(ViewCreator viewCreator, Item... itemArr) {
         super(itemArr);
         this.viewCreator = viewCreator;
     }
