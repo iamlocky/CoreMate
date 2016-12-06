@@ -26,7 +26,7 @@ public class AdapterFrag extends ListFrag {
         setAdapter(new SimpleAdapter<String>(android.R.layout.simple_list_item_1/*TextView.class*/) {
 
             @Override
-            protected void bindViewData(SimpleViewHolder<String> holder, int position, String data, int viewType) {
+            protected void bindViewData(SimpleViewHolder holder, int position, String data, int viewType) {
                 //设置数据可以通过id直接setText
                 holder.setText(android.R.id.text1, data);
                 //也可以获取到控件后再设置
@@ -41,15 +41,13 @@ public class AdapterFrag extends ListFrag {
         super.refresh();
         SimpleAdapter<String> adapter = getAdapter();
         //刷新数据
-        adapter.display(new String[]{
-                "\\(^o^)/阿萨德撒的萨达哀伤",
+        adapter.display("\\(^o^)/阿萨德撒的萨达哀伤",
                 "b(￣▽￣)d",
                 "ヾ(≧▽≦*)o",
                 "(づ￣3￣)づ╭❤～",
                 "_(:зゝ∠)_",
                 "(◑▽◐)",
-                "哼(ˉ(∞)ˉ)唧"
-        });
+                "哼(ˉ(∞)ˉ)唧");
     }
 
     @Override
