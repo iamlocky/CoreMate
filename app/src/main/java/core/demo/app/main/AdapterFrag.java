@@ -1,4 +1,4 @@
-package core.demo.ui.main;
+package core.demo.app.main;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -56,5 +56,7 @@ public class AdapterFrag extends ListFrag {
         String item = getItemAtPosition(position);
         //简化Toast的使用
         ToastUtil.toastShort(item);
+        
+        new ResDlgFrag().show(this);
     }
 }

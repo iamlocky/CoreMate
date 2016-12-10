@@ -1,4 +1,4 @@
-package core.demo.ui;
+package core.demo.app;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -7,10 +7,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import core.demo.R;
-import core.demo.ui.main.AdapterFrag;
-import core.demo.ui.main.PrefFrag;
-import core.demo.ui.main.ResDlgFrag;
-import core.demo.ui.main.TaskFrag;
+import core.demo.app.main.AdapterFrag;
+import core.demo.app.main.PrefFrag;
+import core.demo.app.main.ResDlgFrag;
+import core.demo.app.main.TaskFrag;
 import core.mate.app.CoreActivity;
 
 public class MainActivity extends CoreActivity {
