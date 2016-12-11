@@ -27,8 +27,7 @@ public class PanelDlgFrag extends CoreDlgFrag {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(STYLE_NO_FRAME, android.R.style.Theme_Dialog);
-        setWinAnimStyle(0);
+        setStyle(STYLE_NO_TITLE, 0);
         setWinBgColor(Color.WHITE);
         setWidth(LayoutParams.MATCH_PARENT);
         setGravity(Gravity.BOTTOM);
