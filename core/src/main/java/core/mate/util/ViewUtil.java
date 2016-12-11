@@ -1,5 +1,6 @@
 package core.mate.util;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.support.annotation.Nullable;
@@ -20,17 +21,17 @@ import core.mate.Core;
  * @since 2015年11月13日18:47:08
  */
 public final class ViewUtil {
-
+    
     private ViewUtil() {
     }
 
 	/*视图参数*/
-
+    
     private static float density;
     private static float scaledDensity;
     private static int widthPixels;
     private static int heightPixels;
-
+    
     static {// 初始化
         DisplayMetrics displayMetrics = ContextUtil.getResources().getDisplayMetrics();
         density = displayMetrics.density;
@@ -38,43 +39,56 @@ public final class ViewUtil {
         widthPixels = displayMetrics.widthPixels;
         heightPixels = displayMetrics.heightPixels;
     }
-
+    
     public static float getDisplayMetricsDensity() {
         return density;
     }
-
+    
     public static float getDisplayMetricsScaledDensity() {
         return scaledDensity;
     }
-
+    
     public static int getScreenWidth() {
         return widthPixels;
     }
-
+    
     public static int getScreenHeight() {
         return heightPixels;
     }
-
+    
+    private static Integer statusBarHeight;
+    
+    public static int getStatusBarHeight() {
+        if (statusBarHeight == null) {
+            Resources res = ContextUtil.getResources();
+            int resourceId = res.getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                statusBarHeight = res.getDimensionPixelSize(resourceId);
+            }
+        }
+        return statusBarHeight;
+    }
+    
 	/* 单位转换 */
-
+    
     public static int dpToPx(float dpValue) {
         return (int) (dpValue * getDisplayMetricsDensity() + 0.5F);
     }
-
+    
     public static int pxToDp(float pxValue) {
         return (int) (pxValue / getDisplayMetricsDensity() + 0.5F);
     }
-
+    
     public static int pxToSp(float pxValue) {
         return (int) (pxValue / getDisplayMetricsScaledDensity() + 0.5f);
     }
-
+    
     public static int spToPx(float spValue) {
         return (int) (spValue * getDisplayMetricsScaledDensity() + 0.5f);
     }
 
 	/* 动画/可见性 */
-
+    
     /**
      * 切换布局的可见性。当布局的可见性为{@link View#VISIBLE}时切换到{@link View#GONE}，
      * 当可见性为{@link View#GONE}或者{@link View#INVISIBLE}时，切换到{@link View#VISIBLE}
@@ -85,12 +99,12 @@ public final class ViewUtil {
         int nextVisibility = view.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
         view.setVisibility(nextVisibility);
     }
-
-
+    
+    
     public static Animation showWithAnim(View view, int animRes) {
         return showWithAnim(view, animRes, null);
     }
-
+    
     /**
      * 显示控件后播放动画。如果animRes小于或者等于0则表示不使用动画。
      * 如果view已经处于{@link View#VISIBLE}状态则不做任何处理。
@@ -112,12 +126,12 @@ public final class ViewUtil {
         }
         return anim;
     }
-
+    
     @Nullable
     public static Animation hideWithAnim(View view, int animRes) {
         return hideWithAnim(view, animRes, null);
     }
-
+    
     /**
      * 播放动画后隐藏控件。如果animRes小于或者等于0则表示不使用动画。
      * 如果view已经处于{@link View#GONE}状态则不做任何处理。
@@ -141,7 +155,7 @@ public final class ViewUtil {
     }
 
 	/* 控件尺寸 */
-
+    
     public static int measureViewHeight(View v) {
         // 获取高度
         int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -149,7 +163,7 @@ public final class ViewUtil {
         v.measure(w, h);
         return v.getMeasuredHeight();
     }
-
+    
     public static int measureViewWidth(View v) {
         // 获取高度
         int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -157,7 +171,7 @@ public final class ViewUtil {
         v.measure(w, h);
         return v.getMeasuredWidth();
     }
-
+    
     /**
      * 动态调整ListView的高度。当你将ListView嵌入ScrollView的时候可能需要用到该方法。
      *
@@ -169,7 +183,7 @@ public final class ViewUtil {
         if (listAdapter == null) {
             return;
         }
-
+        
         int totalHeight = 0;
         for (int i = 0, len = listAdapter.getCount(); i < len; i++) {
             // listAdapter.getCount()返回数据项的数目
@@ -179,33 +193,33 @@ public final class ViewUtil {
             // 统计所有子项的总高度
             totalHeight += listItem.getMeasuredHeight();
         }
-
+        
         // listView.getDividerHeight()获取子项间分隔符占用的高度
         // params.height最后得到整个ListView完整显示需要的高度
         int height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         setHeight(listView, height);
     }
-
+    
     public static void setVerticalMargin(View view, int margin) {
         setVerticalMargin(view, margin, margin);
     }
-
+    
     public static void setVerticalMargin(View view, @Nullable Integer top, @Nullable Integer bottom) {
         setMargin(view, null, top, null, bottom);
     }
-
+    
     public static void setHorizontalMargin(View view, int margin) {
         setHorizontalMargin(view, margin, margin);
     }
-
+    
     public static void setHorizontalMargin(View view, @Nullable Integer left, @Nullable Integer right) {
         setMargin(view, left, null, right, null);
     }
-
+    
     public static void setMargin(View view, int margin) {
         setMargin(view, margin, margin, margin, margin);
     }
-
+    
     /**
      * 设置margin。其中left、top、right、bottom如果为null，则表示不处理。
      *
@@ -234,22 +248,22 @@ public final class ViewUtil {
         }
         view.setLayoutParams(params);
     }
-
+    
     public static void setHeight(View view, int height) {
         setSize(view, null, height);
     }
-
+    
     public static void setWidth(View view, int width) {
         setSize(view, width, null);
     }
-
+    
     public static void setSize(View view, @Nullable Integer width, @Nullable Integer height) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
-
+        
         if (params == null) {
             throw new IllegalStateException("无法获取控件的LayoutParams");
         }
-
+        
         if (width != null) {
             params.width = width;
         }
@@ -260,7 +274,7 @@ public final class ViewUtil {
     }
 
 	/* View截图 */
-
+    
     /**
      * 获取视图的截图。
      *
@@ -275,7 +289,7 @@ public final class ViewUtil {
         view.setDrawingCacheEnabled(false);
         return img;
     }
-
+    
     public static Bitmap getBitmapByDraw(View view) {
         Bitmap bmp = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bmp);
@@ -284,5 +298,5 @@ public final class ViewUtil {
         view.setWillNotDraw(false);
         return bmp;
     }
-
+    
 }
