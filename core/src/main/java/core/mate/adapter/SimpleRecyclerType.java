@@ -2,6 +2,7 @@ package core.mate.adapter;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,4 +55,14 @@ public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item>
 
     }
 
+    @Nullable
+    protected <Item> Item getItemFromView(View view) {
+        if (view.getTag() instanceof SimpleViewHolder) {
+            int position = ((SimpleRecyclerViewHolder) view.getTag()).getAdapterPosition();
+            if (position >= 0 && getAdapter() != null && getAdapter().getItemCount() > position) {
+                return (Item) getAdapter().getItem(position);
+            }
+        }
+        return null;
+    }
 }
