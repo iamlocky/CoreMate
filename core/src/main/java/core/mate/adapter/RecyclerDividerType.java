@@ -10,7 +10,7 @@ import android.view.ViewGroup;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class RecyclerDividerType extends AbsRecyclerItemType<Divider> {
+public class RecyclerDividerType extends AbsRecyclerItemType<Divider> {
 
 	/* 继承 */
 

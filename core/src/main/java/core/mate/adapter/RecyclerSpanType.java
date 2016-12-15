@@ -11,7 +11,7 @@ import android.widget.AbsListView;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class RecyclerSpanType extends AbsRecyclerItemType<Span> {
+public class RecyclerSpanType extends AbsRecyclerItemType<Span> {
 
 	/* 继承 */
 

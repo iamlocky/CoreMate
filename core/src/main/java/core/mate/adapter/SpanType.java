@@ -12,7 +12,7 @@ import android.widget.AbsListView;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class SpanType extends AbsItemType<Span> {
+public class SpanType extends AbsItemType<Span> {
 
 	/* 继承 */
 

@@ -99,6 +99,6 @@ public class FlexibleRecyclerAdapter extends CoreRecyclerAdapter<Object> {
             }
         }
         // 用户填入了不可处理的类型
-        throw new IllegalStateException("指定数据类型不存在可用的operator");
+        throw new IllegalStateException("指定数据：" + obj + " 不存在可用的operator");
     }
 }

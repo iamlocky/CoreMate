@@ -11,7 +11,7 @@ import android.view.ViewGroup;
  * @author DrkCore
  * @since 2016年1月18日21:01:24
  */
-public final class DividerType extends AbsItemType<Divider> {
+public class DividerType extends AbsItemType<Divider> {
 
 	/* 继承 */
 

@@ -27,7 +27,7 @@ public abstract class AbsItemType<Item> {
     private Type type;
     private FlexibleAdapter adapter;
 
-    public AbsItemType setAdapter(FlexibleAdapter adapter) {
+    AbsItemType setAdapter(FlexibleAdapter adapter) {
         this.adapter = adapter;
         return this;
     }
