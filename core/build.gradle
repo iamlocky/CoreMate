@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 8
-        versionName "1.0.8"
+        versionCode 9
+        versionName "1.0.9"
     }
 
     buildTypes {
@@ -30,11 +30,11 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:24.2.0'
-    compile 'com.android.support:recyclerview-v7:24.2.0'
+    provided 'com.android.support:appcompat-v7:24.2.0'
+    provided 'com.android.support:recyclerview-v7:24.2.0'
 }
 
-version = "1.0.8"
+version = "1.0.9"
 
 def siteUrl = 'https://github.com/DrkCore/CoreMate'
 def gitUrl = 'git@github.com:DrkCore/CoreMate.git'
