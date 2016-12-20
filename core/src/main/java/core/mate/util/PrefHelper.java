@@ -15,16 +15,16 @@ public class PrefHelper {
 
     private final SharedPreferences pref;
     private final SharedPreferences.Editor editor;
-    private final boolean applyOrCommit;
+    private boolean applyOrCommit = true;
 
-    public PrefHelper(SharedPreferences pref) {
-        this(pref, true);
+    public PrefHelper setApplyOrCommit(boolean applyOrCommit) {
+        this.applyOrCommit = applyOrCommit;
+        return this;
     }
 
-    public PrefHelper(SharedPreferences pref, boolean applyOrCommit) {
+    public PrefHelper(SharedPreferences pref) {
         this.pref = pref;
         this.editor = pref.edit();
-        this.applyOrCommit = applyOrCommit;
     }
 
     /*数据读写*/
