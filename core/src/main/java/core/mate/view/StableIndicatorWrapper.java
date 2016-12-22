@@ -40,7 +40,7 @@ public class StableIndicatorWrapper implements ITaskIndicator {
 
     @Override
     public boolean isProgressing() {
-        return indicator.isProgressing();
+        return progressing;
     }
 
     private boolean progressing;
