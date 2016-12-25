@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 
 import core.demo.R;
-import core.mate.app.PanelDlgFrag;
+import core.mate.app.CoreDlgFrag;
 import core.mate.util.RandomUtil;
 import core.mate.util.ContextUtil;
 
@@ -18,16 +18,17 @@ import core.mate.util.ContextUtil;
  * @author DrkCore
  * @since 2016-09-04
  */
-public class ResDlgFrag extends PanelDlgFrag {
+public class ResDlgFrag extends CoreDlgFrag {
 
     /*继承*/
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setPanelStyle();
         setWinAnimStyle(R.style.CoreWindowAnimSlideTopStyle);
         //必须设置高度才能使用
-        setDialogHeightPercent(0.7F);//设置高度为屏幕的70%
+        setHeightPercent(0.7F);//设置高度为屏幕的70%
         //setDialogHeightDp(128);//设置高度为128dp
         return inflater.inflate(R.layout.dlg_res, container, false);
     }
