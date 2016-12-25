@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,7 @@ import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
 import core.mate.util.BroadcastUtil;
 import core.mate.util.ClassUtil;
+import core.mate.util.ContextUtil;
 import core.mate.util.LogUtil;
 import core.mate.util.ViewUtil;
 
@@ -123,30 +125,37 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     private Integer winAnimStyle;
     private Float dimAmount;
     private Drawable winBgDrawable;
-    private Integer winBgResource;
-    
-    public CoreDlgFrag setWinAnimStyle(Integer winAnimStyle) {
+
+    public CoreDlgFrag setWinAnimStyle(@Nullable Integer winAnimStyle) {
         this.winAnimStyle = winAnimStyle;
         return this;
     }
     
-    public CoreDlgFrag setDimAmount(Float dimAmount) {
+    public CoreDlgFrag setDimAmount(@Nullable Float dimAmount) {
         this.dimAmount = dimAmount;
         return this;
     }
     
-    public CoreDlgFrag setWinBgDrawable(Drawable winBgDrawable) {
+    public CoreDlgFrag setWinBgDrawable(@Nullable Drawable winBgDrawable) {
         this.winBgDrawable = winBgDrawable;
         return this;
     }
     
-    public CoreDlgFrag setWinBgColor(@ColorInt Integer color) {
-        this.winBgDrawable = new ColorDrawable(color);
+    public CoreDlgFrag setWinBgColor(@Nullable @ColorInt Integer color) {
+        if(color != null){
+            setWinBgDrawable(new ColorDrawable(color));
+        }else {
+            setWinBgDrawable(null);
+        }
         return this;
     }
     
-    public CoreDlgFrag setWinBgResource(Integer winBgResource) {
-        this.winBgResource = winBgResource;
+    public CoreDlgFrag setWinBgResource(@Nullable @DrawableRes Integer winBgResource) {
+        if(winBgResource != null){
+            setWinBgDrawable(ContextUtil.getDrawable(winBgResource));
+        }else {
+            setWinBgDrawable(null);
+        }
         return this;
     }
 
@@ -163,28 +172,28 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     private Integer width;
     private Integer height;
     
-    public CoreDlgFrag setGravity(Integer gravity) {
+    public CoreDlgFrag setGravity(@Nullable Integer gravity) {
         this.gravity = gravity;
         return this;
     }
     
-    public CoreDlgFrag setWidth(Integer width) {
+    public CoreDlgFrag setWidth(@Nullable Integer width) {
         this.width = width;
         return this;
     }
     
-    public CoreDlgFrag setHeight(Integer height) {
+    public CoreDlgFrag setHeight(@Nullable Integer height) {
         this.height = height;
         return this;
     }
     
-    public CoreDlgFrag setSize(Integer width, Integer height) {
+    public CoreDlgFrag setSize(@Nullable Integer width, @Nullable Integer height) {
         this.width = width;
         this.height = height;
         return this;
     }
     
-    protected CoreDlgFrag setWidthPercent(Float percent) {
+    protected CoreDlgFrag setWidthPercent(@Nullable Float percent) {
         if(percent != null){
             if (percent < 0 || percent > 1) {
                 throw new IllegalArgumentException("width percent " + percent + " 不合法");
@@ -196,7 +205,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         return this;
     }
     
-    protected CoreDlgFrag setHeightPercent(Float percent) {
+    protected CoreDlgFrag setHeightPercent(@Nullable Float percent) {
         if(percent != null){
             if (percent < 0 || percent > 1) {
                 throw new IllegalArgumentException("height percent " + percent + " 不合法");
@@ -211,17 +220,17 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     private Integer x;
     private Integer y;
     
-    public CoreDlgFrag setX(Integer x) {
+    public CoreDlgFrag setX(@Nullable Integer x) {
         this.x = x;
         return this;
     }
     
-    public CoreDlgFrag setY(Integer y) {
+    public CoreDlgFrag setY(@Nullable Integer y) {
         this.y = y;
         return this;
     }
     
-    public CoreDlgFrag setPosition(Integer x, Integer y) {
+    public CoreDlgFrag setPosition(@Nullable Integer x, @Nullable Integer y) {
         this.x = x;
         this.y = y;
         return this;
@@ -244,8 +253,6 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         
         if (winBgDrawable != null) {
             dlgWin.setBackgroundDrawable(winBgDrawable);
-        } else if (winBgResource != null) {
-            dlgWin.setBackgroundDrawableResource(winBgResource);
         }
         if (dimAmount != null) {
             dlgWin.setDimAmount(dimAmount);
