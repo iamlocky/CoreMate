@@ -26,6 +26,7 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.mate.R;
 import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
@@ -163,6 +164,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         setStyle(STYLE_NO_TITLE, 0);
         setWinBgColor(Color.WHITE);
         setWidth(WindowManager.LayoutParams.MATCH_PARENT);
+        setWinAnimStyle(R.style.CoreWindowAnimSlideTopStyle);
         setGravity(Gravity.BOTTOM);
 
         return this;

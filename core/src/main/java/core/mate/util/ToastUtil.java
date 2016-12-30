@@ -13,39 +13,30 @@ import core.mate.Core;
  */
 public class ToastUtil {
 
-    private static WeakReference<Toast> lastToastRef;
-
-    public static Toast toastShort(@StringRes int resId) {
-        return toastShort(ContextUtil.getString(resId));
+    public static Toast show(@StringRes int resId) {
+        return show(resId, Toast.LENGTH_SHORT);
     }
 
-    public static Toast toastShort(CharSequence tip) {
-        Toast toast = Toast.makeText(Core.getInstance().getAppContext(), tip, Toast.LENGTH_SHORT);
+    public static Toast show(CharSequence tip) {
+        return show(tip, Toast.LENGTH_SHORT);
+    }
+
+    public static Toast showLong(@StringRes int resId) {
+        return show(resId, Toast.LENGTH_LONG);
+    }
+
+    public static Toast showLong(CharSequence tip) {
+        return show(tip, Toast.LENGTH_LONG);
+    }
+
+    public static Toast show(@StringRes int resId, int duration) {
+        return show(ContextUtil.getString(resId), duration);
+    }
+
+    public static Toast show(CharSequence tip, int duration) {
+        Toast toast = Toast.makeText(Core.getInstance().getAppContext(), tip, duration);
         toast.show();
-        lastToastRef = new WeakReference<Toast>(toast);
         return toast;
-    }
-
-    public static Toast toastLong(CharSequence tip) {
-        Toast toast = Toast.makeText(Core.getInstance().getAppContext(), tip, Toast.LENGTH_LONG);
-        toast.show();
-        lastToastRef = new WeakReference<Toast>(toast);
-        return toast;
-    }
-
-    public static Toast toastLong(@StringRes int resId) {
-        return toastLong(ContextUtil.getString(resId));
-    }
-
-    public static void cancelLastToast() {
-        if (lastToastRef != null) {
-            Toast toast = lastToastRef.get();
-            if (toast != null) {
-                toast.cancel();
-            }
-            lastToastRef.clear();
-            lastToastRef = null;
-        }
     }
 
 }

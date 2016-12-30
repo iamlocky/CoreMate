@@ -68,7 +68,7 @@ public class TaskFrag extends CoreFrag {
                 .addOnTaskListener(new OnTaskListenerImpl<File>() {
                     @Override
                     public void onSuccess(File file) {
-                        ToastUtil.toastShort("成功导出到=" + file.getAbsolutePath());
+                        ToastUtil.show("成功导出到=" + file.getAbsolutePath());
                     }
                 })
                 //将assets中的文件导出到/data/data/包名/files目录下
@@ -84,7 +84,7 @@ public class TaskFrag extends CoreFrag {
 
                     @Override
                     public void onSuccess(boolean[] booleen) {
-                        ToastUtil.toastShort("执行删除完毕");
+                        ToastUtil.show("执行删除完毕");
                     }
                 })
                 //删除导出的文件
@@ -101,12 +101,12 @@ public class TaskFrag extends CoreFrag {
                     @Override
                     public void onFailure(Throwable e) {
                         super.onFailure(e);
-                        ToastUtil.toastShort("读取文件失败，请先导出文件");
+                        ToastUtil.show("读取文件失败，请先导出文件");
                     }
 
                     @Override
                     public void onSuccess(String s) {
-                        ToastUtil.toastShort("读取内容 = " + s);
+                        ToastUtil.show("读取内容 = " + s);
                     }
                 })
                 .execute(new File(getContext().getFilesDir(), ASSETS));
