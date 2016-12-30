@@ -160,9 +160,18 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         return this;
     }
 
-    public CoreDlgFrag setPanelStyle(){
-        setStyle(STYLE_NO_TITLE, 0);
-        setWinBgColor(Color.WHITE);
+    /**
+     * 设置对话框为面板样式，也就是宽度占满全屏。
+     * <p>
+     * 主要通过{@link #setStyle(int, int)}方法设置对话框为{@link #STYLE_NO_FRAME}来实现的。
+     * 同时要向实现全屏必须设置对话框颜色，这里将之设置为了透明。
+     *
+     * @return
+     */
+    public CoreDlgFrag setPanelStyle() {
+        setStyle(STYLE_NO_FRAME, 0);
+        //注意，必须设置颜色才能使窗口全屏
+        setWinBgColor(Color.TRANSPARENT);
         setWidth(WindowManager.LayoutParams.MATCH_PARENT);
         setWinAnimStyle(R.style.CoreWindowAnimSlideTopStyle);
         setGravity(Gravity.BOTTOM);
