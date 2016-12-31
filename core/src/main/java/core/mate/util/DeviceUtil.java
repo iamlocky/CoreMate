@@ -1,6 +1,9 @@
 package core.mate.util;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -80,6 +83,68 @@ public final class DeviceUtil {
      */
     public static String getSerialNumber() {
         return Build.SERIAL;
+    }
+
+    /*系统状态*/
+
+    public static boolean isNetworkAvailable() {
+        Context context = Core.getInstance().getAppContext();
+        ConnectivityManager mgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = mgr.getActiveNetworkInfo();
+        return info != null && info.isAvailable();
+    }
+
+    public static boolean isWifiAvailable() {
+        return isNetTypeAvailable(ConnectivityManager.TYPE_WIFI);
+    }
+
+    public static boolean isMobileAvailable() {
+        return isNetTypeAvailable(ConnectivityManager.TYPE_MOBILE);
+    }
+
+    public static boolean isNetTypeAvailable(int netType) {
+        Context context = Core.getInstance().getAppContext();
+        ConnectivityManager mgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Network[] networks = mgr.getAllNetworks();
+            for (int i = 0, size = DataUtil.getSize(networks); i < size; i++) {
+                NetworkInfo tmp = mgr.getNetworkInfo(networks[i]);
+                if (tmp.getType() == netType) {
+                    info = tmp;
+                    break;
+                }
+            }
+        } else {
+            info = mgr.getNetworkInfo(netType);
+        }
+        return info != null && info.isAvailable();
+    }
+
+    public static final int STATE_NONE = -1;
+    public static final int STATE_WIFI = 1;
+    public static final int STATE_WAP = 2;
+    public static final int STATE_CMNET = 3;
+
+    public static int getNetState() {
+        Context context = Core.getInstance().getAppContext();
+
+        int netType = STATE_NONE;
+        ConnectivityManager mgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = mgr.getActiveNetworkInfo();
+        if (info != null) {
+            int nowType = info.getType();
+            if (nowType == ConnectivityManager.TYPE_MOBILE) {
+                if (info.getExtraInfo().toLowerCase().equals("cmnet")) {
+                    netType = STATE_CMNET;
+                } else {
+                    netType = STATE_WAP;
+                }
+            } else if (nowType == ConnectivityManager.TYPE_WIFI) {
+                netType = STATE_WIFI;
+            }
+        }
+        return netType;
     }
 
 	/*运行环境*/

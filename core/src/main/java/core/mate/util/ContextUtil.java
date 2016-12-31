@@ -1,6 +1,7 @@
 package core.mate.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -9,6 +10,7 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.AnimRes;
 import android.support.annotation.ArrayRes;
@@ -107,6 +109,11 @@ public final class ContextUtil {
 
     public static Resources getResources() {
         return Core.getInstance().getAppContext().getResources();
+    }
+
+    public static int getIdentifier(String name, String defType, String defPackage){
+        Resources res = ContextUtil.getResources();
+        return res.getIdentifier(name,defType,defPackage);
     }
 
     public static AssetManager getAssets() {
@@ -408,6 +415,68 @@ public final class ContextUtil {
             IOUtil.close(in);
             IOUtil.close(out);
         }
+    }
+
+    /*Intent*/
+
+    public static Intent getSendTextIntent(String title, String content) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TITLE, title);
+        intent.putExtra(Intent.EXTRA_TEXT, content);
+        intent.setType("text/plain");
+        return intent;
+    }
+
+    public static Intent getSendMailIntent(String toMail, String title, String content) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{toMail});
+        intent.putExtra(Intent.EXTRA_SUBJECT, title);
+        intent.putExtra(Intent.EXTRA_TEXT, content);
+        return intent;
+    }
+
+    public static Intent getSendFileIntent(File file) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+        intent.setType("text/plain");
+        return intent;
+    }
+
+    public static Intent getAppMarketIntent(String pkgName) {
+        Uri uri = Uri.parse("market://details?id=" + pkgName);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
+    }
+
+    public static Intent getChoseImageIntent() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);//ACTION_OPEN_DOCUMENT
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        return intent;
+    }
+
+    public static Intent getInstallApkIntent(File apk) {
+        return new Intent(Intent.ACTION_VIEW)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .setDataAndType(Uri.parse("file://" + apk), "application/vnd.android.package-archive");
+    }
+
+    public static Intent getStartAppIntent(String pkgName) {
+        Context app = Core.getInstance().getAppContext();
+        return app.getPackageManager().getLaunchIntentForPackage(pkgName);
+    }
+
+    public static Intent getOpenUrlIntent(String url) {
+        Uri uri = Uri.parse(url);
+        return new Intent(Intent.ACTION_VIEW, uri);
+    }
+
+    public static Intent getLauncherIntent(){
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        return intent;
     }
 
 }
