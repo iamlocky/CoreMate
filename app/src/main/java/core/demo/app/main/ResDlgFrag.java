@@ -22,12 +22,18 @@ public class ResDlgFrag extends CoreDlgFrag {
 
     /*继承*/
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setPanelStyle();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setPanelStyle();
         setWinAnimStyle(R.style.CoreWindowAnimSlideTopStyle);
         //必须设置高度才能使用
+        setDimAmount(0.64F);
         setHeightPercent(0.7F);//设置高度为屏幕的70%
         //setDialogHeightDp(128);//设置高度为128dp
         return inflater.inflate(R.layout.dlg_res, container, false);

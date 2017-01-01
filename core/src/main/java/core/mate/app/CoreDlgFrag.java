@@ -43,7 +43,7 @@ import core.mate.util.ViewUtil;
  * @since 2015年10月17日12:48:35
  */
 public abstract class CoreDlgFrag extends DialogFragment implements DialogInterface.OnKeyListener {
-    
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,59 +51,59 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
             dismiss();
         }
     }
-    
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Dialog dlg = getDialog();
         Window dlgWin = dlg.getWindow();
         onPrepareDialogWindow(savedInstanceState, dlg, dlgWin);
-        
+
         if (onDlgListener != null) {
             onDlgListener.onShow(this);
         }
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
         if (needRefreshOnResume()) {
             refresh();
         }
-        
+
         if (resumeReceivers != null) {
             for (Object[] item : resumeReceivers) {
                 BroadcastUtil.registerReceiver((BroadcastReceiver) item[0], (IntentFilter) item[1]);
             }
         }
     }
-    
+
     @Override
     public void onPause() {
         super.onPause();
         if (clearAllOnPauseEnable) {
             clearAllClearable();
         }
-        
+
         if (resumeReceivers != null) {
             for (Object[] item : resumeReceivers) {
                 BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
             }
         }
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         clearAllClearable();
-        
+
         if (fullReceivers != null) {
             for (Object[] item : fullReceivers) {
                 BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
             }
         }
     }
-    
+
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
@@ -111,7 +111,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
             onDlgListener.onDismiss(this);
         }
     }
-    
+
     @Override
     public void dismiss() {
         try {
@@ -122,7 +122,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     }
 
     /* 配置 */
-    
+
     private Integer winAnimStyle;
     private Float dimAmount;
     private Drawable winBgDrawable;
@@ -131,30 +131,30 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         this.winAnimStyle = winAnimStyle;
         return this;
     }
-    
+
     public CoreDlgFrag setDimAmount(@Nullable Float dimAmount) {
         this.dimAmount = dimAmount;
         return this;
     }
-    
+
     public CoreDlgFrag setWinBgDrawable(@Nullable Drawable winBgDrawable) {
         this.winBgDrawable = winBgDrawable;
         return this;
     }
-    
+
     public CoreDlgFrag setWinBgColor(@Nullable @ColorInt Integer color) {
-        if(color != null){
+        if (color != null) {
             setWinBgDrawable(new ColorDrawable(color));
-        }else {
+        } else {
             setWinBgDrawable(null);
         }
         return this;
     }
-    
+
     public CoreDlgFrag setWinBgResource(@Nullable @DrawableRes Integer winBgResource) {
-        if(winBgResource != null){
+        if (winBgResource != null) {
             setWinBgDrawable(ContextUtil.getDrawable(winBgResource));
-        }else {
+        } else {
             setWinBgDrawable(null);
         }
         return this;
@@ -182,71 +182,71 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     private Integer gravity;
     private Integer width;
     private Integer height;
-    
+
     public CoreDlgFrag setGravity(@Nullable Integer gravity) {
         this.gravity = gravity;
         return this;
     }
-    
+
     public CoreDlgFrag setWidth(@Nullable Integer width) {
         this.width = width;
         return this;
     }
-    
+
     public CoreDlgFrag setHeight(@Nullable Integer height) {
         this.height = height;
         return this;
     }
-    
+
     public CoreDlgFrag setSize(@Nullable Integer width, @Nullable Integer height) {
         this.width = width;
         this.height = height;
         return this;
     }
-    
+
     protected CoreDlgFrag setWidthPercent(@Nullable Float percent) {
-        if(percent != null){
+        if (percent != null) {
             if (percent < 0 || percent > 1) {
                 throw new IllegalArgumentException("width percent " + percent + " 不合法");
             }
             setWidth((int) (ViewUtil.getScreenWidth() * percent));
-        }else {
+        } else {
             setWidth(null);
         }
         return this;
     }
-    
+
     protected CoreDlgFrag setHeightPercent(@Nullable Float percent) {
-        if(percent != null){
+        if (percent != null) {
             if (percent < 0 || percent > 1) {
                 throw new IllegalArgumentException("height percent " + percent + " 不合法");
             }
             setHeight((int) (ViewUtil.getScreenHeight() * percent));
-        }else {
+        } else {
             setHeight(null);
         }
         return this;
     }
-    
+
     private Integer x;
     private Integer y;
-    
+
     public CoreDlgFrag setX(@Nullable Integer x) {
         this.x = x;
         return this;
     }
-    
+
     public CoreDlgFrag setY(@Nullable Integer y) {
         this.y = y;
         return this;
     }
-    
+
     public CoreDlgFrag setPosition(@Nullable Integer x, @Nullable Integer y) {
         this.x = x;
         this.y = y;
         return this;
     }
-    
+
     /**
      * 配置对话框的window，将在{@link #onActivityCreated(Bundle)}中回调。
      *
@@ -257,63 +257,61 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     protected void onPrepareDialogWindow(@Nullable Bundle savedInstanceState, Dialog dlg, Window dlgWin) {
         setCancelOnTouchOutSideEnable(cancelOnTouchOutSideEnable);
         dlg.setOnKeyListener(this);
-        
+
         if (winAnimStyle != null) {
             dlgWin.setWindowAnimations(winAnimStyle);
         }
-        
+
         if (winBgDrawable != null) {
             dlgWin.setBackgroundDrawable(winBgDrawable);
         }
+        WindowManager.LayoutParams params = dlgWin.getAttributes();
+        if (gravity != null) {
+            params.gravity = gravity;
+        }
+        if (width != null) {
+            params.width = width;
+        }
+        if (height != null) {
+            params.height = height;
+        }
+        if (x != null) {
+            params.x = x;
+        }
+        if (y != null) {
+            params.y = y;
+        }
         if (dimAmount != null) {
+            params.flags |=WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             dlgWin.setDimAmount(dimAmount);
         }
-        
-        if (gravity != null || width != null || height != null || x != null || y != null) {
-            WindowManager.LayoutParams params = dlgWin.getAttributes();
-            if (gravity != null) {
-                params.gravity = gravity;
-            }
-            if (width != null) {
-                params.width = width;
-            }
-            if (height != null) {
-                params.height = height;
-            }
-            if (x != null) {
-                params.x = x;
-            }
-            if (y != null) {
-                params.y = y;
-            }
-            dlgWin.setAttributes(params);
-        }
+        dlgWin.setAttributes(params);
     }
-    
+
     @Override
     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
         return false;
     }
 
 	/* 刷新 */
-    
+
     private RefreshRate refreshRate;
     private boolean onceRefreshed;
-    
+
     public RefreshRate getRefreshRate() {
         return refreshRate;
     }
-    
+
     public void setRefreshRate(RefreshRate refreshRate) {
         this.refreshRate = refreshRate;
     }
-    
+
     private boolean needRefreshOnResume() {
         refreshRate = refreshRate != null ? refreshRate : RefreshRate.ONCE;
         switch (refreshRate) {
             case ALWAYS:
                 return true;
-            
+
             case ONCE:
                 if (onceRefreshed) {
                     return false;
@@ -321,28 +319,28 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
                     onceRefreshed = true;
                     return true;
                 }
-            
+
             case NEVER:
             default:
                 return false;
         }
     }
-    
+
     public void refresh() {
     }
 
 	/* 显示 */
-    
+
     public interface OnDlgListener {
-        
+
         void onShow(CoreDlgFrag dlgFrag);
-        
+
         void onDismiss(CoreDlgFrag dlgFrag);
-        
+
     }
-    
+
     private OnDlgListener onDlgListener;
-    
+
     public CoreDlgFrag setOnDlgListener(OnDlgListener onDlgListener) {
         if (onDlgListener == this) {// 自己给自己设置监听？这并不好吧……
             throw new IllegalArgumentException("不允许将自己设为自己的监听器，这可能导致无限递归！如果你需要该方法，请直接重写。");
@@ -350,7 +348,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         this.onDlgListener = onDlgListener;
         return this;
     }
-    
+
     /**
      * 显示对话框，使用类名作为tag<br>
      *
@@ -359,7 +357,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public void show(FragmentActivity context) {
         show(context.getSupportFragmentManager(), ClassUtil.getTypeName(this));
     }
-    
+
     /**
      * 显示对话框，使用类名作为tag
      *
@@ -368,7 +366,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public void show(FragmentManager fragMgr) {
         show(fragMgr, ClassUtil.getTypeName(this));
     }
-    
+
     /**
      * 显示对话框，使用类名作为tag
      *
@@ -377,19 +375,19 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public void show(Fragment frag) {
         show(frag.getChildFragmentManager());
     }
-    
+
     private boolean dismissIfRecreated = true;
     private boolean cancelOnTouchOutSideEnable = true;
-    
+
     public boolean isDismissIfRecreated() {
         return dismissIfRecreated;
     }
-    
+
     public CoreDlgFrag setDismissIfRecreated(boolean dismissIfRecreated) {
         this.dismissIfRecreated = dismissIfRecreated;
         return this;
     }
-    
+
     /**
      * 是否启用点击外部区域关闭对话框。默认为true。
      *
@@ -398,7 +396,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public boolean isCancelOnTouchOutSideEnable() {
         return cancelOnTouchOutSideEnable;
     }
-    
+
     /**
      * 设置开闭点击外部区域关闭对话框的功能，默认情况下会启用。
      *
@@ -414,9 +412,9 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     }
 
 	/* 线程 */
-    
+
     private Handler handler;
-    
+
     /**
      * 获取当前线程的{@link Handler}。
      * 该方法是简单单例的，一次调用之后实例就会被缓存。
@@ -429,7 +427,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         }
         return handler;
     }
-    
+
     /**
      * 具体注释请参阅{@link Handler#post(Runnable)}。
      *
@@ -440,7 +438,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public boolean post(Runnable r) {
         return getHandler().post(r);
     }
-    
+
     /**
      * 具体注释请参阅{@link Handler#postAtTime(Runnable, long)}。
      *
@@ -452,7 +450,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public boolean postAtTime(Runnable r, long uptimeMillis) {
         return getHandler().postAtTime(r, uptimeMillis);
     }
-    
+
     /**
      * 具体注释请参阅{@link Handler#postAtTime(Runnable, Object, long)}。
      *
@@ -465,7 +463,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
         return getHandler().postAtTime(r, token, uptimeMillis);
     }
-    
+
     /**
      * 具体注释请参阅{@link Handler#postDelayed(Runnable, long)}。
      *
@@ -477,7 +475,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     public boolean postDelayed(Runnable r, long delayMillis) {
         return getHandler().postDelayed(r, delayMillis);
     }
-    
+
     /**
      * 具体注释请参阅{@link Handler#postAtFrontOfQueue(Runnable)}。
      *
@@ -490,9 +488,9 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     }
 
     /*Fragment操作*/
-    
+
     private FragHelper fragHelper;
-    
+
     public FragHelper getFragHelper() {
         if (fragHelper == null) {
             fragHelper = new FragHelper(getChildFragmentManager());
@@ -501,10 +499,10 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     }
 
     /*广播*/
-    
+
     private List<Object[]> fullReceivers;
     private List<Object[]> resumeReceivers;
-    
+
     public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
@@ -515,7 +513,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         fullReceivers.add(new Object[]{receiver, filter});
         BroadcastUtil.registerReceiver(receiver, filter);
     }
-    
+
     public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
@@ -527,16 +525,16 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     }
 
     /*Clearable*/
-    
+
     private ClearableHolder clearableHolder;
     private boolean clearAllOnPauseEnable;
-    
+
     public void setClearAllOnPauseEnable(boolean clearAllOnPauseEnable) {
         this.clearAllOnPauseEnable = clearAllOnPauseEnable;
     }
-    
+
     public <T> T addClearableEx(T t) {
-        
+
         if (t instanceof Clearable) {
             addClearable((Clearable) t);
         } else if (t instanceof AsyncTask) {
@@ -547,7 +545,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         }
         return t;
     }
-    
+
     /**
      * 保存clearable的弱引用
      *
@@ -559,7 +557,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         }
         clearableHolder.add(clearable);
     }
-    
+
     /**
      * clear所有保存着的引用。在{@link #onDestroy()}时自动回调。
      */
@@ -570,7 +568,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     }
 
 	/* 拓展 */
-    
+
     /**
      * 从父容器中获取回调。
      *
@@ -590,7 +588,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         }
         return null;
     }
-    
+
     /**
      * 调用activity的{@link Activity#overridePendingTransition(int, int)}
      * 方法来播放activity之间的动画。
