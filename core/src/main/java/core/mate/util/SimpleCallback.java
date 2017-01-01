@@ -2,6 +2,8 @@ package core.mate.util;
 
 import android.support.annotation.NonNull;
 
+import java.util.Collection;
+
 /**
  * 简单的回调接口，用于异步编程。配合lambda表达式一同食用有奇效。
  * <p>
@@ -29,9 +31,21 @@ public abstract class SimpleCallback<Result> implements Callback<Result> {
 
     }
 
-    public static <Result> void call(Callback<Result> callback, Result result) {
-        if (callback != null) {
-            callback.onCall(result);
+    public static <Result> void call(Result result, Callback<Result>... callbacks) {
+        for (int i = 0, len = DataUtil.getSize(callbacks); i < len; i++) {
+            if (callbacks[i] != null) {
+                callbacks[i].onCall(result);
+            }
+        }
+    }
+
+    public static <Result> void call(Result result, Collection<Callback<Result>> callbacks) {
+        for (int i = 0, len = DataUtil.getSize(callbacks); i < len; i++) {
+            for (Callback<Result> callback : callbacks) {
+                if(callback != null){
+                    callback.onCall(result);
+                }
+            }
         }
     }
 
