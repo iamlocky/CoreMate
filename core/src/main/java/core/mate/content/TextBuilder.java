@@ -15,11 +15,11 @@ public final class TextBuilder {
 
     public static final int CAPACITY_DEFAULT = 128;
 
-    private final StringBuilder stringBuilder;
-
     public TextBuilder() {
         this(CAPACITY_DEFAULT);
     }
+
+    private final StringBuilder stringBuilder;
 
     public TextBuilder(int capacity) {
         stringBuilder = new StringBuilder(capacity);
@@ -248,7 +248,12 @@ public final class TextBuilder {
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o) || toString().equals(o);
+        return o instanceof TextBuilder && TextUtils.equals(((TextBuilder) o).stringBuilder, stringBuilder);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override

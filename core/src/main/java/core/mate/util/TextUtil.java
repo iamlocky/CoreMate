@@ -235,7 +235,7 @@ public final class TextUtil {
 
     /**
      * 将字符串按照编码保存到指定文本文件中。
-     * 写入的实现请参照 {@link IOUtil#writeString(OutputStream, String, Charset)}
+     * 写入的实现请参照 {@link IOUtil#write(OutputStream, String, Charset)}
      *
      * @param txtFile 需要保存到的文件。如果该文件不存在则会通过 {@link FileUtil#createFile(File)}尝试创建。
      * @param content 需要保存的字符串
@@ -256,7 +256,7 @@ public final class TextUtil {
         }
 
         // 写入文本
-        IOUtil.writeString(new FileOutputStream(txtFile), content, charset);
+        IOUtil.write(new FileOutputStream(txtFile), content, charset);
     }
 
 	/*其他*/

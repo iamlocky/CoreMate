@@ -312,7 +312,7 @@ public final class ContextUtil {
     }
 
     public static String readAsset(String asset, Charset charset) throws IOException {
-        return IOUtil.readString(getAssets().open(asset), charset);
+        return IOUtil.read(getAssets().open(asset), charset);
     }
 
     /**
@@ -409,7 +409,7 @@ public final class ContextUtil {
         try {
             in = assetMgr.open(asset);
             out = new FileOutputStream(dstFile);
-            IOUtil.writeData(in, out);
+            IOUtil.write(out, in);
             return dstFile;
         } finally {
             IOUtil.close(in);

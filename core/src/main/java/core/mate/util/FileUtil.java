@@ -833,7 +833,7 @@ public final class FileUtil {
         confirmFile(targetFile);
 
         // 开始复制
-        IOUtil.writeData(new FileInputStream(srcFile), new FileOutputStream(targetFile));
+        IOUtil.write(new FileOutputStream(targetFile), new FileInputStream(srcFile));
         return targetFile;
     }
 
@@ -961,7 +961,7 @@ public final class FileUtil {
         confirmFile(dstFile);
 
         // 开始复制
-        IOUtil.writeData(new FileInputStream(srcFile), new FileOutputStream(dstFile));
+        IOUtil.write(new FileOutputStream(dstFile), new FileInputStream(srcFile));
         return dstFile;
     }
 

@@ -159,7 +159,7 @@ public final class DeviceUtil {
      */
     public static int getRuntimeValue() {
         String version = System.getProperty("java.vm.version");
-        if (Integer.valueOf(version.substring(0, version.indexOf("."))) >= 2) {
+        if (Integer.parseInt(version.substring(0, version.indexOf("."))) >= 2) {
             return RUNTIME_ART;
         } else {
             return RUNTIME_DALVIK;

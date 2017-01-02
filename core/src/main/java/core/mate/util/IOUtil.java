@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
@@ -49,56 +48,11 @@ public final class IOUtil {
 
 	/* 读操作 */
 
-    /**
-     * {@link #readString(InputStream, Charset, boolean)}，自动关闭流
-     *
-     * @param in
-     * @param charset
-     * @return
-     * @throws UnsupportedEncodingException
-     * @throws IOException
-     */
-    public static String readString(InputStream in, Charset charset) throws IOException {
-        return readString(in, charset, true);
+    public static String read(InputStream in, Charset charset) throws IOException {
+        return new String(read(in), charset);
     }
 
-    /**
-     * 将输入流转换成指定编码的字符串。
-     * 这里使用{@link #readBytes(InputStream, boolean)}
-     * 一次性读取输入流的数据为byte数组，并一次性按编码转化为String，
-     * 这两次都会分配新的内存。所以该方法的速度较快但如果读入的数据较大时会对内存造成压力。
-     *
-     * @param in
-     * @param charset
-     * @param autoClose
-     * @return 输入流中的数据。
-     * @throws UnsupportedEncodingException
-     * @throws IOException
-     */
-    public static String readString(InputStream in, Charset charset, boolean autoClose) throws IOException {
-        return new String(readBytes(in, autoClose), charset);
-    }
-
-    /**
-     * {@link #readBytes(InputStream, boolean)}，自动关闭流
-     *
-     * @param in
-     * @return
-     * @throws IOException
-     */
-    public static byte[] readBytes(InputStream in) throws IOException {
-        return readBytes(in, true);
-    }
-
-    /**
-     * 将指定输入流的数据读出为byte数组。
-     *
-     * @param in
-     * @param autoClose
-     * @return
-     * @throws IOException
-     */
-    public static byte[] readBytes(InputStream in, boolean autoClose) throws IOException {
+    public static byte[] read(InputStream in) throws IOException {
         ByteArrayOutputStream byteArrOut = null;
         try {
             byteArrOut = new ByteArrayOutputStream();
@@ -110,68 +64,33 @@ public final class IOUtil {
             byteArrOut.flush();
             return byteArrOut.toByteArray();
         } finally {
-            if (autoClose) {
-                close(byteArrOut);
-                close(in);
-            }
+            close(byteArrOut);
+            close(in);
         }
     }
 
 	/* 写操作 */
 
     /**
-     * 具体实现请参阅{@link #writeString(OutputStream, String, Charset)}，默认使用系统编码
+     * 默认使用系统编码
      */
-    public static void writeString(OutputStream out, String content) throws IOException {
-        writeString(out, content, Charset.defaultCharset());
+    public static void write(OutputStream out, String content) throws IOException {
+        write(out, content, Charset.defaultCharset());
     }
 
-    /**
-     * 具体实现请参阅 {@link #writeString(OutputStream, String, Charset, boolean)}，自动关闭流
-     */
-    public static void writeString(OutputStream out, String content, Charset charset) throws IOException {
-        writeString(out, content, charset, true);
-    }
-
-    /**
-     * 使用指定编码向输出流写入文字
-     *
-     * @param out
-     * @param content
-     * @param charset
-     * @param autoClose 写入后是否自动关闭输出流
-     * @throws IOException
-     */
-    public static void writeString(OutputStream out, String content, Charset charset, boolean autoClose) throws IOException {
+    public static void write(OutputStream out, String content, Charset charset) throws IOException {
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(out, charset);
             writer.write(content);
             writer.flush();
         } finally {
-            if (autoClose) {
-                close(writer);
-                close(out);
-            }
+            close(writer);
+            close(out);
         }
     }
 
-    /**
-     * 具体实现请参阅{@link #writeData(InputStream, OutputStream, boolean)}，默认自动关闭流。
-     */
-    public static void writeData(InputStream in, OutputStream out) throws IOException {
-        writeData(in, out, true);
-    }
-
-    /**
-     * 将输入流的数据写入输出流。
-     *
-     * @param in
-     * @param out
-     * @param autoClose 写入后是否关闭流
-     * @throws IOException
-     */
-    public static void writeData(InputStream in, OutputStream out, boolean autoClose) throws IOException {
+    public static void write(OutputStream out, InputStream in) throws IOException {
         // 创建临时变量准备输入
         byte[] data = new byte[1024];
         int len;
@@ -181,10 +100,8 @@ public final class IOUtil {
                 out.write(data, 0, len);
             }
         } finally {
-            if (autoClose) {
-                close(in);
-                close(out);
-            }
+            close(in);
+            close(out);
         }
     }
 }
