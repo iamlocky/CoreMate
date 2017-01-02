@@ -56,7 +56,5 @@ public class AdapterFrag extends ListFrag {
         String item = getItemAtPosition(position);
         //简化Toast的使用
         ToastUtil.show(item);
-        
-        new ResDlgFrag().show(this);
     }
 }
