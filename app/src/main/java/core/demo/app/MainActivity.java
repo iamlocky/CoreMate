@@ -4,12 +4,10 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import core.demo.R;
 import core.demo.app.main.AdapterFrag;
 import core.demo.app.main.PrefFrag;
-import core.demo.app.main.ResDlgFrag;
 import core.demo.app.main.TaskFrag;
 import core.mate.app.CoreActivity;
 
@@ -69,13 +67,6 @@ public class MainActivity extends CoreActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("查看资源");
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-        new ResDlgFrag().show(this);
         return true;
     }
 }
