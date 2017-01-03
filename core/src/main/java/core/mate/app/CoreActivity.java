@@ -3,8 +3,10 @@ package core.mate.app;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -20,6 +22,7 @@ import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
 import core.mate.util.BroadcastUtil;
+import core.mate.util.DataUtil;
 
 /**
  * 封装了常用方法的Activity基类。
@@ -29,10 +32,10 @@ import core.mate.util.BroadcastUtil;
  */
 public abstract class CoreActivity extends AppCompatActivity {
 
-    private boolean isInResumed;
+    private boolean inResumed;
 
     public boolean isInResumed() {
-        return isInResumed;
+        return inResumed;
     }
 
 	/* 继承 */
@@ -43,28 +46,26 @@ public abstract class CoreActivity extends AppCompatActivity {
         if (needRefreshOnResume()) {
             refresh();
         }
-        isInResumed = true;
+        inResumed = true;
 
-        if (resumeReceivers != null) {
-            for (Object[] item : resumeReceivers) {
-                BroadcastUtil.registerReceiver((BroadcastReceiver) item[0], (IntentFilter) item[1]);
-            }
+        for (int i = 0, len = DataUtil.getSize(resumeReceivers); i < len; i++) {
+            ReceiverHolder item = resumeReceivers.get(i);
+            registerReceiver(item.receiver, item.filter, item.local);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        isInResumed = false;
+        inResumed = false;
 
         if (clearAllOnPauseEnable) {
             clearAllClearable();
         }
 
-        if (resumeReceivers != null) {
-            for (Object[] item : resumeReceivers) {
-                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
-            }
+        for (int i = 0, len = DataUtil.getSize(resumeReceivers); i < len; i++) {
+            ReceiverHolder item = resumeReceivers.get(i);
+            unregisterReceiver(item.receiver, item.local);
         }
     }
 
@@ -73,10 +74,9 @@ public abstract class CoreActivity extends AppCompatActivity {
         super.onDestroy();
         clearAllClearable();
 
-        if (fullReceivers != null) {
-            for (Object[] item : fullReceivers) {
-                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
-            }
+        for (int i = 0, len = DataUtil.getSize(fullReceivers); i < len; i++) {
+            ReceiverHolder item = fullReceivers.get(i);
+            unregisterReceiver(item.receiver, item.local);
         }
     }
 
@@ -357,12 +357,6 @@ public abstract class CoreActivity extends AppCompatActivity {
 
     private Handler handler;
 
-    /**
-     * 获取当前线程的{@link Handler}。
-     * 该方法是简单单例的，一次调用之后实例就会被缓存。
-     *
-     * @return
-     */
     public Handler getHandler() {
         if (handler == null) {
             handler = new Handler();
@@ -370,89 +364,127 @@ public abstract class CoreActivity extends AppCompatActivity {
         return handler;
     }
 
-    /**
-     * 具体注释请参阅{@link Handler#post(Runnable)}。
-     *
-     * @param r
-     * @return
-     * @see #getHandler()
-     */
     public boolean post(Runnable r) {
         return getHandler().post(r);
     }
 
-    /**
-     * 具体注释请参阅{@link Handler#postAtTime(Runnable, long)}。
-     *
-     * @param r
-     * @param uptimeMillis
-     * @return
-     * @see #getHandler()
-     */
     public boolean postAtTime(Runnable r, long uptimeMillis) {
         return getHandler().postAtTime(r, uptimeMillis);
     }
 
-    /**
-     * 具体注释请参阅{@link Handler#postAtTime(Runnable, Object, long)}。
-     *
-     * @param r
-     * @param token
-     * @param uptimeMillis
-     * @return
-     * @see #getHandler()
-     */
     public boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
         return getHandler().postAtTime(r, token, uptimeMillis);
     }
 
-    /**
-     * 具体注释请参阅{@link Handler#postDelayed(Runnable, long)}。
-     *
-     * @param r
-     * @param delayMillis
-     * @return
-     * @see #getHandler()
-     */
     public boolean postDelayed(Runnable r, long delayMillis) {
         return getHandler().postDelayed(r, delayMillis);
     }
 
-    /**
-     * 具体注释请参阅{@link Handler#postAtFrontOfQueue(Runnable)}。
-     *
-     * @param r
-     * @return
-     * @see #getHandler()
-     */
     public boolean postAtFrontOfQueue(Runnable r) {
         return getHandler().postAtFrontOfQueue(r);
     }
 
     /*广播*/
 
-    private List<Object[]> fullReceivers;
-    private List<Object[]> resumeReceivers;
+    private List<ReceiverHolder> fullReceivers;
+    private List<ReceiverHolder> resumeReceivers;
 
+    /**
+     * 注册长时间监听的广播。该广播会在调用该方法时自动注册，并在{@link #onDestroy()}中注销。
+     * <p>
+     * 默认注册为全局广播。
+     *
+     * @param receiver
+     * @param filter
+     */
     public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        addFullReceiver(receiver, filter, false);
+    }
+
+    /**
+     * 注册长时间监听的广播。该广播会在调用该方法时自动注册，并在{@link #onDestroy()}中注销。
+     *
+     * @param receiver
+     * @param filter
+     * @param local    是否通过{@link LocalBroadcastManager}注册为本地广播。
+     *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
+     */
+    public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
         }
         if (fullReceivers == null) {
             fullReceivers = new ArrayList<>();
         }
-        fullReceivers.add(new Object[]{receiver, filter});
-        BroadcastUtil.registerReceiver(receiver, filter);
+        fullReceivers.add(new ReceiverHolder(receiver, filter, local));
+        registerReceiver(receiver, filter, local);
     }
 
+    /**
+     * 注册只在{@link #onResume()}和{@link #onPause()}之间启用的广播。在{@link #onResume()}之后调用该方法会注册不上广播，
+     * 此时调用该方法将会抛出运行时异常。因而只建议在{@link #onCreate(Bundle)}中使用该方法。
+     * <p>
+     * 默认注册为全局广播。
+     *
+     * @param receiver
+     * @param filter
+     */
     public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        addResumeReceiver(receiver, filter, false);
+    }
+
+    /**
+     * 注册只在{@link #onResume()}和{@link #onPause()}之间启用的广播。在{@link #onResume()}之后调用该方法会注册不上广播，
+     * 此时调用该方法将会抛出运行时异常。因而只建议在{@link #onCreate(Bundle)}中使用该方法。
+     *
+     * @param receiver
+     * @param filter
+     * @param local    是否通过{@link LocalBroadcastManager}注册为本地广播。
+     *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
+     */
+    public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
+        } else if (isInResumed()) {
+            throw new IllegalStateException("请在onResume调用前执行该方法");
         }
+
         if (resumeReceivers == null) {
             resumeReceivers = new ArrayList<>();
         }
-        resumeReceivers.add(new Object[]{receiver, filter});
+
+        resumeReceivers.add(new ReceiverHolder(receiver, filter, local));
+    }
+
+    /**
+     * 注册广播。
+     *
+     * @param receiver
+     * @param filter
+     * @param local    是否通过{@link LocalBroadcastManager}注册为本地广播。
+     *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
+     */
+    public void registerReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
+        if (local) {
+            BroadcastUtil.registerReceiver(receiver, filter);
+        } else {
+            registerReceiver(receiver, filter);
+        }
+    }
+
+    /**
+     * 注销广播。
+     *
+     * @param receiver
+     * @param local    该广播是否是通过{@link LocalBroadcastManager}注册的本地广播。
+     *                 如果和注册时不一致的话，会无法注销广播。
+     */
+    public void unregisterReceiver(BroadcastReceiver receiver, boolean local) {
+        if (local) {
+            BroadcastUtil.unregisterReceiver(receiver);
+        } else {
+            unregisterReceiver(receiver);
+        }
     }
 
 	/*Clearable*/
