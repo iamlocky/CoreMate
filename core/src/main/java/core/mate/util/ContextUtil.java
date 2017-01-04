@@ -382,7 +382,7 @@ public final class ContextUtil {
 
     /**
      * 从应用Assets目录导出文件到dstDir下，如果你要导出myFile.txt会返回导出的dstDir/myFile.txt文件。
-     * 如果asset的路径类似"docs/home.html"则会得到dstDir/home.html，过滤父路径的逻辑请参阅{@link FileUtil#getItemName(String)}。
+     * 如果asset的路径类似"docs/home.html"则会得到dstDir/home.html，过滤父路径的逻辑请参阅{@link FileUtil#getName(String)}。
      *
      * @param asset  资源名
      * @param dstDir 目标文件
@@ -394,7 +394,7 @@ public final class ContextUtil {
         dstDir = FileUtil.getOrCreateDir(dstDir);//确认目录
 
         //计算文件名，如从"docs/home.html"中取出"home.html"
-        String itemName = FileUtil.getItemName(asset);
+        String itemName = FileUtil.getName(asset);
         File dstFile = new File(dstDir, itemName);
         if (dstFile.isDirectory()) {
             throw new IOException("指定位置" + dstFile + "被目录占据，无法写入");

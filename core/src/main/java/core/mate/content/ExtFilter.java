@@ -13,7 +13,7 @@ import core.mate.util.FileUtil;
  * @author DrkCore
  * @since 2016年1月24日10:05:31
  */
-public class ExtNameFilter extends VisibleFilter {
+public class ExtFilter extends VisibleFilter {
 
 	/*常见的拓展名*/
 
@@ -61,11 +61,11 @@ public class ExtNameFilter extends VisibleFilter {
 
 	private final Set<String> extSet;
 
-	public ExtNameFilter (Set<String> extSet) {
+	public ExtFilter(Set<String> extSet) {
 		this.extSet = extSet;
 	}
 
-	public ExtNameFilter (String... exts) {
+	public ExtFilter(String... exts) {
 		if (exts == null || exts.length == 0) {
 			throw new IllegalArgumentException();
 		}
@@ -79,7 +79,7 @@ public class ExtNameFilter extends VisibleFilter {
 	public boolean accept (File file) {
 		String extName = null;
 		if (super.accept(file) && file.isFile()) {
-			extName = FileUtil.getFileExtName(file);
+			extName = FileUtil.getExt(file);
 			extName = extName != null? extName.toLowerCase():null;
 		}
 		return extName != null && extSet.contains(extName);

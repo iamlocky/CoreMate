@@ -17,6 +17,6 @@ public class DeleteFileTask extends CoreTask<File[], Void, boolean[]> {
         Thread.sleep(3000L);//为了演示这里阻塞3秒
 
         //使用FileUtil删除文件或者文件夹
-        return FileUtil.deleteItems(files);
+        return FileUtil.delete(files);
     }
 }

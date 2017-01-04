@@ -2,6 +2,7 @@ package core.mate.content;
 
 import java.io.File;
 
+import core.mate.util.AbsFileAppender;
 import core.mate.util.FileUtil;
 
 /**
@@ -15,11 +16,11 @@ import core.mate.util.FileUtil;
  *@author DrkCore
  * @since 2015年9月22日23:37:16
  */
-public class SimpleTagAppend extends FileUtil.AbsTagAppender {
+public class SimpleAppender extends AbsFileAppender {
 	
 	private final String tag;
 	
-	public SimpleTagAppend(String tag) {
+	public SimpleAppender(String tag) {
 		if (tag == null || tag.equals("")) {
 			throw new IllegalArgumentException("tag不可为空");
 		} else if (tag.contains("\\") || tag.contains("/") || tag.contains(".")) {
@@ -29,11 +30,11 @@ public class SimpleTagAppend extends FileUtil.AbsTagAppender {
 	}
 	
 	@Override
-	public File appendTagToFile(String basePath) {
+	public File appendFile(String basePath) {
 		File file = new File(basePath);
 		if (file.exists()) {// 重名文件已存在
 			StringBuilder path = new StringBuilder(basePath);
-			String type = FileUtil.getFileExtName(basePath);
+			String type = FileUtil.getExt(basePath);
 			
 			if (type != null) {// 拓展名存在
 				int typeLen = type.length();
@@ -53,7 +54,7 @@ public class SimpleTagAppend extends FileUtil.AbsTagAppender {
 	}
 	
 	@Override
-	protected File appendTagToDir(String basePath) {
+	protected File appendDir(String basePath) {
 		File dir = new File(basePath);
 		if (dir.exists()) {// 重名文件已存在
 			StringBuilder path = new StringBuilder(basePath);

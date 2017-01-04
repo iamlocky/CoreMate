@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.os.storage.StorageManager;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.Formatter;
 
@@ -208,7 +209,7 @@ public final class FileUtil {
             return file;
         } else if (!file.exists() && createFile(file).isFile()) {// 不存在但是创建成功
             return file;
-        } else if (file.isDirectory() && deleteItem(file) && createFile(file).isFile()) {// 是目录，但是删除后创建文件成功
+        } else if (file.isDirectory() && delete(file) && createFile(file).isFile()) {// 是目录，但是删除后创建文件成功
             return file;
         } else {
             throw new IOException("文件不可用");
@@ -245,6 +246,8 @@ public final class FileUtil {
         }
     }
 
+    public static final String NO_MEDIA = ".nomedia";
+
     /**
      * 在指定目录中创建.nomedia文件来表明目录之下不存在媒体数据。
      *
@@ -253,7 +256,11 @@ public final class FileUtil {
      * @throws IOException
      */
     public static File confirmNoMediaFile(File inDir) throws IOException {
-        return confirmFile(new File(inDir, ".nomedia"));
+        return confirmFile(getNoMediaFile(inDir));
+    }
+
+    public static File getNoMediaFile(File inDir) {
+        return new File(inDir, NO_MEDIA);
     }
 
     /**
@@ -262,9 +269,8 @@ public final class FileUtil {
      * @param inDir
      * @return
      */
-    public static File containNoMediaFile(File inDir) {
-        File nomediaFile = new File(inDir, ".nomedia");
-        return nomediaFile.exists() ? nomediaFile : null;
+    public static boolean containNoMediaFile(File inDir) {
+        return getNoMediaFile(inDir).exists();
     }
 
     public static File[] toItems(String... paths) {
@@ -304,13 +310,13 @@ public final class FileUtil {
 	/* 项目名和路径处理 */
 
     /**
-     * {@link #getFileExtName(String)}
+     * {@link #getExt(String)}
      *
      * @param file
      * @return
      */
-    public static String getFileExtName(File file) {
-        return getFileExtName(file.getAbsolutePath());
+    public static String getExt(File file) {
+        return getExt(file.getAbsolutePath());
     }
 
     /**
@@ -321,9 +327,9 @@ public final class FileUtil {
      * @return 小写的文件拓展名的字符串，不包括点号，比如“txt”。<br>
      * 如果不存在符合规则的拓展名，则返回null。
      */
-    public static String getFileExtName(String path) {
+    public static String getExt(String path) {
         // 获取文件名称
-        String fileName = getItemName(path);
+        String fileName = getName(path);
         // 获取小数点所在位置
         int index = fileName.lastIndexOf('.');
         /*
@@ -352,10 +358,10 @@ public final class FileUtil {
     /**
      * @param file
      * @return
-     * @see #getAbsoluteFileName(String)
+     * @see #getAbsoluteName(String)
      */
-    public static String getAbsoluteFileName(File file) {
-        return getAbsoluteFileName(file.getAbsolutePath());
+    public static String getAbsoluteName(File file) {
+        return getAbsoluteName(file.getAbsolutePath());
     }
 
     /**
@@ -364,9 +370,9 @@ public final class FileUtil {
      * @param path 文件路径。该路径分隔符以当前系统为准，即File.separator
      * @return 去除了拓展名后的名称，比如"C:\fileName.TXT"，将返回“fileName”。
      */
-    public static String getAbsoluteFileName(String path) {
-        String fileName = getItemName(path);
-        String type = getFileExtName(path);
+    public static String getAbsoluteName(String path) {
+        String fileName = getName(path);
+        String type = getExt(path);
         if (type != null) {
             // 移动拓展名
             // 因为截取的type是不带小数点的，所以要多减去1位
@@ -377,13 +383,13 @@ public final class FileUtil {
     }
 
     /**
-     * {@link #getItemName(String)}
+     * {@link #getName(String)}
      *
      * @param item
      * @return
      */
-    public static String getItemName(File item) {
-        return getItemName(item.getAbsolutePath());
+    public static String getName(File item) {
+        return getName(item.getAbsolutePath());
     }
 
     /**
@@ -395,7 +401,7 @@ public final class FileUtil {
      * （如“C:\ABC\”将返回ABC，“C:\1.txt”返回“1.txt”） <br>
      * 如果项目名称为“/”，即Linux或者unix的根目录，则直接返回"/"
      */
-    public static String getItemName(String filePath) {
+    public static String getName(String filePath) {
         //统一分隔符
         filePath = filePath.contains("\\") ? filePath.replace('\\', '/') : filePath;
         if (filePath.equals("/")) {
@@ -415,7 +421,7 @@ public final class FileUtil {
      * @param item
      * @return
      */
-    public static boolean isItemInDir(File dir, File item) {
+    public static boolean isInDir(File dir, File item) {
         if (item.exists() && dir.isDirectory()) {
             String itemPath = item.getAbsolutePath();
             String dirPath = dir.getAbsolutePath();
@@ -435,7 +441,7 @@ public final class FileUtil {
      * @param item
      * @return
      */
-    public static boolean isItemInDirDirectly(File dir, File item) {
+    public static boolean isInDirDirectly(File dir, File item) {
         if (item.exists() && dir.isDirectory()) {
             String itemPath = item.getAbsolutePath();
             String dirPath = dir.getAbsolutePath();
@@ -457,59 +463,70 @@ public final class FileUtil {
      * @param srcItem
      * @return
      */
-    public static boolean isSameItem(File dstItem, File srcItem) {
+    public static boolean isSame(File dstItem, File srcItem) {
         return srcItem.getAbsolutePath().equals(dstItem.getAbsolutePath());
     }
 
-    public static void dumpFile(File item, List<File> fileList) {
-        dumpFile(item, fileList, null);
-    }
-
     /**
-     * 具体实现请参阅{@link #dumpFile(File, List, FileFilter, boolean)}，默认allowHiddenDir为false。
+     * 广度优先递归遍历目录下的所有文件。默认忽略隐藏的目录。
      *
      * @param item
-     * @param fileList
-     * @param filter
+     * @return
      */
-    public static void dumpFile(File item, List<File> fileList, @Nullable FileFilter filter) {
-        dumpFile(item, fileList, filter, false);
+    public static List<File> dumpFile(File item) {
+        return dumpFile(item, null, null, false);
     }
 
     /**
-     * 使用递归遍历目录下的所有文件，并填入指定的List之中。
+     * 广度优先递归遍历目录下的所有文件。默认忽略隐藏的目录。
      *
-     * @param item     如果item本身是文件并且符合filter的要求，也会被添加到list中
-     * @param fileList
+     * @param item   如果item本身是文件并且符合filter的要求，也会被添加到list中
      * @param filter
+     * @return
      */
-    public static void dumpFile(File item, List<File> fileList, @Nullable FileFilter filter, boolean allowHiddenDir) {
+    @NonNull
+    public static List<File> dumpFile(File item, @Nullable FileFilter filter) {
+        return dumpFile(item, null, filter, false);
+    }
+
+    /**
+     * 广度优先递归遍历目录下的所有文件，并填入指定的List之中。
+     *
+     * @param item           如果item本身是文件并且符合filter的要求，也会被添加到list中
+     * @param result         用于保存找到文件的列表，可以为null
+     * @param filter
+     * @param allowHiddenDir 是否查找{@link File#isHidden()}为true的目录。
+     * @return 如果result参数不为空，返回result。否则返回新建的List实例。
+     */
+    @NonNull
+    public static List<File> dumpFile(File item, @Nullable List<File> result, @Nullable FileFilter filter, boolean allowHiddenDir) {
+        if (result == null) {
+            result = new ArrayList<>();
+        }
+
         if (item.isFile()) {
             if (filter == null || filter.accept(item)) {
-                fileList.add(item);
+                result.add(item);
             }
         } else if (item.isDirectory() && (!item.isHidden() || allowHiddenDir)) {// 是目录，不是隐藏目录，或者允许隐藏目录
             File[] files = item.listFiles();
-            if (files != null) {
-                for (File check : files) {
-                    dumpFile(check, fileList, filter, allowHiddenDir);
-                }
+            for (int i = 0, len = DataUtil.getSize(files); i < len; i++) {
+                dumpFile(files[i], result, filter, allowHiddenDir);
             }
         }
+
+        return result;
     }
 
 	/* 项目大小 */
 
     /**
-     * 获取文件的大小，或者目录下所有项目的大小。
+     * 通过{@link File#length()}递归获取文件或者目录下所有项目的大小。
      *
-     * @param item 文件或者目录。<br/>
-     *             如果文件不存在则抛出异常。
-     * @return 通过{@link File#length()}获取文件的路径，
-     * 如果是目录则通过递归循环统计文件大小，长度以bytes计。
-     * @throws FileNotFoundException
+     * @param item
+     * @return 文件的byte大小，如果文件不存在则返回0
      */
-    public static long countItemSize(File item) throws FileNotFoundException {
+    public static long getSize(File item) {
         if (item.isFile()) {
             return item.length();
         } else if (item.isDirectory()) {
@@ -517,15 +534,13 @@ public final class FileUtil {
 
             // 统计
             File[] files = item.listFiles();
-            if (files != null && files.length > 0) {
-                for (File check : files) {
-                    sum += countItemSize(check);
-                }
+            for (int i = 0, len = DataUtil.getSize(files); i < len; i++) {
+                sum += getSize(files[i]);
             }
 
             return sum;
         } else {
-            throw new FileNotFoundException("指定文件不存在");
+            return 0;
         }
     }
 
@@ -535,11 +550,11 @@ public final class FileUtil {
      * @param item
      * @return
      * @throws FileNotFoundException 文件不存在时抛出该异常
-     * @see #getFileExtName(String)
+     * @see #getExt(String)
      */
-    public static String getFormattedItemSize(File item) throws FileNotFoundException {
-        long fileLen = countItemSize(item);
-        return formatItemSize(fileLen);
+    public static String getFormattedSize(File item) {
+        long fileLen = getSize(item);
+        return formatSize(fileLen);
     }
 
     /**
@@ -615,7 +630,7 @@ public final class FileUtil {
      * @param fileLen
      * @return
      */
-    public static String formatItemSize(long fileLen) {
+    public static String formatSize(long fileLen) {
         return Formatter.formatFileSize(Core.getInstance().getAppContext(), fileLen);
     }
 
@@ -717,79 +732,9 @@ public final class FileUtil {
     public @interface ConflictOperation {
     }
 
-    /**
-     * 用于向文件或者目录后添加尾缀以得到一个空的项目的处理工具
-     */
-    public abstract static class AbsTagAppender {
+    /* 复制项目 */
 
-        /**
-         * {@link #getAvailableFileToken(String)}
-         *
-         * @param baseFile
-         * @return
-         */
-        public final File getAvailableFileToken(File baseFile) {
-            return getAvailableFileToken(baseFile.getAbsolutePath());
-        }
-
-        /**
-         * 获取可用的文件占位
-         *
-         * @param basePath
-         * @return 一个指向可用的空位置的File对象。
-         */
-        public final File getAvailableFileToken(String basePath) {
-            File availableFile = appendTagToFile(basePath);
-            if (!availableFile.exists()) {// 文件不存在，好样的
-                return availableFile;
-            } else {
-                throw new IllegalStateException("appendTag所返回的File对象不允许指向一个已存在的项目");
-            }
-        }
-
-        /**
-         * {@link #getAvailableDirToken(String)}
-         *
-         * @param baseDir
-         * @return
-         */
-        public final File getAvailableDirToken(File baseDir) {
-            return getAvailableDirToken(baseDir.getAbsolutePath());
-        }
-
-        /**
-         * 获取可用的目录占位
-         *
-         * @param basePath
-         * @return 一个指向可用的空位置的File对象。
-         */
-        public final File getAvailableDirToken(String basePath) {
-            File availableFile = appendTagToDir(basePath);
-            if (!availableFile.exists()) {// 文件不存在，好样的
-                return availableFile;
-            } else {
-                throw new IllegalStateException("appendTag所返回的File对象不允许指向一个已存在的项目");
-            }
-        }
-
-        /**
-         * 根据基础的路径不断地拼接tag，直到得到一个不存在的文件的路径位置。
-         *
-         * @param basePath 文件的基本路径
-         * @return 指向空位置的文件路径
-         */
-        protected abstract File appendTagToFile(String basePath);
-
-        /**
-         * @param basePath 文件的基本路径
-         * @return
-         */
-        protected abstract File appendTagToDir(String basePath);
-    }
-
-	/* 复制项目 */
-
-    private static File copyFile(File dstDir, File srcFile, @ConflictOperation int operation, AbsTagAppender appender) throws IOException {
+    private static File copyFile(File dstDir, File srcFile, @ConflictOperation int operation, AbsFileAppender appender) throws IOException {
         // 获取源文件
         if (!srcFile.isFile()) {
             // 源文件不存在，或者是目录
@@ -805,18 +750,18 @@ public final class FileUtil {
 
         // 获取目标文件
         // 获取待复制文件的文件名
-        File targetFile = new File(dstDir, getItemName(srcFile));
+        File targetFile = new File(dstDir, getName(srcFile));
         if (targetFile.exists()) {// 存在同名项目
             switch (operation) {
                 case CONFLICT_OPERATION_TERMINATE:
                     throw new FileExistsException("指定目录下存在同名项目");
 
                 case CONFLICT_OPERATION_APPEND_TAG:
-                    targetFile = appender.getAvailableFileToken(targetFile.getAbsolutePath());// 获得一个可用的位置
+                    targetFile = appender.getNextFile(targetFile.getAbsolutePath());// 获得一个可用的位置
                     break;
 
                 case CONFLICT_OPERATION_COVER:
-                    if (isSameItem(targetFile, srcFile)) {
+                    if (isSame(targetFile, srcFile)) {
                         throw new FileExistsException("无法覆盖自己");
                     }
                     break;
@@ -837,7 +782,7 @@ public final class FileUtil {
         return targetFile;
     }
 
-    private static File copyDir(File dstDir, File srcDir, @ConflictOperation int operation, AbsTagAppender appender) throws IOException {
+    private static File copyDir(File dstDir, File srcDir, @ConflictOperation int operation, AbsFileAppender appender) throws IOException {
         // 获取源目录
         if (!srcDir.isDirectory()) {
             // 源目录不存在或者并非目录
@@ -855,18 +800,18 @@ public final class FileUtil {
         }
 
         // 检查目录层次合法性
-        if (isSameItem(srcDir, dstDir) || isItemInDir(srcDir, dstDir)) {
+        if (isSame(srcDir, dstDir) || isInDir(srcDir, dstDir)) {
             throw new FileNotFoundException("不允许将目录复制到自身目录及其下级目录");
         }
 
-        File targetDir = new File(dstDir, getItemName(srcDir));
+        File targetDir = new File(dstDir, getName(srcDir));
         if (targetDir.exists()) {// 目标目录下存在同名项目
             switch (operation) {
                 case CONFLICT_OPERATION_TERMINATE:
                     throw new FileExistsException("指定目录下存在同名项目");
 
                 case CONFLICT_OPERATION_APPEND_TAG:
-                    targetDir = appender.getAvailableDirToken(targetDir.getAbsolutePath());// 获得一个可用的位置
+                    targetDir = appender.getNextDir(targetDir.getAbsolutePath());// 获得一个可用的位置
                     break;
 
                 case CONFLICT_OPERATION_COVER:// 覆盖操作
@@ -886,7 +831,7 @@ public final class FileUtil {
 
         // 开始复制所有项目
         if (fileList != null && fileList.length != 0) {
-            copyItems(targetDir, fileList, operation, appender);
+            copy(targetDir, fileList, operation, appender);
         }
         return targetDir;
     }
@@ -902,7 +847,7 @@ public final class FileUtil {
      * @throws FileExistsException
      * @throws IOException
      */
-    public static File copyItem(File dstDir, File srcItem, @ConflictOperation int operation, AbsTagAppender appender) throws IOException {
+    public static File copy(File dstDir, File srcItem, @ConflictOperation int operation, AbsFileAppender appender) throws IOException {
         if (srcItem.isFile()) { // 源文件
             return copyFile(dstDir, srcItem, operation, appender);
         } else if (srcItem.isDirectory()) {
@@ -914,7 +859,7 @@ public final class FileUtil {
 
     /**
      * 批量复制文件。复制过程中某个项目可能会出现异常，导致整个操作终止。
-     * 具体实现请参阅{@link #copyItem(File, File, int, AbsTagAppender)}
+     * 具体实现请参阅{@link #copy(File, File, int, AbsFileAppender)}
      *
      * @param items
      * @param operation
@@ -924,10 +869,10 @@ public final class FileUtil {
      * @throws FileExistsException
      * @throws IOException
      */
-    public static File[] copyItems(File dstDir, File[] items, @ConflictOperation int operation, AbsTagAppender appender) throws IOException {
+    public static File[] copy(File dstDir, File[] items, @ConflictOperation int operation, AbsFileAppender appender) throws IOException {
         File[] fileArr = new File[items.length];
         for (int i = 0, len = items.length; i < len; i++) {
-            fileArr[i] = copyItem(dstDir, items[i], operation, appender);
+            fileArr[i] = copy(dstDir, items[i], operation, appender);
         }
         return fileArr;
     }
@@ -943,7 +888,7 @@ public final class FileUtil {
      * @throws FileExistsException
      * @throws IOException
      */
-    public static File saveFileAs(File srcFile, File dstFile, boolean replaceIfExist) throws IOException {
+    public static File saveAs(File srcFile, File dstFile, boolean replaceIfExist) throws IOException {
         // 获取源文件
         if (!srcFile.isFile()) {
             // 源文件不存在，或者是目录
@@ -951,7 +896,7 @@ public final class FileUtil {
         }
 
         // 检查目标位置合法性
-        if (isSameItem(srcFile, dstFile)) {
+        if (isSame(srcFile, dstFile)) {
             throw new FileExistsException("源文件和目标文件相同");
         } else if ((dstFile.exists() && !replaceIfExist)) {//冲突且不允许替换
             throw new FileExistsException("目标目录下存在同名文件");
@@ -983,7 +928,7 @@ public final class FileUtil {
      * @throws FileExistsException
      * @throws IOException
      */
-    public static File moveItem(File dstDir, File srcItem, @ConflictOperation int operation, AbsTagAppender appender) throws IOException {
+    public static File move(File dstDir, File srcItem, @ConflictOperation int operation, AbsFileAppender appender) throws IOException {
         // 获取源文件
         if (!srcItem.exists()) {
             // 源文件不存在
@@ -998,12 +943,12 @@ public final class FileUtil {
         }
 
         // 检查非法情况
-        if (srcItem.isDirectory() && (isSameItem(srcItem, dstDir) || isItemInDir(srcItem, dstDir))) {
+        if (srcItem.isDirectory() && (isSame(srcItem, dstDir) || isInDir(srcItem, dstDir))) {
             throw new FileNotFoundException("无法将目录移动到自己及次级目录之下");
         }
 
-        File targetFile = new File(dstDir, getItemName(srcItem));
-        if (isSameItem(targetFile, srcItem)) {
+        File targetFile = new File(dstDir, getName(srcItem));
+        if (isSame(targetFile, srcItem)) {
             throw new FileExistsException("目标位置和源项目冲突，无法移动");
         }
 
@@ -1014,9 +959,9 @@ public final class FileUtil {
 
                 case CONFLICT_OPERATION_APPEND_TAG:
                     if (srcItem.isFile()) {
-                        targetFile = appender.getAvailableFileToken(targetFile.getAbsolutePath());
+                        targetFile = appender.getNextFile(targetFile.getAbsolutePath());
                     } else {
-                        targetFile = appender.getAvailableDirToken(targetFile.getAbsolutePath());
+                        targetFile = appender.getNextDir(targetFile.getAbsolutePath());
                     }
                     break;
 
@@ -1040,7 +985,7 @@ public final class FileUtil {
     }
 
     /**
-     * 批量移动文件，具体实现请参阅{@link #moveItem(File, File, int, AbsTagAppender)}。
+     * 批量移动文件，具体实现请参阅{@link #move(File, File, int, AbsFileAppender)}。
      * 移动过程某个文件可能会出现异常导致整个操作终止。
      *
      * @param srcItems
@@ -1051,10 +996,10 @@ public final class FileUtil {
      * @throws IOException
      * @throws FileExistsException
      */
-    public static File[] moveItems(File dstDir, File[] srcItems, @ConflictOperation int operation, AbsTagAppender appender) throws IOException {
+    public static File[] move(File dstDir, File[] srcItems, @ConflictOperation int operation, AbsFileAppender appender) throws IOException {
         File[] fileArr = new File[srcItems.length];
         for (int i = 0, len = srcItems.length; i < len; i++) {
-            fileArr[i] = moveItem(dstDir, srcItems[i], CONFLICT_OPERATION_APPEND_TAG, appender);
+            fileArr[i] = move(dstDir, srcItems[i], CONFLICT_OPERATION_APPEND_TAG, appender);
         }
         return fileArr;
     }
@@ -1062,12 +1007,13 @@ public final class FileUtil {
 	/* 移动项目Ex，但移动操作失败的时候使用复制后删除的方法来实现移动 */
 
     /**
-     * 先尝试使用{@link #moveItem(File, File, int, AbsTagAppender)}
+     * 先尝试使用{@link #move(File, File, int, AbsFileAppender)}
      * 方法进行移动操作，当操作抛出{@link IOException#}时说明{@link File#renameTo(File)}方法执行不成。
      * 此时换用复制成功后删除的方式移动文件。
-     * 如果使用{@link #moveItem(File, File, int, AbsTagAppender)}时抛出了{@link FileNotFoundException#}或者{@link FileExistsException#}
+     * <p>
+     * 如果使用{@link #move(File, File, int, AbsFileAppender)}时抛出了{@link FileNotFoundException#}或者{@link FileExistsException#}
      * 异常的话，说明参数或者状态不合法，将直接终止操作。
-     * 该方法涉及IO操作，可能没有使用{@link #moveItem(File, File, int, AbsTagAppender)}
+     * 该方法涉及IO操作，可能没有使用{@link #move(File, File, int, AbsFileAppender)}
      * 来得快，但是不受文件系统的限制。
      *
      * @param dstDir
@@ -1079,10 +1025,10 @@ public final class FileUtil {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public static File moveItemEx(File dstDir, File srcItem, @ConflictOperation int operation, AbsTagAppender appender) throws IOException {
+    public static File moveEx(File dstDir, File srcItem, @ConflictOperation int operation, AbsFileAppender appender) throws IOException {
         try {
             // 使用普通的移动方法
-            return moveItem(dstDir, srcItem, operation, appender);
+            return move(dstDir, srcItem, operation, appender);
         } catch (FileNotFoundException | FileExistsException e) {// 抛出这些异常说明参数有问题
             // 重抛出无法处理的异常，这里不需要打印栈信息
             throw e;
@@ -1090,14 +1036,14 @@ public final class FileUtil {
             // LogUtil.e(e);这里不需要打印栈信息
             // 当抛出IO异常的时候可以知道是剪切操作因为rename操作的原因失败
             // 此时使用复制成功后删除的方法操作
-            File result = copyItem(dstDir, srcItem, operation, appender);
-            deleteItem(srcItem);
+            File result = copy(dstDir, srcItem, operation, appender);
+            delete(srcItem);
             return result;
         }
     }
 
     /**
-     * 使用{@link #moveItemEx(File, File, int, AbsTagAppender)}方法批量移动文件。
+     * 使用{@link #moveEx(File, File, int, AbsFileAppender)}方法批量移动文件。
      * <br>
      * 复制过程中某个项目可能会出现异常，导致整个操作终止。
      *
@@ -1109,10 +1055,10 @@ public final class FileUtil {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public static File[] moveItemsEx(File dstDir, File[] srcItems, @ConflictOperation int operate, AbsTagAppender appender) throws IOException {
+    public static File[] moveEx(File dstDir, File[] srcItems, @ConflictOperation int operate, AbsFileAppender appender) throws IOException {
         File[] fileArr = new File[srcItems.length];
         for (int i = 0, len = srcItems.length; i < len; i++) {
-            fileArr[i] = moveItemEx(dstDir, srcItems[i], operate, appender);
+            fileArr[i] = moveEx(dstDir, srcItems[i], operate, appender);
         }
         return fileArr;
     }
@@ -1126,16 +1072,14 @@ public final class FileUtil {
      * @param item
      * @return
      */
-    private static boolean deleteItem(File item) {
+    private static boolean delete(File item) {
         boolean flag = true;
         if (item.isDirectory()) {// 是目录则处理子文件
             File[] files = item.listFiles();
-            if (files != null) {
-                for (File child : files) { // 删除该目录下的项目
-                    if (!deleteItem(child)) { // 只要有一个失败就立刻不再继续
-                        flag = false;
-                        break;
-                    }
+            for (int i = 0, len = DataUtil.getSize(files); i < len; i++) {
+                if (!delete(files[i])) { // 只要有一个失败就立刻不再继续
+                    flag = false;
+                    break;
                 }
             }
         }
@@ -1149,10 +1093,10 @@ public final class FileUtil {
      * @param items
      * @return
      */
-    public static boolean[] deleteItems(File... items) {
+    public static boolean[] delete(File... items) {
         boolean[] resultArr = new boolean[items.length];
         for (int i = 0, len = items.length; i < len; i++) {
-            resultArr[i] = deleteItem(items[i]);
+            resultArr[i] = delete(items[i]);
         }
         return resultArr;
     }

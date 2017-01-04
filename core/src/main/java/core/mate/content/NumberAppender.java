@@ -2,6 +2,7 @@ package core.mate.content;
 
 import java.io.File;
 
+import core.mate.util.AbsFileAppender;
 import core.mate.util.FileUtil;
 import core.mate.util.LogUtil;
 
@@ -11,25 +12,25 @@ import core.mate.util.LogUtil;
  *@author DrkCore
  * @since 2015年9月26日15:30:28
  */
-public class NumberTagAppender extends FileUtil.AbsTagAppender {
+public class NumberAppender extends AbsFileAppender {
 	
-	private static final NumberTagAppender INSTANCE = new NumberTagAppender();
+	private static final NumberAppender INSTANCE = new NumberAppender();
 	
-	public static NumberTagAppender getInstance() {
+	public static NumberAppender getInstance() {
 		return INSTANCE;
 	}
 	
-	private NumberTagAppender() {
+	private NumberAppender() {
 		
 	}
 	
 	/* 继承 */
 	
 	@Override
-	protected File appendTagToFile(String basePath) {
+	protected File appendFile(String basePath) {
 		File dir = new File(basePath);
 		if (dir.exists()) {// 重名文件已存在
-			String type = FileUtil.getFileExtName(basePath);
+			String type = FileUtil.getExt(basePath);
 			if (type != null) {// 拓展名存在
 				// 获取不带拓展名的的builder
 				StringBuilder path = new StringBuilder(basePath.substring(0, basePath.length() - type.length() - 1));
@@ -100,7 +101,7 @@ public class NumberTagAppender extends FileUtil.AbsTagAppender {
 	}
 	
 	@Override
-	protected File appendTagToDir(String basePath) {
+	protected File appendDir(String basePath) {
 		File dir = new File(basePath);
 		if (dir.exists()) {// 重名文件已存在
 			StringBuilder path = new StringBuilder(basePath);
