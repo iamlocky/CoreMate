@@ -1,6 +1,5 @@
 package core.mate.async;
 
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 
@@ -11,7 +10,7 @@ import java.lang.ref.WeakReference;
  * @author DrkCore
  * @since 2015年10月7日22:41:44
  */
-public abstract class WeakRefHandler<RefType> extends Handler {
+public abstract class WeakRefHandler<RefType> extends CoreHandler {
 
     private WeakReference<RefType> ref;
 

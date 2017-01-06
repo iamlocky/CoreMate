@@ -1,6 +1,5 @@
 package core.mate.async;
 
-import android.os.Handler;
 import android.os.Message;
 
 /**
@@ -9,7 +8,7 @@ import android.os.Message;
  * @author DrkCore
  * @since 2016年4月17日22:49:20
  */
-public abstract class LastMsgHandler extends Handler {
+public abstract class LastMsgHandler extends CoreHandler {
 
     private int count = 0;
 
