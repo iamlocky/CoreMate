@@ -178,7 +178,7 @@ public class MultiProxy implements InvocationHandler {
         if (booleanMergeMode != BOOL_MODE_DISABLE && (returnType == Boolean.class || returnType == boolean.class)) {//布尔模式
             boolean bool = false, tmp;
             for (int i = 0, size = proxies.size(); i < size; i++) {
-                tmp = method.invoke(proxies.get(i), args) == Boolean.TRUE;
+                tmp = Boolean.TRUE.equals(method.invoke(proxies.get(i), args));
                 if (i == 0) {
                     bool = tmp;
                 } else {
