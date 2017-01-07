@@ -32,21 +32,12 @@ import core.mate.util.DataUtil;
  */
 public abstract class CoreActivity extends AppCompatActivity {
 
-    private boolean inResumed;
-
-    public boolean isInResumed() {
-        return inResumed;
-    }
-
-	/* 继承 */
-
     @Override
     protected void onResume() {
         super.onResume();
         if (needRefreshOnResume()) {
             refresh();
         }
-        inResumed = true;
 
         for (int i = 0, len = DataUtil.getSize(resumeReceivers); i < len; i++) {
             ReceiverHolder item = resumeReceivers.get(i);
@@ -57,8 +48,6 @@ public abstract class CoreActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        inResumed = false;
-
         if (clearAllOnPauseEnable) {
             clearAllClearable();
         }
@@ -434,8 +423,10 @@ public abstract class CoreActivity extends AppCompatActivity {
     }
 
     /**
-     * 注册只在{@link #onResume()}和{@link #onPause()}之间启用的广播。在{@link #onResume()}之后调用该方法会注册不上广播，
-     * 此时调用该方法将会抛出运行时异常。因而只建议在{@link #onCreate(Bundle)}中使用该方法。
+     * 注册只在{@link #onResume()}和{@link #onPause()}之间的窗口启用的广播。
+     * <p>
+     * 注意，如果在窗口期内调用该方法的话只会在下个窗口期开始时真正注册到上下文中，
+     * 因而只建议在{@link #onCreate(Bundle)}中使用该方法。
      *
      * @param receiver
      * @param filter
@@ -445,8 +436,6 @@ public abstract class CoreActivity extends AppCompatActivity {
     public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
         if (receiver == null || filter == null) {
             throw new IllegalArgumentException();
-        } else if (isInResumed()) {
-            throw new IllegalStateException("请在onResume调用前执行该方法");
         }
 
         if (resumeReceivers == null) {
@@ -465,11 +454,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
      */
     public void registerReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
-        if (local) {
-            BroadcastUtil.registerReceiver(receiver, filter);
-        } else {
-            registerReceiver(receiver, filter);
-        }
+        BroadcastUtil.getManager(local).register(receiver, filter);
     }
 
     /**
@@ -480,11 +465,7 @@ public abstract class CoreActivity extends AppCompatActivity {
      *                 如果和注册时不一致的话，会无法注销广播。
      */
     public void unregisterReceiver(BroadcastReceiver receiver, boolean local) {
-        if (local) {
-            BroadcastUtil.unregisterReceiver(receiver);
-        } else {
-            unregisterReceiver(receiver);
-        }
+        BroadcastUtil.getManager(local).unregister(receiver);
     }
 
 	/*Clearable*/

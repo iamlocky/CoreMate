@@ -1,12 +1,10 @@
 package core.mate.util;
 
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-
-import java.io.Serializable;
 
 import core.mate.Core;
 
@@ -16,42 +14,94 @@ import core.mate.Core;
  */
 public class BroadcastUtil {
 
-    /*广播*/
+    public static abstract class Wrapper {
 
-    private static final LocalBroadcastManager BROADCAST_MANAGER =
-            LocalBroadcastManager.getInstance(Core.getInstance().getAppContext());
+        public abstract void register(BroadcastReceiver receiver, IntentFilter filter);
 
-    public static void registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        BROADCAST_MANAGER.registerReceiver(receiver, filter);
+        public abstract void unregister(BroadcastReceiver receiver);
+
+        public void send(String action) {
+            send(new Intent(action));
+        }
+
+        public abstract void send(Intent intent);
     }
 
-    public static void unregisterReceiver(BroadcastReceiver receiver) {
-        BROADCAST_MANAGER.unregisterReceiver(receiver);
+    private static class LocalWrapper extends Wrapper {
+
+        private static volatile LocalWrapper instance = null;
+
+        private LocalWrapper() {
+        }
+
+        public static LocalWrapper getInstance() {
+            if (instance == null) {
+                synchronized (LocalWrapper.class) {
+                    if (instance == null) {
+                        instance = new LocalWrapper();
+                    }
+                }
+            }
+            return instance;
+        }
+
+        private LocalBroadcastManager mgr = LocalBroadcastManager.getInstance(Core.getInstance().getAppContext());
+
+        @Override
+        public void register(BroadcastReceiver receiver, IntentFilter filter) {
+            mgr.registerReceiver(receiver, filter);
+        }
+
+        @Override
+        public void unregister(BroadcastReceiver receiver) {
+            mgr.unregisterReceiver(receiver);
+        }
+
+        @Override
+        public void send(Intent intent) {
+            mgr.sendBroadcast(intent);
+        }
+
     }
 
-    public static void sendBroadcast(String action) {
-        sendBroadcast(new Intent(action));
+    private static class GlobalManager extends Wrapper {
+
+        private static volatile GlobalManager instance = null;
+
+        private GlobalManager() {
+        }
+
+        public static GlobalManager getInstance() {
+            if (instance == null) {
+                synchronized (GlobalManager.class) {
+                    if (instance == null) {
+                        instance = new GlobalManager();
+                    }
+                }
+            }
+            return instance;
+        }
+
+        private final Context context = Core.getInstance().getAppContext();
+
+        @Override
+        public void register(BroadcastReceiver receiver, IntentFilter filter) {
+            context.registerReceiver(receiver, filter);
+        }
+
+        @Override
+        public void unregister(BroadcastReceiver receiver) {
+            context.unregisterReceiver(receiver);
+        }
+
+        @Override
+        public void send(Intent intent) {
+            context.sendBroadcast(intent);
+        }
     }
 
-    public static void sendBroadcast(Intent intent) {
-        BROADCAST_MANAGER.sendBroadcast(intent);
-    }
-
-    public static void sendSerializable(Serializable serializable) {
-        sendSerializable(serializable.getClass(),serializable);
-    }
-
-    public static void sendSerializable(Class clz, @Nullable Serializable serializable) {
-        String pkgName = clz.getCanonicalName();
-
-        Intent intent = new Intent(pkgName);
-        intent.putExtra(pkgName, serializable);
-        sendBroadcast(intent);
-    }
-
-    public static <T extends Serializable> T getSerializable(Intent intent, Class clz) {
-        String pkgPath = clz.getCanonicalName();
-        return (T) intent.getSerializableExtra(pkgPath);
+    public static Wrapper getManager(boolean local) {
+        return local ? LocalWrapper.getInstance() : GlobalManager.getInstance();
     }
 
 }
