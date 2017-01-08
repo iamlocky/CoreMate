@@ -1,9 +1,7 @@
 package core.mate.app;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 
 import core.mate.util.DeviceUtil;
@@ -12,10 +10,13 @@ import core.mate.util.DeviceUtil;
  * @author DrkCore
  * @since 2017/1/3
  */
-public class NetworkChangeReceiver extends BroadcastReceiver {
+public class NetworkChangeReceiver extends CoreReceiver {
 
-    public static IntentFilter newFilter(){
-        return new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+    private static final String ACTION = ConnectivityManager.CONNECTIVITY_ACTION;
+    private static final boolean LOCAL = false;
+
+    public NetworkChangeReceiver() {
+        super(LOCAL, ACTION);
     }
 
     @Override
