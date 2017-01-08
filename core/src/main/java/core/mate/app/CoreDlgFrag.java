@@ -2,9 +2,7 @@ package core.mate.app;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
-import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -17,7 +15,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Window;
@@ -74,8 +71,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
 
 
         for (int i = 0, len = DataUtil.getSize(resumeReceivers); i < len; i++) {
-            ReceiverHolder item = resumeReceivers.get(i);
-            registerReceiver(item.receiver, item.filter, item.local);
+            registerReceiver(resumeReceivers.get(i));
         }
     }
 
@@ -87,8 +83,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         }
 
         for (int i = 0, len = DataUtil.getSize(resumeReceivers); i < len; i++) {
-            ReceiverHolder item = resumeReceivers.get(i);
-            unregisterReceiver(item.receiver, item.local);
+            unregisterReceiver(resumeReceivers.get(i));
         }
     }
 
@@ -98,8 +93,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         clearAllClearable();
 
         for (int i = 0, len = DataUtil.getSize(fullReceivers); i < len; i++) {
-            ReceiverHolder item = fullReceivers.get(i);
-            unregisterReceiver(item.receiver, item.local);
+            unregisterReceiver(fullReceivers.get(i));
         }
     }
 
@@ -271,7 +265,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
             params.y = y;
         }
         if (dimAmount != null) {
-            params.flags |=WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            params.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             dlgWin.setDimAmount(dimAmount);
         }
         dlgWin.setAttributes(params);
@@ -489,51 +483,20 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
 
     /*广播*/
 
-    private List<ReceiverHolder> fullReceivers;
-    private List<ReceiverHolder> resumeReceivers;
-
-    /**
-     * 注册长时间监听的广播。该广播会在调用该方法时自动注册，并在{@link #onDestroy()}中注销。
-     * <p>
-     * 默认注册为全局广播。
-     *
-     * @param receiver
-     * @param filter
-     */
-    public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        addFullReceiver(receiver, filter, false);
-    }
+    private List<CoreReceiver> fullReceivers;
+    private List<CoreReceiver> resumeReceivers;
 
     /**
      * 注册长时间监听的广播。该广播会在调用该方法时自动注册，并在{@link #onDestroy()}中注销。
      *
      * @param receiver
-     * @param filter
-     * @param local    是否通过{@link LocalBroadcastManager}注册为本地广播。
-     *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
      */
-    public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
-        if (receiver == null || filter == null) {
-            throw new IllegalArgumentException();
-        }
+    public void addFullReceiver(CoreReceiver receiver) {
         if (fullReceivers == null) {
             fullReceivers = new ArrayList<>();
         }
-        fullReceivers.add(new ReceiverHolder(receiver, filter, local));
-        registerReceiver(receiver, filter, local);
-    }
-
-    /**
-     * 注册只在{@link #onResume()}和{@link #onPause()}之间启用的广播。在{@link #onResume()}之后调用该方法会注册不上广播，
-     * 此时调用该方法将会抛出运行时异常。因而只建议在{@link #onCreate(Bundle)}中使用该方法。
-     * <p>
-     * 默认注册为全局广播。
-     *
-     * @param receiver
-     * @param filter
-     */
-    public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        addResumeReceiver(receiver, filter, false);
+        fullReceivers.add(receiver);
+        registerReceiver(receiver);
     }
 
     /**
@@ -543,43 +506,21 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
      * 因而只建议在{@link #onCreate(Bundle)}中使用该方法。
      *
      * @param receiver
-     * @param filter
-     * @param local    是否通过{@link LocalBroadcastManager}注册为本地广播。
-     *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
      */
-    public void addResumeReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
-        if (receiver == null || filter == null) {
-            throw new IllegalArgumentException();
-        }
-
+    public void addResumeReceiver(CoreReceiver receiver) {
         if (resumeReceivers == null) {
             resumeReceivers = new ArrayList<>();
         }
 
-        resumeReceivers.add(new ReceiverHolder(receiver, filter, local));
+        resumeReceivers.add(receiver);
     }
 
-    /**
-     * 注册广播。
-     *
-     * @param receiver
-     * @param filter
-     * @param local    是否通过{@link LocalBroadcastManager}注册为本地广播。
-     *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
-     */
-    public void registerReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
-        BroadcastUtil.getManager(local).register(receiver, filter);
+    public void registerReceiver(CoreReceiver receiver) {
+        BroadcastUtil.getManager(receiver.isLocal()).register(receiver, receiver.getFilter());
     }
 
-    /**
-     * 注销广播。
-     *
-     * @param receiver
-     * @param local    该广播是否是通过{@link LocalBroadcastManager}注册的本地广播。
-     *                 如果和注册时不一致的话，会无法注销广播。
-     */
-    public void unregisterReceiver(BroadcastReceiver receiver, boolean local) {
-        BroadcastUtil.getManager(local).unregister(receiver);
+    public void unregisterReceiver(CoreReceiver receiver) {
+        BroadcastUtil.getManager(receiver.isLocal()).unregister(receiver);
     }
 
     /*Clearable*/

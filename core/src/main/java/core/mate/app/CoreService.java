@@ -1,13 +1,10 @@
 package core.mate.app;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,67 +29,33 @@ public abstract class CoreService extends Service {
         clearAllClearable();
 
         for (int i = 0, len = DataUtil.getSize(fullReceivers); i < len; i++) {
-            ReceiverHolder item = fullReceivers.get(i);
-            unregisterReceiver(item.receiver, item.local);
+            unregisterReceiver(fullReceivers.get(i));
         }
     }
 
     /*广播*/
 
-    private List<ReceiverHolder> fullReceivers;
-
-    /**
-     * 注册长时间监听的广播。该广播会在调用该方法时自动注册，并在{@link #onDestroy()}中注销。
-     * <p>
-     * 默认注册为全局广播。
-     *
-     * @param receiver
-     * @param filter
-     */
-    public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        addFullReceiver(receiver, filter, false);
-    }
+    private List<CoreReceiver> fullReceivers;
 
     /**
      * 注册长时间监听的广播。该广播会在调用该方法时自动注册，并在{@link #onDestroy()}中注销。
      *
      * @param receiver
-     * @param filter
-     * @param local    是否通过{@link LocalBroadcastManager}注册为本地广播。
-     *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
      */
-    public void addFullReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
-        if (receiver == null || filter == null) {
-            throw new IllegalArgumentException();
-        }
+    public void addFullReceiver(CoreReceiver receiver) {
         if (fullReceivers == null) {
             fullReceivers = new ArrayList<>();
         }
-        fullReceivers.add(new ReceiverHolder(receiver, filter, local));
-        registerReceiver(receiver, filter, local);
+        fullReceivers.add(receiver);
+        registerReceiver(receiver);
     }
 
-    /**
-     * 注册广播。
-     *
-     * @param receiver
-     * @param filter
-     * @param local    是否通过{@link LocalBroadcastManager}注册为本地广播。
-     *                 如果你要接受系统的广播的话请将之设为false，否则可能会出现无法响应的问题。
-     */
-    public void registerReceiver(BroadcastReceiver receiver, IntentFilter filter, boolean local) {
-        BroadcastUtil.getManager(local).register(receiver, filter);
+    public void registerReceiver(CoreReceiver receiver) {
+        BroadcastUtil.getManager(receiver.isLocal()).register(receiver, receiver.getFilter());
     }
 
-    /**
-     * 注销广播。
-     *
-     * @param receiver
-     * @param local    该广播是否是通过{@link LocalBroadcastManager}注册的本地广播。
-     *                 如果和注册时不一致的话，会无法注销广播。
-     */
-    public void unregisterReceiver(BroadcastReceiver receiver, boolean local) {
-        BroadcastUtil.getManager(local).unregister(receiver);
+    public void unregisterReceiver(CoreReceiver receiver) {
+        BroadcastUtil.getManager(receiver.isLocal()).unregister(receiver);
     }
 
 	/*Clearable*/
