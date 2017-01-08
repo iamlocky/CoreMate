@@ -5,32 +5,32 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import core.mate.util.BroadcastUtil;
+
 /**
  * @author DrkCore
  * @since 2017/1/3
  */
 public class CoreReceiver extends BroadcastReceiver {
 
-    public interface Receiver {
-
-        void onReceive(Context context, Intent intent);
-
-    }
-
-    private final IntentFilter filter;
     private final boolean local;
-
-    public IntentFilter getFilter() {
-        return filter;
-    }
+    private final IntentFilter filter;
 
     public boolean isLocal() {
         return local;
     }
 
-    public CoreReceiver(IntentFilter filter, boolean local) {
-        this.filter = filter;
+    public IntentFilter getFilter() {
+        return filter;
+    }
+
+    public CoreReceiver(boolean local, String... actions) {
+        this(local, BroadcastUtil.createFilter(actions));
+    }
+
+    public CoreReceiver(boolean local, IntentFilter filter) {
         this.local = local;
+        this.filter = filter;
     }
 
     @Override

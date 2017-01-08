@@ -104,4 +104,15 @@ public class BroadcastUtil {
         return local ? LocalWrapper.getInstance() : GlobalManager.getInstance();
     }
 
+    public static IntentFilter createFilter(String... actions) {
+        if (DataUtil.isEmpty(actions)) {
+            throw new IllegalArgumentException();
+        }
+
+        IntentFilter filter = new IntentFilter();
+        for (String action : actions) {
+            filter.addAction(action);
+        }
+        return filter;
+    }
 }
