@@ -1,9 +1,7 @@
 package core.mate.app;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -15,46 +13,55 @@ import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
 import core.mate.util.BroadcastUtil;
+import core.mate.util.DataUtil;
 
 public abstract class CoreService extends Service {
-    
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         clearAllClearable();
-        
-        if (receivers != null) {
-            for (Object[] item : receivers) {
-                BroadcastUtil.unregisterReceiver((BroadcastReceiver) item[0]);
-            }
+
+        for (int i = 0, len = DataUtil.getSize(fullReceivers); i < len; i++) {
+            unregisterReceiver(fullReceivers.get(i));
         }
     }
 
     /*广播*/
-    
-    private List<Object[]> receivers;
-    
-    public void addReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        if (receiver == null || filter == null) {
-            throw new IllegalArgumentException();
+
+    private List<CoreReceiver> fullReceivers;
+
+    /**
+     * 注册长时间监听的广播。该广播会在调用该方法时自动注册，并在{@link #onDestroy()}中注销。
+     *
+     * @param receiver
+     */
+    public void addFullReceiver(CoreReceiver receiver) {
+        if (fullReceivers == null) {
+            fullReceivers = new ArrayList<>();
         }
-        if (receivers == null) {
-            receivers = new ArrayList<>();
-        }
-        receivers.add(new Object[]{receiver, filter});
-        BroadcastUtil.registerReceiver(receiver, filter);
+        fullReceivers.add(receiver);
+        registerReceiver(receiver);
+    }
+
+    public void registerReceiver(CoreReceiver receiver) {
+        BroadcastUtil.getManager(receiver.isLocal()).register(receiver, receiver.getFilter());
+    }
+
+    public void unregisterReceiver(CoreReceiver receiver) {
+        BroadcastUtil.getManager(receiver.isLocal()).unregister(receiver);
     }
 
 	/*Clearable*/
-    
+
     private ClearableHolder clearableHolder;
-    
+
     public <T> T addClearableEx(T t) {
         if (t instanceof Clearable) {
             addClearable((Clearable) t);
@@ -66,7 +73,7 @@ public abstract class CoreService extends Service {
         }
         return t;
     }
-    
+
     /**
      * 保存clearable的弱引用
      *
@@ -78,7 +85,7 @@ public abstract class CoreService extends Service {
         }
         clearableHolder.add(clearable);
     }
-    
+
     /**
      * clear所有保存着的引用。在{@link #onDestroy()}时自动回调。
      */
@@ -87,5 +94,5 @@ public abstract class CoreService extends Service {
             clearableHolder.clear();
         }
     }
-    
+
 }

@@ -757,7 +757,7 @@ public final class FileUtil {
                     throw new FileExistsException("指定目录下存在同名项目");
 
                 case CONFLICT_OPERATION_APPEND_TAG:
-                    targetFile = appender.getNextFile(targetFile.getAbsolutePath());// 获得一个可用的位置
+                    targetFile = appender.nextFile(targetFile.getAbsolutePath());// 获得一个可用的位置
                     break;
 
                 case CONFLICT_OPERATION_COVER:
@@ -811,7 +811,7 @@ public final class FileUtil {
                     throw new FileExistsException("指定目录下存在同名项目");
 
                 case CONFLICT_OPERATION_APPEND_TAG:
-                    targetDir = appender.getNextDir(targetDir.getAbsolutePath());// 获得一个可用的位置
+                    targetDir = appender.nextDir(targetDir.getAbsolutePath());// 获得一个可用的位置
                     break;
 
                 case CONFLICT_OPERATION_COVER:// 覆盖操作
@@ -959,9 +959,9 @@ public final class FileUtil {
 
                 case CONFLICT_OPERATION_APPEND_TAG:
                     if (srcItem.isFile()) {
-                        targetFile = appender.getNextFile(targetFile.getAbsolutePath());
+                        targetFile = appender.nextFile(targetFile.getAbsolutePath());
                     } else {
-                        targetFile = appender.getNextDir(targetFile.getAbsolutePath());
+                        targetFile = appender.nextDir(targetFile.getAbsolutePath());
                     }
                     break;
 
