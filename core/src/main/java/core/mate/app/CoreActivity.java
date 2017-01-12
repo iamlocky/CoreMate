@@ -18,6 +18,7 @@ import java.util.List;
 import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
+import core.mate.async.CoreHandler;
 import core.mate.util.BroadcastUtil;
 import core.mate.util.DataUtil;
 
@@ -342,7 +343,10 @@ public abstract class CoreActivity extends AppCompatActivity {
 
     public Handler getHandler() {
         if (handler == null) {
-            handler = new Handler();
+            CoreHandler coreHandler = new CoreHandler();
+            addClearable(coreHandler);
+            handler = coreHandler;
+
         }
         return handler;
     }
