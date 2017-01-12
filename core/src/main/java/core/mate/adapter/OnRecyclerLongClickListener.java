@@ -12,9 +12,20 @@ public abstract class OnRecyclerLongClickListener implements CoreRecyclerAdapter
 
     @Override
     public boolean onItemLongClick(ViewGroup parent, View v, int adapterPosition) {
-        return onItemLongClick(parent instanceof RecyclerView ? (RecyclerView) parent : null, v, adapterPosition);
+        return onItemLongClick(parent instanceof RecyclerView ? (RecyclerView) parent : null, v, adapterPosition, getItemAt(parent, adapterPosition));
     }
 
-    public abstract boolean onItemLongClick(RecyclerView recyclerView, View v, int adapterPosition);
+    public <T> T getItemAt(ViewGroup parent, int adapterPosition) {
+        T t = null;
+        if (parent instanceof RecyclerView) {
+            RecyclerView.Adapter adapter = ((RecyclerView) parent).getAdapter();
+            if (adapter instanceof CoreRecyclerAdapter) {
+                t = (T) ((CoreRecyclerAdapter) adapter).getItem(adapterPosition);
+            }
+        }
+        return t;
+    }
+
+    public abstract boolean onItemLongClick(RecyclerView recyclerView, View v, int adapterPosition, Object item);
 
 }

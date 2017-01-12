@@ -12,9 +12,20 @@ public abstract class OnRecyclerClickListener implements CoreRecyclerAdapter.OnI
 
     @Override
     public void onItemClick(ViewGroup parent, View v, int adapterPosition) {
-        onItemClick(parent instanceof RecyclerView ? (RecyclerView) parent : null, v, adapterPosition);
+        onItemClick(parent instanceof RecyclerView ? (RecyclerView) parent : null, v, adapterPosition, getItemAt(parent, adapterPosition));
     }
 
-    public abstract void onItemClick(RecyclerView recyclerView, View v, int adapterPosition);
+    public <T> T getItemAt(ViewGroup parent, int adapterPosition) {
+        T t = null;
+        if (parent instanceof RecyclerView) {
+            RecyclerView.Adapter adapter = ((RecyclerView) parent).getAdapter();
+            if (adapter instanceof CoreRecyclerAdapter) {
+                t = (T) ((CoreRecyclerAdapter) adapter).getItem(adapterPosition);
+            }
+        }
+        return t;
+    }
+
+    public abstract void onItemClick(RecyclerView recyclerView, View v, int adapterPosition, Object item);
 
 }
