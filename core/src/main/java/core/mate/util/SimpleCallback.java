@@ -40,9 +40,9 @@ public abstract class SimpleCallback<Result> implements Callback<Result> {
     }
 
     public static <Result> void call(Result result, Collection<Callback<Result>> callbacks) {
-        for (int i = 0, len = DataUtil.getSize(callbacks); i < len; i++) {
+        if (!DataUtil.isEmpty(callbacks)) {
             for (Callback<Result> callback : callbacks) {
-                if(callback != null){
+                if (callback != null) {
                     callback.onCall(result);
                 }
             }
