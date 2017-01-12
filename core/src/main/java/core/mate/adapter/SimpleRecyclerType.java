@@ -57,7 +57,7 @@ public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item>
 
     @Nullable
     protected <Item> Item getItemFromView(View view) {
-        if (view.getTag() instanceof SimpleViewHolder) {
+        if (view.getTag() instanceof SimpleRecyclerViewHolder) {
             int position = ((SimpleRecyclerViewHolder) view.getTag()).getAdapterPosition();
             if (position >= 0 && getAdapter() != null && getAdapter().getItemCount() > position) {
                 return (Item) getAdapter().getItem(position);
