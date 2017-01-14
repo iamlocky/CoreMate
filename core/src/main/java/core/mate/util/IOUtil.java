@@ -2,7 +2,6 @@ package core.mate.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
-import java.io.FileOutputStream;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,14 +37,6 @@ public final class IOUtil {
             try {//如果是可flush的，就先flush一下
                 Flushable flushable = (Flushable) closeable;
                 flushable.flush();
-            } catch (IOException e) {
-                LogUtil.e(e);
-            }
-        }
-
-        if (closeable instanceof FileOutputStream) {
-            try {//如果是写入文件，则同步一下
-                ((FileOutputStream) closeable).getFD().sync();
             } catch (IOException e) {
                 LogUtil.e(e);
             }
