@@ -242,11 +242,11 @@ public abstract class CoreTask<Params, Progress, Result> extends AsyncTask<Param
     
     private TaskState taskState = TaskState.INIT;
     
-    public Result getPostedResult() {
+    public Result getResult() {
         return resultHolder != null ? resultHolder.result : null;
     }
     
-    public Throwable getPostedException() {
+    public Throwable getException() {
         return resultHolder != null ? resultHolder.e : null;
     }
     
