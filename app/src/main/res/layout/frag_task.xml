@@ -23,4 +23,16 @@
         android:layout_height="wrap_content"
         android:text="读取导出的文本文件" />
 
+    <Button
+        android:id="@+id/button_frag_task_await"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="先执行" />
+
+    <Button
+        android:id="@+id/button_frag_task_doAwait"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="后等待" />
+
 </LinearLayout>

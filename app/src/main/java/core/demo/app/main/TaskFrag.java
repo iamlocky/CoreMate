@@ -12,6 +12,7 @@ import core.demo.R;
 import core.demo.task.DeleteFileTask;
 import core.demo.task.ExportAssetsTask;
 import core.demo.task.ReadTextTask;
+import core.demo.task.SleepTask;
 import core.mate.app.CoreFrag;
 import core.mate.app.ProgressDlgFrag;
 import core.mate.async.OnTaskListenerImpl;
@@ -36,24 +37,11 @@ public class TaskFrag extends CoreFrag {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.button_frag_task_export).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                exportAssets();
-            }
-        });
-        view.findViewById(R.id.button_frag_task_delete).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteExportedFile();
-            }
-        });
-        view.findViewById(R.id.button_frag_task_read).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                readExportedFile();
-            }
-        });
+        view.findViewById(R.id.button_frag_task_export).setOnClickListener(v -> exportAssets());
+        view.findViewById(R.id.button_frag_task_delete).setOnClickListener(v -> deleteExportedFile());
+        view.findViewById(R.id.button_frag_task_read).setOnClickListener(v -> readExportedFile());
+        view.findViewById(R.id.button_frag_task_await).setOnClickListener(v -> awaitTask());
+        view.findViewById(R.id.button_frag_task_doAwait).setOnClickListener(v -> doAwaitTask());
     }
 
     /*拓展*/
@@ -110,5 +98,18 @@ public class TaskFrag extends CoreFrag {
                     }
                 })
                 .execute(new File(getContext().getFilesDir(), ASSETS));
+    }
+
+    SleepTask task = new SleepTask();
+
+    private void awaitTask() {
+        addClearable(task);
+        task.execute(5000L);
+    }
+
+    private void doAwaitTask() {
+        if (task != null) {
+            task.await(resultHolderExceptionPair -> ToastUtil.show("结束"));
+        }
     }
 }
