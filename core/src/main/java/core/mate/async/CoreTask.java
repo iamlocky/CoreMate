@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,7 +244,7 @@ public abstract class CoreTask<Param, Progress, Result> extends AsyncTask<Param,
         return resultHolder != null ? resultHolder.result : null;
     }
 
-    public void await(Callback<Pair<ResultHolder<Param, Result>, Exception>> callback) {
+    public void await(Callback<Exception> callback) {
         if (callback == null) {
             return;
         }
@@ -254,17 +253,16 @@ public abstract class CoreTask<Param, Progress, Result> extends AsyncTask<Param,
         clearAfterDone = false;
 
         if (resultHolder != null) {
-            callback.onCall(new Pair<>(resultHolder, null));
+            callback.onCall(null);
         } else if (getStatus() == Status.FINISHED) {
-            ResultHolder<Param, Result> holder = null;
             Exception exception = null;
             try {
-                holder = get();
+                get();
             } catch (Exception e) {
                 LogUtil.e(e);
                 exception = e;
             }
-            callback.onCall(new Pair<>(holder, exception));
+            callback.onCall(exception);
         } else {
             doAwait(callback);
         }
@@ -274,18 +272,16 @@ public abstract class CoreTask<Param, Progress, Result> extends AsyncTask<Param,
     private Handler waitHandler;
     private final byte[] waitLock = new byte[0];
 
-    private void doAwait(@NonNull Callback<Pair<ResultHolder<Param, Result>, Exception>> callback) {
+    private void doAwait(@NonNull Callback<Exception> callback) {
         new Thread(() -> {
-            ResultHolder<Param, Result> holder = null;
             Exception exception = null;
             try {
-                holder = get();
+                get();
             } catch (Exception e) {
                 LogUtil.e(e);
                 exception = e;
             }
 
-            final ResultHolder<Param, Result> theHolder = holder;
             final Exception theException = exception;
 
             if (!isCancelled()) {
@@ -294,7 +290,7 @@ public abstract class CoreTask<Param, Progress, Result> extends AsyncTask<Param,
                         if (waitHandler == null) {
                             waitHandler = new Handler(Looper.getMainLooper());
                         }
-                        waitHandler.post(() -> callback.onCall(new Pair<>(theHolder, theException)));
+                        waitHandler.post(() -> callback.onCall(theException));
                     }
                 }
             }
