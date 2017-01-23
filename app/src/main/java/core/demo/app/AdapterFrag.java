@@ -1,4 +1,4 @@
-package core.demo.app.main;
+package core.demo.app;
 
 import android.view.View;
 import android.widget.AdapterView;

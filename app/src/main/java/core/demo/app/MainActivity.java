@@ -6,9 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.Menu;
 
 import core.demo.R;
-import core.demo.app.main.AdapterFrag;
-import core.demo.app.main.PrefFrag;
-import core.demo.app.main.TaskFrag;
 import core.mate.app.CoreActivity;
 
 public class MainActivity extends CoreActivity {
@@ -33,7 +30,7 @@ public class MainActivity extends CoreActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabLayout_main_tabs);
 
         //填充TabLayout
-        Class[] frags = {AdapterFrag.class, TaskFrag.class, PrefFrag.class};
+        Class[] frags = {AdapterFrag.class, TaskFrag.class, PrefFrag.class,MyWebFrag.class};
         for (Class clz : frags) {
             tabLayout.addTab(tabLayout.newTab().setText(clz.getSimpleName()).setTag(clz));
         }
