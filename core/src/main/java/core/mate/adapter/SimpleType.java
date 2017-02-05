@@ -53,7 +53,7 @@ public abstract class SimpleType<Item> extends AbsItemType<Item> {
         return viewHolder;
     }
 
-    protected void onViewHolderCreated(SimpleViewHolder holder) {
+    public void onViewHolderCreated(SimpleViewHolder holder) {
 
     }
 
@@ -63,7 +63,7 @@ public abstract class SimpleType<Item> extends AbsItemType<Item> {
     }
 
     @Nullable
-    protected <T> T getItemFromView(View view) {
+    public <T> T getItemFromView(View view) {
         if (view.getTag() instanceof SimpleViewHolder) {
             int position = ((SimpleViewHolder) view.getTag()).getPosition();
             if (position >= 0 && getAdapter() != null && getAdapter().getCount() > position) {
