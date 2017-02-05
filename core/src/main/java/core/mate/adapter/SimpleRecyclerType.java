@@ -61,20 +61,4 @@ public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item>
 
     }
 
-    public int getPositionFromView(View view) {
-        Object tag = view.getTag();
-        if (tag instanceof SimpleRecyclerViewHolder) {
-            return ((SimpleRecyclerViewHolder) tag).getAdapterPosition();
-        }
-        return ListView.INVALID_POSITION;
-    }
-
-    @Nullable
-    public <T> T getItemFromView(View view) {
-        int position = getPositionFromView(view);
-        if (position >= 0 && getAdapter() != null && getAdapter().getItemCount() > position) {
-            return (T) getAdapter().getItem(position);
-        }
-        return null;
-    }
 }

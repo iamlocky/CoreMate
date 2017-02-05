@@ -1,7 +1,10 @@
 package core.mate.adapter;
 
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -75,4 +78,20 @@ public abstract class AbsRecyclerItemType<Item> {
 
     public abstract void bindViewData(SimpleRecyclerViewHolder holder, int position, Item data);
 
+    public int getPositionFromView(View view) {
+        Object tag = view.getTag();
+        if (tag instanceof SimpleRecyclerViewHolder) {
+            return ((SimpleRecyclerViewHolder) tag).getAdapterPosition();
+        }
+        return ListView.INVALID_POSITION;
+    }
+
+    @Nullable
+    public <T> T getItemFromView(View view) {
+        int position = getPositionFromView(view);
+        if (position >= 0 && getAdapter() != null && getAdapter().getItemCount() > position) {
+            return (T) getAdapter().getItem(position);
+        }
+        return null;
+    }
 }

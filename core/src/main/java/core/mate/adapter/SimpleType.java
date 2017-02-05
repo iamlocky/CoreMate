@@ -62,21 +62,4 @@ public abstract class SimpleType<Item> extends AbsItemType<Item> {
     public void bindViewData(SimpleViewHolder holder, int position, Item data) {
 
     }
-
-    public int getPositionFromView(View view) {
-        Object tag = view.getTag();
-        if (tag instanceof SimpleViewHolder) {
-            return ((SimpleViewHolder) tag).getPosition();
-        }
-        return ListView.INVALID_POSITION;
-    }
-
-    @Nullable
-    public <T> T getItemFromView(View view) {
-        int position = getPositionFromView(view);
-        if (position >= 0 && getAdapter() != null && getAdapter().getCount() > position) {
-            return (T) getAdapter().getItem(position);
-        }
-        return null;
-    }
 }
