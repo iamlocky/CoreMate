@@ -55,12 +55,17 @@ public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item>
 
     }
 
+    @Override
+    public void bindViewData(SimpleRecyclerViewHolder holder, int position, Item data) {
+
+    }
+
     @Nullable
-    protected <Item> Item getItemFromView(View view) {
+    protected <T> T getItemFromView(View view) {
         if (view.getTag() instanceof SimpleRecyclerViewHolder) {
             int position = ((SimpleRecyclerViewHolder) view.getTag()).getAdapterPosition();
             if (position >= 0 && getAdapter() != null && getAdapter().getItemCount() > position) {
-                return (Item) getAdapter().getItem(position);
+                return (T) getAdapter().getItem(position);
             }
         }
         return null;
