@@ -23,7 +23,7 @@ public class DividerType extends AbsItemType<Divider> {
 
     @Override
     public void bindViewData(SimpleViewHolder holder, int position, Divider data) {
-        holder.setHolderSize(ViewGroup.LayoutParams.MATCH_PARENT, data.getHeightPx());
+        holder.setHolderSize(ViewGroup.LayoutParams.MATCH_PARENT, data.getHeight());
         holder.setHolderBackgroundDrawable(data.getDrawable());
     }
 }
