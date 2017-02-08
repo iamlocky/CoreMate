@@ -7,7 +7,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 
 import core.mate.util.ContextUtil;
-import core.mate.util.ViewUtil;
 
 /**
  * 分割线
@@ -19,23 +18,18 @@ public final class Divider {
 
     public static final Drawable DEFAULT_DRAWABLE = new ColorDrawable(Color.GRAY);
 
-    private int heightPx;
+    private int height;
     private Drawable drawable = DEFAULT_DRAWABLE;
 
-    public int getHeightPx() {
-        if (heightPx <= 0) {
-            heightPx = 1;//默认一个像素
+    public int getHeight() {
+        if (height <= 0) {
+            height = 1;//默认一个像素
         }
-        return heightPx;
+        return height;
     }
 
-    public Divider setHeightPx(int heightPx) {
-        this.heightPx = heightPx;
-        return this;
-    }
-
-    public Divider setHeightDp(float heightDp) {
-        heightPx = ViewUtil.dpToPx(heightDp);
+    public Divider setHeight(int heightPx) {
+        this.height = heightPx;
         return this;
     }
 
@@ -60,17 +54,17 @@ public final class Divider {
     public Divider() {
     }
 
-    public Divider(int heightPx) {
-        this.heightPx = heightPx;
+    public Divider(int height) {
+        this.height = height;
     }
 
-    public Divider(int heightPx, Drawable drawable) {
-        setHeightPx(heightPx);
+    public Divider(int height, Drawable drawable) {
+        setHeight(height);
         setDrawable(drawable);
     }
 
-    public Divider(int heightPx, int bgResId) {
-        setHeightPx(heightPx);
+    public Divider(int height, int bgResId) {
+        setHeight(height);
         setDrawableRes(bgResId);
     }
 }

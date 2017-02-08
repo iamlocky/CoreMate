@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 /**
  * @author DrkCore
@@ -51,18 +52,13 @@ public abstract class SimpleRecyclerType<Item> extends AbsRecyclerItemType<Item>
         return holder;
     }
 
-    protected void onViewHolderCreated(SimpleRecyclerViewHolder holder) {
+    public void onViewHolderCreated(SimpleRecyclerViewHolder holder) {
 
     }
 
-    @Nullable
-    protected <Item> Item getItemFromView(View view) {
-        if (view.getTag() instanceof SimpleRecyclerViewHolder) {
-            int position = ((SimpleRecyclerViewHolder) view.getTag()).getAdapterPosition();
-            if (position >= 0 && getAdapter() != null && getAdapter().getItemCount() > position) {
-                return (Item) getAdapter().getItem(position);
-            }
-        }
-        return null;
+    @Override
+    public void bindViewData(SimpleRecyclerViewHolder holder, int position, Item data) {
+
     }
+
 }

@@ -60,7 +60,6 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
         setHolderSize(null, height);
     }
 
-
     public void setHolderSize(@Nullable Integer width, @Nullable Integer height) {
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
         if (params == null) {
@@ -74,6 +73,42 @@ public class SimpleRecyclerViewHolder extends RecyclerView.ViewHolder {
         }
         if (height != null) {
             params.height = height;
+        }
+
+        itemView.setLayoutParams(params);
+    }
+
+    public void setHolderVerticalMargin(int margin) {
+        setHolderMargin(null, margin, null, margin);
+    }
+
+    public void setHolderHorizontalMargin(int margin) {
+        setHolderMargin(margin, null, margin, null);
+    }
+
+    public void setHolderMargin(int margin) {
+        setHolderMargin(margin, margin, margin, margin);
+    }
+
+    public void setHolderMargin(@Nullable Integer left, @Nullable Integer top, @Nullable Integer right, @Nullable Integer bottom) {
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+        if (params == null) {
+            params = new RecyclerView.LayoutParams(
+                    RecyclerView.LayoutParams.WRAP_CONTENT,
+                    RecyclerView.LayoutParams.WRAP_CONTENT);
+        }
+
+        if (left != null) {
+            params.leftMargin = left;
+        }
+        if (top != null) {
+            params.topMargin = top;
+        }
+        if (right != null) {
+            params.rightMargin = right;
+        }
+        if (bottom != null) {
+            params.bottomMargin = bottom;
         }
 
         itemView.setLayoutParams(params);
