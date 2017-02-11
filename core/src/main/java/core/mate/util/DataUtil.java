@@ -366,6 +366,118 @@ public final class DataUtil {
         return array != null ? array.length : 0;
     }
 
+    public static byte parseByte(String str) {
+        return parseByte(str, (byte) 0);
+    }
+
+    public static byte parseByte(String str, byte defVal) {
+        if (TextUtil.isEmpty(str)) {
+            return defVal;
+        }
+        try {
+            return Byte.parseByte(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return defVal;
+        }
+    }
+
+    public static boolean parseBoolean(String str) {
+        return parseBoolean(str, false);
+    }
+
+    public static boolean parseBoolean(String str, boolean defVal) {
+        if (TextUtil.isEmpty(str)) {
+            return defVal;
+        }
+        try {
+            return Boolean.parseBoolean(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return defVal;
+        }
+    }
+
+    public static int parseInt(String str) {
+        return parseInt(str, 0);
+    }
+
+    public static int parseInt(String str, int defVal) {
+        if (TextUtil.isEmpty(str)) {
+            return defVal;
+        }
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return defVal;
+        }
+    }
+
+    public static short parseShort(String str) {
+        return parseShort(str, (short) 0);
+    }
+
+    public static short parseShort(String str, short defVal) {
+        if (TextUtil.isEmpty(str)) {
+            return defVal;
+        }
+        try {
+            return Short.parseShort(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return defVal;
+        }
+    }
+
+    public static long parseLong(String str) {
+        return parseLong(str, 0);
+    }
+
+    public static long parseLong(String str, long defVal) {
+        if (TextUtil.isEmpty(str)) {
+            return defVal;
+        }
+        try {
+            return Long.parseLong(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return defVal;
+        }
+    }
+
+    public static float parseFloat(String str) {
+        return parseFloat(str, 0);
+    }
+
+    public static float parseFloat(String str, float defVal) {
+        if (TextUtil.isEmpty(str)) {
+            return defVal;
+        }
+        try {
+            return Float.parseFloat(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return defVal;
+        }
+    }
+
+    public static double parseDouble(String str) {
+        return parseDouble(str, 0);
+    }
+
+    public static double parseDouble(String str, double defVal) {
+        if (TextUtil.isEmpty(str)) {
+            return defVal;
+        }
+        try {
+            return Double.parseDouble(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return defVal;
+        }
+    }
+
     public interface Filter<T> {
 
         boolean accept(T t);
