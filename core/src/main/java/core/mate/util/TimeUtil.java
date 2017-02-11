@@ -1,6 +1,7 @@
 package core.mate.util;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.text.format.DateUtils;
 
@@ -69,42 +70,9 @@ public final class TimeUtil extends DateUtils {
         TimeUtil.locale = locale;
     }
 
-    /**
-     * 给出一个时间的描述。比如“昨天 12:30”。
-     * 当time不在前天与后天之，则默认使用“yyyy-MM-dd”格式初始化时间描述。
-     *
-     * @param time
-     * @return 时间的描述
-     */
-    public static String toSimpleDescription(long time) {
-        long currentTime = System.currentTimeMillis();
-
-        // 获取结尾的 小时和分钟
-        int whatDay = whatDay(new Date(time), new Date(currentTime));
-        switch (whatDay) {
-            case DAY_TODAY:
-                return "今天 " + toFormattedDescription(time, "HH:mm");
-
-            case DAY_YESTERDAY:
-                return "昨天 " + toFormattedDescription(time, "HH:mm");
-
-            case DAY_TOMORROW:
-                return "明天 " + toFormattedDescription(time, "HH:mm");
-
-            case DAY_BEFORE_YESTERDAY:
-                return "前天 " + toFormattedDescription(time, "HH:mm");
-
-            case DAY_AFTER_TOMORROW:
-                return "后天 " + toFormattedDescription(time, "HH:mm");
-
-            default:
-                return toFormattedDescription(time, "yyyy-MM-dd");
-        }
-    }
-
     private volatile static LruCache<String, DateFormat> dateFormatLruCache;
 
-    private static DateFormat getDateFormat(String pattern) {
+    public static DateFormat getDateFormat(String pattern) {
         if (dateFormatLruCache == null) {
             synchronized (TimeUtil.class) {
                 if (dateFormatLruCache == null) {
@@ -120,19 +88,63 @@ public final class TimeUtil extends DateUtils {
         return format;
     }
 
+    public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm";
+
+    /**
+     * 使用{@link #DEFAULT_PATTERN}样式来格式化时间
+     *
+     * @param time
+     * @return
+     */
+    public static String format(long time) {
+        return format(time, null);
+    }
+
     /**
      * 按照时间格式给出一个时间的描述。比如“2014年8月17日 09:50”。
-     * 默认使用{@link Locale#CHINA}作为时区。
+     * 默认使用{@link Locale#getDefault()}作为时区。
      *
      * @param time
      * @param pattern 时间的格式。<br>
-     *                如果为null，则默认使用
-     *                “yyyy-MM-dd HH:mm”
+     *                如果为null，则默认使用{@link #DEFAULT_PATTERN}
      * @return
      */
-    public static String toFormattedDescription(long time, String pattern) {
-        pattern = !TextUtil.isEmpty(pattern) ? pattern : "yyyy-MM-dd HH:mm";
+    public static String format(long time, @Nullable String pattern) {
+        pattern = !TextUtil.isEmpty(pattern) ? pattern : DEFAULT_PATTERN;
         return getDateFormat(pattern).format(new Date(time));
+    }
+
+    /**
+     * 给出一个时间的描述。比如“昨天 12:30”。
+     * 当time不在前天与后天之，则默认使用“yyyy-MM-dd”格式初始化时间描述。
+     *
+     * @param time
+     * @return 时间的描述
+     */
+    public static String formatRecent(long time) {
+        long currentTime = System.currentTimeMillis();
+
+        // 获取结尾的 小时和分钟
+        int whatDay = whatDay(new Date(time), new Date(currentTime));
+        switch (whatDay) {
+            case DAY_TODAY:
+                return "今天 " + format(time, "HH:mm");
+
+            case DAY_YESTERDAY:
+                return "昨天 " + format(time, "HH:mm");
+
+            case DAY_TOMORROW:
+                return "明天 " + format(time, "HH:mm");
+
+            case DAY_BEFORE_YESTERDAY:
+                return "前天 " + format(time, "HH:mm");
+
+            case DAY_AFTER_TOMORROW:
+                return "后天 " + format(time, "HH:mm");
+
+            default:
+                return format(time, "yyyy-MM-dd");
+        }
     }
 
     /**
@@ -216,20 +228,20 @@ public final class TimeUtil extends DateUtils {
      * @throws ParseException
      */
     @SuppressLint("SimpleDateFormat")
-    public static Date toDate(String pattern, String formattedStr) throws ParseException {
+    public static Date parseDate(String pattern, String formattedStr) throws ParseException {
         return getDateFormat(pattern).parse(formattedStr);
     }
 
     /**
-     * 将指定格式的时间字符串转为毫秒数。具体实现请参阅{@link #toDate(String, String)}
+     * 将指定格式的时间字符串转为毫秒数。具体实现请参阅{@link #parseDate(String, String)}
      *
      * @param pattern
      * @param formattedStr
      * @return
      * @throws ParseException
      */
-    public static long toTimeMillis(String pattern, String formattedStr) throws ParseException {
-        return toDate(pattern, formattedStr).getTime();
+    public static long parse(String pattern, String formattedStr) throws ParseException {
+        return parseDate(pattern, formattedStr).getTime();
     }
 
 	/*获取时间*/
