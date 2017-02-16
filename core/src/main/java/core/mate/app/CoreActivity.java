@@ -1,7 +1,6 @@
 package core.mate.app;
 
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
@@ -19,8 +18,6 @@ import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
 import core.mate.async.CoreHandler;
-import core.mate.util.BroadcastUtil;
-import core.mate.util.DataUtil;
 
 /**
  * 封装了常用方法的Activity基类。
@@ -37,8 +34,8 @@ public abstract class CoreActivity extends AppCompatActivity {
             refresh();
         }
 
-        for (int i = 0, len = DataUtil.getSize(resumeReceivers); i < len; i++) {
-            registerReceiver(resumeReceivers.get(i));
+        if (receiverHelper != null) {
+            receiverHelper.onResume();
         }
     }
 
@@ -49,8 +46,8 @@ public abstract class CoreActivity extends AppCompatActivity {
             clearAllClearable();
         }
 
-        for (int i = 0, len = DataUtil.getSize(resumeReceivers); i < len; i++) {
-            unregisterReceiver(resumeReceivers.get(i));
+        if (receiverHelper != null) {
+            receiverHelper.onPause();
         }
     }
 
@@ -59,8 +56,12 @@ public abstract class CoreActivity extends AppCompatActivity {
         super.onDestroy();
         clearAllClearable();
 
-        for (int i = 0, len = DataUtil.getSize(fullReceivers); i < len; i++) {
-            unregisterReceiver(fullReceivers.get(i));
+        if(handler != null){
+            handler.removeCallbacksAndMessages(null);
+        }
+
+        if (receiverHelper != null) {
+            receiverHelper.onDestroy();
         }
     }
 
@@ -326,7 +327,7 @@ public abstract class CoreActivity extends AppCompatActivity {
         return (ViewGroup) getWindow().getDecorView();
     }
 
-	/*Fragment操作*/
+	/*辅助类*/
 
     private FragHelper fragHelper;
 
@@ -337,7 +338,14 @@ public abstract class CoreActivity extends AppCompatActivity {
         return fragHelper;
     }
 
-	/* 线程 */
+    private ReceiverHelper receiverHelper;
+
+    public ReceiverHelper getReceiverHelper() {
+        if (receiverHelper == null) {
+            receiverHelper = new ReceiverHelper();
+        }
+        return receiverHelper;
+    }
 
     private Handler handler;
 
@@ -349,68 +357,6 @@ public abstract class CoreActivity extends AppCompatActivity {
 
         }
         return handler;
-    }
-
-    public boolean post(Runnable r) {
-        return getHandler().post(r);
-    }
-
-    public boolean postAtTime(Runnable r, long uptimeMillis) {
-        return getHandler().postAtTime(r, uptimeMillis);
-    }
-
-    public boolean postAtTime(Runnable r, Object token, long uptimeMillis) {
-        return getHandler().postAtTime(r, token, uptimeMillis);
-    }
-
-    public boolean postDelayed(Runnable r, long delayMillis) {
-        return getHandler().postDelayed(r, delayMillis);
-    }
-
-    public boolean postAtFrontOfQueue(Runnable r) {
-        return getHandler().postAtFrontOfQueue(r);
-    }
-
-    /*广播*/
-
-    private List<CoreReceiver> fullReceivers;
-    private List<CoreReceiver> resumeReceivers;
-
-    /**
-     * 注册长时间监听的广播。该广播会在调用该方法时自动注册，并在{@link #onDestroy()}中注销。
-     *
-     * @param receiver
-     */
-    public void addFullReceiver(CoreReceiver receiver) {
-        if (fullReceivers == null) {
-            fullReceivers = new ArrayList<>();
-        }
-        fullReceivers.add(receiver);
-        registerReceiver(receiver);
-    }
-
-    /**
-     * 注册只在{@link #onResume()}和{@link #onPause()}之间的窗口启用的广播。
-     * <p>
-     * 注意，如果在窗口期内调用该方法的话只会在下个窗口期开始时真正注册到上下文中，
-     * 因而只建议在{@link #onCreate(Bundle)}中使用该方法。
-     *
-     * @param receiver
-     */
-    public void addResumeReceiver(CoreReceiver receiver) {
-        if (resumeReceivers == null) {
-            resumeReceivers = new ArrayList<>();
-        }
-
-        resumeReceivers.add(receiver);
-    }
-
-    public void registerReceiver(CoreReceiver receiver) {
-        BroadcastUtil.getManager(receiver.isLocal()).register(receiver, receiver.getFilter());
-    }
-
-    public void unregisterReceiver(CoreReceiver receiver) {
-        BroadcastUtil.getManager(receiver.isLocal()).unregister(receiver);
     }
 
 	/*Clearable*/
