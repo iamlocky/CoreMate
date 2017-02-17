@@ -31,12 +31,20 @@ public abstract class SimpleCallback<Result> implements Callback<Result> {
 
     }
 
+    public static void call(Callback<Void>... callbacks) {
+        call(null, callbacks);
+    }
+
     public static <Result> void call(Result result, Callback<Result>... callbacks) {
         for (int i = 0, len = DataUtil.getSize(callbacks); i < len; i++) {
             if (callbacks[i] != null) {
                 callbacks[i].onCall(result);
             }
         }
+    }
+
+    public static void call(Collection<Callback<Void>> callbacks) {
+        call(null, callbacks);
     }
 
     public static <Result> void call(Result result, Collection<Callback<Result>> callbacks) {
