@@ -31,7 +31,7 @@ public abstract class SimpleCallback<Result> implements Callback<Result> {
 
     }
 
-    public static void call(Callback<Void>... callbacks) {
+    public static void callVoid(Callback<Void>... callbacks) {
         call(null, callbacks);
     }
 
@@ -43,7 +43,7 @@ public abstract class SimpleCallback<Result> implements Callback<Result> {
         }
     }
 
-    public static void call(Collection<Callback<Void>> callbacks) {
+    public static void callVoid(Collection<Callback<Void>> callbacks) {
         call(null, callbacks);
     }
 
