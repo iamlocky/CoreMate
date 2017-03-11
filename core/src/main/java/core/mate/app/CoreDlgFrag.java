@@ -27,7 +27,6 @@ import core.mate.async.ClearableWrapper;
 import core.mate.async.CoreHandler;
 import core.mate.util.ClassUtil;
 import core.mate.util.ContextUtil;
-import core.mate.util.DataUtil;
 import core.mate.util.LogUtil;
 import core.mate.util.ViewUtil;
 
@@ -42,6 +41,7 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onceRefreshed = false;
         if (dismissIfRecreated && savedInstanceState != null) {
             dismiss();
         }
