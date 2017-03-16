@@ -1,6 +1,7 @@
 package core.mate.app;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
@@ -56,7 +57,7 @@ public abstract class CoreActivity extends AppCompatActivity {
         super.onDestroy();
         clearAllClearable();
 
-        if(handler != null){
+        if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         }
 
@@ -276,28 +277,7 @@ public abstract class CoreActivity extends AppCompatActivity {
         });
     }
 
-	/* 视图层次 */
-
-    /**
-     * 添加视图到Activity根布局上。由于根布局是{@link android.widget.FrameLayout#}因而新添加的视图会悬浮在原有界面上，
-     * 默认宽高均为{@link android.view.ViewGroup.LayoutParams#MATCH_PARENT}。
-     * 具体实现请参阅{@link #addContentView(View, ViewGroup.LayoutParams)}
-     *
-     * @param view
-     */
-    public void addContentView(View view) {
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        super.addContentView(view, params);
-    }
-
-    /**
-     * 从Activity的根布局中移除控件
-     *
-     * @param view
-     */
-    public void removeContentView(View view) {
-        getContentViewContainer().removeView(view);
-    }
+	/* 视图 */
 
     /**
      * 获取通过setContentView(int)等方法设置的内容视图。
@@ -325,6 +305,37 @@ public abstract class CoreActivity extends AppCompatActivity {
      */
     public ViewGroup getDecorViewContainer() {
         return (ViewGroup) getWindow().getDecorView();
+    }
+
+    public static final int FULL_SCREEN_UI_OPTION;
+
+    static {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {//New Api
+            FULL_SCREEN_UI_OPTION = View.GONE;
+        } else {
+            FULL_SCREEN_UI_OPTION = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+    }
+
+    public boolean isFullScreen() {
+        View decorView = this.getWindow().getDecorView();
+        int uiOption = decorView.getSystemUiVisibility();
+        return (uiOption & FULL_SCREEN_UI_OPTION)
+                == FULL_SCREEN_UI_OPTION;
+    }
+
+    public void toggleFullScreen() {
+        setFullScreen(!isFullScreen());
+    }
+
+    public void setFullScreen(boolean fullScreen) {
+        if (isFullScreen() == fullScreen) {
+            return;
+        }
+
+        View decorView = this.getWindow().getDecorView();
+        decorView.setSystemUiVisibility(FULL_SCREEN_UI_OPTION);
     }
 
 	/*辅助类*/
