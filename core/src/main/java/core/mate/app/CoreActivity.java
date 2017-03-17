@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -310,7 +311,7 @@ public abstract class CoreActivity extends AppCompatActivity {
     public static final int FULL_SCREEN_UI_OPTION;
 
     static {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {//New Api
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             FULL_SCREEN_UI_OPTION = View.GONE;
         } else {
             FULL_SCREEN_UI_OPTION = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -319,10 +320,9 @@ public abstract class CoreActivity extends AppCompatActivity {
     }
 
     public boolean isFullScreen() {
-        View decorView = this.getWindow().getDecorView();
-        int uiOption = decorView.getSystemUiVisibility();
-        return (uiOption & FULL_SCREEN_UI_OPTION)
-                == FULL_SCREEN_UI_OPTION;
+        int flag = getWindow().getAttributes().flags;
+        return (flag & WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                == WindowManager.LayoutParams.FLAG_FULLSCREEN;
     }
 
     public void toggleFullScreen() {
@@ -330,12 +330,22 @@ public abstract class CoreActivity extends AppCompatActivity {
     }
 
     public void setFullScreen(boolean fullScreen) {
-        if (isFullScreen() == fullScreen) {
-            return;
-        }
+        if (isFullScreen() != fullScreen) {
+            View decorView = this.getWindow().getDecorView();
+            if (fullScreen) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        View decorView = this.getWindow().getDecorView();
-        decorView.setSystemUiVisibility(FULL_SCREEN_UI_OPTION);
+                decorView.setSystemUiVisibility(FULL_SCREEN_UI_OPTION);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+                int uiOption = View.VISIBLE;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    uiOption &= ~FULL_SCREEN_UI_OPTION;
+                }
+                decorView.setSystemUiVisibility(uiOption);
+            }
+        }
     }
 
 	/*辅助类*/
