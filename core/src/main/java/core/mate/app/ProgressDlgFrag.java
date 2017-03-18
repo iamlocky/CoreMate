@@ -23,7 +23,7 @@ import core.mate.view.ITaskIndicator;
  * @author DrkCore 178456643@qq.com
  * @since 2015年10月29日13:20:25s
  */
-public final class ProgressDlgFrag extends CoreDlgFrag implements ITaskIndicator {
+public class ProgressDlgFrag extends CoreDlgFrag implements ITaskIndicator {
 
 	/* 继承 */
 
