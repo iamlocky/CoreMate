@@ -25,7 +25,6 @@ import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
 import core.mate.async.CoreHandler;
-import core.mate.util.ClassUtil;
 import core.mate.util.ContextUtil;
 import core.mate.util.LogUtil;
 import core.mate.util.ViewUtil;
@@ -332,22 +331,12 @@ public abstract class CoreDlgFrag extends DialogFragment implements DialogInterf
         return this;
     }
 
-    /**
-     * 显示对话框，使用类名作为tag<br>
-     *
-     * @param context
-     */
     public void show(FragmentActivity context) {
-        show(context.getSupportFragmentManager(), ClassUtil.getTypeName(this));
+        show(context.getSupportFragmentManager(), getClass().getCanonicalName());
     }
 
-    /**
-     * 显示对话框，使用类名作为tag
-     *
-     * @param fragMgr
-     */
     public void show(FragmentManager fragMgr) {
-        show(fragMgr, ClassUtil.getTypeName(this));
+        show(fragMgr, getClass().getCanonicalName());
     }
 
     /**
