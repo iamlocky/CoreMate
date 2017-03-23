@@ -8,15 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import core.mate.async.Clearable;
 import core.mate.async.ClearableHolder;
 import core.mate.async.ClearableWrapper;
 import core.mate.async.CoreHandler;
-import core.mate.util.BroadcastUtil;
-import core.mate.util.DataUtil;
 
 /**
  * 规范化fragment执行顺序的抽象fragment基类。
@@ -39,6 +34,8 @@ public abstract class CoreFrag extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onceRefreshed = false;
+
         if (savedInstanceState != null) {
             //该部分代码来自博客：http://www.jianshu.com/p/c12a98a36b2b
             boolean isSupportHidden = savedInstanceState.getBoolean(STATE_SAVE_IS_HIDDEN);
