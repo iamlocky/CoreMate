@@ -18,12 +18,15 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
+import android.text.TextUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,8 +35,6 @@ import java.nio.charset.Charset;
 import core.mate.Core;
 import core.mate.content.TextBuilder;
 
-import static android.content.pm.PackageManager.GET_UNINSTALLED_PACKAGES;
-import static android.content.pm.PackageManager.MATCH_UNINSTALLED_PACKAGES;
 
 /**
  * 用于获取应用信息的工具类
@@ -45,7 +46,7 @@ public final class ContextUtil {
     private ContextUtil() {
     }
 
-	/*应用信息*/
+	/*Info*/
 
     /**
      * 获取app的版本名
@@ -95,9 +96,9 @@ public final class ContextUtil {
             PackageManager pkgMgr = Core.getInstance().getAppContext().getPackageManager();
             ApplicationInfo info;
             if (Build.VERSION.SDK_INT >= 24) {
-                info = pkgMgr.getApplicationInfo(pkgName, MATCH_UNINSTALLED_PACKAGES);
+                info = pkgMgr.getApplicationInfo(pkgName, PackageManager.MATCH_UNINSTALLED_PACKAGES);
             } else {
-                info = pkgMgr.getApplicationInfo(pkgName, GET_UNINSTALLED_PACKAGES);
+                info = pkgMgr.getApplicationInfo(pkgName, PackageManager.GET_UNINSTALLED_PACKAGES);
             }
             return info != null;
         } catch (PackageManager.NameNotFoundException e) {
@@ -105,15 +106,44 @@ public final class ContextUtil {
         }
     }
 
-	/* 资源获取 */
+    public static String getPackageName() {
+        return Core.getInstance().getAppContext().getPackageName();
+    }
+
+    public static boolean isPackageProcess() {
+        return TextUtils.equals(getPackageName(), getProcessName());
+    }
+
+    public static String getProcessName() {
+        return getProcessName(android.os.Process.myPid());
+    }
+
+    public static String getProcessName(int pid) {
+        String processName = null;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader("/proc/" + pid + "/cmdline"));
+            String line = reader.readLine();
+            if (!TextUtils.isEmpty(line)) {
+                processName = line.trim();
+            }
+        } catch (Throwable e) {
+            LogUtil.e(e);
+        } finally {
+            IOUtil.close(reader);
+        }
+        return processName;
+    }
+
+	/* Res */
 
     public static Resources getResources() {
         return Core.getInstance().getAppContext().getResources();
     }
 
-    public static int getIdentifier(String name, String defType, String defPackage){
+    public static int getIdentifier(String name, String defType, String defPackage) {
         Resources res = ContextUtil.getResources();
-        return res.getIdentifier(name,defType,defPackage);
+        return res.getIdentifier(name, defType, defPackage);
     }
 
     public static AssetManager getAssets() {
@@ -168,7 +198,7 @@ public final class ContextUtil {
         return context.getResources().getDimensionPixelSize(id);
     }
 
-    /*目录*/
+    /*Dir*/
 
     public static File getFilesDir() {
         return Core.getInstance().getAppContext().getFilesDir();
@@ -473,7 +503,7 @@ public final class ContextUtil {
         return new Intent(Intent.ACTION_VIEW, uri);
     }
 
-    public static Intent getLauncherIntent(){
+    public static Intent getLauncherIntent() {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         return intent;
