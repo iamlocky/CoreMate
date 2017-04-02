@@ -1,7 +1,5 @@
 package core.mate.util;
 
-import android.text.TextUtils;
-
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,28 +7,13 @@ import java.util.List;
 
 public abstract class AbsEncryptor {
 
-    private final byte[] salt;
     private final Charset charset;
 
     public Charset getCharset() {
         return charset;
     }
 
-    public AbsEncryptor() {
-        this(null);
-    }
-
-    public AbsEncryptor(byte[] salt) {
-        this(salt, null);
-    }
-
-    public AbsEncryptor(String salt, Charset charset) {
-        this.charset = charset != null ? charset : Charset.defaultCharset();
-        this.salt = !TextUtils.isEmpty(salt) ? salt.getBytes(this.charset) : null;
-    }
-
-    public AbsEncryptor(byte[] salt, Charset charset) {
-        this.salt = salt != null ? salt.clone() : null;
+    public AbsEncryptor(Charset charset) {
         this.charset = charset != null ? charset : Charset.defaultCharset();
     }
 
@@ -38,9 +21,6 @@ public abstract class AbsEncryptor {
 
     public final byte[] encrypt(byte[] src) {
         try {
-            if (src != null && !DataUtil.isEmpty(salt)) {
-                src = DataUtil.concat(src, salt);
-            }
             return doEncrypt(src);
         } catch (Exception e) {
             LogUtil.e(e);
@@ -50,16 +30,7 @@ public abstract class AbsEncryptor {
 
     public final byte[] decrypt(byte[] cipher) {
         try {
-            byte[] src = doDecrypt(cipher);
-
-            if (src != null && !DataUtil.isEmpty(salt)) {
-                byte[] tmp = src;
-
-                int len = src.length - salt.length;
-                src = new byte[len];
-                System.arraycopy(src, 0, tmp, 0, len);
-            }
-            return src;
+            return doDecrypt(cipher);
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException();
@@ -78,7 +49,7 @@ public abstract class AbsEncryptor {
     }
 
     public final String decryptHex(String hexStr) {
-        byte[] cipher = EncodeUtil.toBytes(hexStr);
+        byte[] cipher = EncodeUtil.hexToBytes(hexStr);
         byte[] decrypted = decrypt(cipher);
         return new String(decrypted, charset);
     }

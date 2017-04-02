@@ -1,5 +1,6 @@
 package core.demo.helper;
 
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import core.demo.App;
@@ -17,14 +18,21 @@ public class ConfigHelper {
     /**
      * 因为是应用全局的配置，所以这里写成常量
      */
-    private static final EncryptPrefHelper PREF = new EncryptPrefHelper(
-            //获取系统默认的SharePreference
-            PreferenceManager.getDefaultSharedPreferences(App.getInstance()),
-            //使用AES加密，你也可以使用自定义的设备唯一码来作为密码
-            new AESEncryptor.Builder().setPassword("123").build(),
-            //是否连同key值一同加密
-            false
-    );
+    private static final EncryptPrefHelper PREF;
+
+    private static final String KEY_AES_SECURE_SALT_HEX = "KEY_AES_SECURE_SALT_HEX";
+
+    static {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(App.getInstance());
+        PREF = new EncryptPrefHelper(
+                //获取系统默认的SharePreference
+                sp,
+                //使用AES加密，你也可以使用自定义的设备唯一码来作为密码
+                new AESEncryptor.Builder().setPassword("123").setSecureSalt(sp, KEY_AES_SECURE_SALT_HEX).build(),
+                //是否连同key值一同加密
+                false
+        );
+    }
 
     /*测试*/
 
