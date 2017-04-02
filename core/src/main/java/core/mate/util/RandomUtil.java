@@ -109,7 +109,10 @@ public final class RandomUtil {
     }
 
     public static byte[] nextBytes(int size) {
-        byte[] bytes = new byte[size];
+        return nextBytes(new byte[size]);
+    }
+
+    public static byte[] nextBytes(byte[] bytes) {
         random.nextBytes(bytes);
         return bytes;
     }

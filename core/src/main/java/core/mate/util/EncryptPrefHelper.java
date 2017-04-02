@@ -2,8 +2,6 @@ package core.mate.util;
 
 import android.content.SharedPreferences;
 
-import core.mate.content.AbsEncryptor;
-
 /**
  * 带加密的{@link android.content.SharedPreferences}配置处理文件
  *
@@ -34,12 +32,12 @@ public class EncryptPrefHelper extends PrefHelper {
 	/*字符串加解密*/
 
     private String getKey(String originKey) {
-        return encryptKeyEnable ? encryptor.encrypt(originKey) : originKey;
+        return encryptKeyEnable ? encryptor.encryptToHex(originKey) : originKey;
     }
 
     public final EncryptPrefHelper putEncryptedString(String key, String value) {
         key = getKey(key);
-        value = value != null ? encryptor.encrypt(value) : null;
+        value = value != null ? encryptor.encryptToHex(value) : null;
         putString(key, value);
         return this;
     }
@@ -47,7 +45,7 @@ public class EncryptPrefHelper extends PrefHelper {
     public final String getDecryptedString(String key, String defValue) {
         key = getKey(key);
         String value = getString(key, null);
-        return value != null ? encryptor.decrypt(value) : defValue;
+        return value != null ? encryptor.decryptHex(value) : defValue;
     }
 
     /*基础数据类型加解密*/

@@ -3,7 +3,7 @@ package core.demo.helper;
 import android.preference.PreferenceManager;
 
 import core.demo.App;
-import core.mate.content.AESEncryptor;
+import core.mate.util.AESEncryptor;
 import core.mate.util.EncryptPrefHelper;
 
 /**
@@ -21,7 +21,7 @@ public class ConfigHelper {
             //获取系统默认的SharePreference
             PreferenceManager.getDefaultSharedPreferences(App.getInstance()),
             //使用AES加密，你也可以使用自定义的设备唯一码来作为密码
-            new AESEncryptor("123"),
+            new AESEncryptor.Builder().setPassword("123").build(),
             //是否连同key值一同加密
             false
     );

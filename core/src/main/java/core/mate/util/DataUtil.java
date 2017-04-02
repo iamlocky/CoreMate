@@ -2,6 +2,8 @@ package core.mate.util;
 
 import android.support.annotation.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +20,8 @@ public final class DataUtil {
 
     private DataUtil() {
     }
+
+    /*Reverse*/
 
     public static void reverse(byte[] array) {
         int len = array.length;
@@ -57,6 +61,21 @@ public final class DataUtil {
 
         int halfLen = len / 2;
         char tmp;
+        for (int i = 0; i < halfLen; i++) {
+            tmp = array[i];
+            array[i] = array[len - i - 1];
+            array[len - i - 1] = tmp;
+        }
+    }
+
+    public static void reverse(short[] array) {
+        int len = array.length;
+        if (len <= 1) {
+            return;
+        }
+
+        int halfLen = len / 2;
+        short tmp;
         for (int i = 0; i < halfLen; i++) {
             tmp = array[i];
             array[i] = array[len - i - 1];
@@ -139,6 +158,26 @@ public final class DataUtil {
         }
     }
 
+    /*Index*/
+
+    public static int indexOf(boolean[] array, boolean value) {
+        for (int i = 0, len = getSize(array); i < len; i++) {
+            if (array[i] == value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int indexOf(byte[] array, byte value) {
+        for (int i = 0, len = getSize(array); i < len; i++) {
+            if (array[i] == value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public static int indexOf(char[] array, char value) {
         for (int i = 0, len = getSize(array); i < len; i++) {
             if (array[i] == value) {
@@ -196,6 +235,15 @@ public final class DataUtil {
     public static <T> int indexOf(T[] array, T value) {
         for (int i = 0, len = getSize(array); i < len; i++) {
             if ((array[i] != null && array[i].equals(value)) || (array[i] == null && value == null)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int lastIndexOf(boolean[] array, boolean value) {
+        for (int len = getSize(array), i = len - 1; i >= 0; i--) {
+            if (array[i] == value) {
                 return i;
             }
         }
@@ -265,6 +313,8 @@ public final class DataUtil {
         return -1;
     }
 
+    /*IsEmpty*/
+
     public static <T> boolean isEmpty(Collection<T> collection) {
         return collection == null || collection.isEmpty();
     }
@@ -292,6 +342,10 @@ public final class DataUtil {
         return array == null || array.length == 0;
     }
 
+    public static boolean isEmpty(short[] array) {
+        return array == null || array.length == 0;
+    }
+
     public static boolean isEmpty(int[] array) {
         return array == null || array.length == 0;
     }
@@ -308,8 +362,10 @@ public final class DataUtil {
         return array == null || array.length == 0;
     }
 
+    /*Get*/
+
     @Nullable
-    public static <T> T getQuietly(@Nullable List<T> list, int location) {
+    public static <T> T get(@Nullable List<T> list, int location) {
         if (location < 0) {
             throw new IllegalArgumentException("location不允许为负数");
         }
@@ -317,54 +373,202 @@ public final class DataUtil {
     }
 
     @Nullable
-    public static <T> T getFirstQuietly(@Nullable List<T> list) {
-        return getQuietly(list, 0);
+    public static <T> T get(@Nullable T[] array, int location) {
+        if (location < 0) {
+            throw new IllegalArgumentException("location不允许为负数");
+        }
+        return array != null && array.length > location ? array[location] : null;
     }
 
     @Nullable
-    public static <T> T getLastQuietly(@Nullable List<T> list) {
-        return getQuietly(list, list != null ? list.size() - 1 : 0);
+    public static Byte get(@Nullable byte[] array, int location) {
+        if (location < 0) {
+            throw new IllegalArgumentException("location不允许为负数");
+        }
+        return array != null && array.length > location ? array[location] : null;
     }
 
-    public static <T> int getSize(@Nullable Collection<T> collection) {
+    @Nullable
+    public static Character get(@Nullable char[] array, int location) {
+        if (location < 0) {
+            throw new IllegalArgumentException("location不允许为负数");
+        }
+        return array != null && array.length > location ? array[location] : null;
+    }
+
+    @Nullable
+    public static Short get(@Nullable short[] array, int location) {
+        if (location < 0) {
+            throw new IllegalArgumentException("location不允许为负数");
+        }
+        return array != null && array.length > location ? array[location] : null;
+    }
+
+    @Nullable
+    public static Integer get(@Nullable int[] array, int location) {
+        if (location < 0) {
+            throw new IllegalArgumentException("location不允许为负数");
+        }
+        return array != null && array.length > location ? array[location] : null;
+    }
+
+    @Nullable
+    public static Long get(@Nullable long[] array, int location) {
+        if (location < 0) {
+            throw new IllegalArgumentException("location不允许为负数");
+        }
+        return array != null && array.length > location ? array[location] : null;
+    }
+
+    @Nullable
+    public static Float get(@Nullable float[] array, int location) {
+        if (location < 0) {
+            throw new IllegalArgumentException("location不允许为负数");
+        }
+        return array != null && array.length > location ? array[location] : null;
+    }
+
+    @Nullable
+    public static Double get(@Nullable double[] array, int location) {
+        if (location < 0) {
+            throw new IllegalArgumentException("location不允许为负数");
+        }
+        return array != null && array.length > location ? array[location] : null;
+    }
+
+    @Nullable
+    public static <T> T getFirst(@Nullable List<T> list) {
+        return get(list, 0);
+    }
+
+    @Nullable
+    public static <T> T getFirst(T[] array) {
+        return get(array, 0);
+    }
+
+    @Nullable
+    public static Byte getFirst(@Nullable byte[] array) {
+        return get(array, 0);
+    }
+
+    @Nullable
+    public static Character getFirst(@Nullable char[] array) {
+        return get(array, 0);
+    }
+
+    @Nullable
+    public static Short getFirst(@Nullable short[] array) {
+        return get(array, 0);
+    }
+
+    @Nullable
+    public static Integer getFirst(@Nullable int[] array) {
+        return get(array, 0);
+    }
+
+    @Nullable
+    public static Long getFirst(@Nullable long[] array) {
+        return get(array, 0);
+    }
+
+    @Nullable
+    public static Float getFirst(@Nullable float[] array) {
+        return get(array, 0);
+    }
+
+    @Nullable
+    public static Double getFirst(@Nullable double[] array) {
+        return get(array, 0);
+    }
+
+    @Nullable
+    public static <T> T getLast(@Nullable List<T> list) {
+        return list != null && getSize(list) > 0 ? get(list, list.size() - 1) : null;
+    }
+
+    @Nullable
+    public static <T> T getLast(T[] array) {
+        return getSize(array) > 0 ? get(array, array.length - 1) : null;
+    }
+
+    @Nullable
+    public static Byte getLast(byte[] array) {
+        return getSize(array) > 0 ? get(array, array.length - 1) : null;
+    }
+
+    @Nullable
+    public static Character getLast(char[] array) {
+        return getSize(array) > 0 ? get(array, array.length - 1) : null;
+    }
+
+    @Nullable
+    public static Short getLast(short[] array) {
+        return getSize(array) > 0 ? get(array, array.length - 1) : null;
+    }
+
+    @Nullable
+    public static Integer getLast(int[] array) {
+        return getSize(array) > 0 ? get(array, array.length - 1) : null;
+    }
+
+    @Nullable
+    public static Long getLast(long[] array) {
+        return getSize(array) > 0 ? get(array, array.length - 1) : null;
+    }
+
+    @Nullable
+    public static Float getLast(float[] array) {
+        return getSize(array) > 0 ? get(array, array.length - 1) : null;
+    }
+
+    @Nullable
+    public static Double getLast(double[] array) {
+        return getSize(array) > 0 ? get(array, array.length - 1) : null;
+    }
+
+    /*Size*/
+
+    public static <T> int getSize(Collection<T> collection) {
         return collection != null ? collection.size() : 0;
     }
 
-    public static <T> int getSize(@Nullable T[] array) {
+    public static <T> int getSize(T[] array) {
         return array != null ? array.length : 0;
     }
 
-    public static int getSize(@Nullable boolean[] array) {
+    public static int getSize(boolean[] array) {
         return array != null ? array.length : 0;
     }
 
-    public static int getSize(@Nullable byte[] array) {
+    public static int getSize(byte[] array) {
         return array != null ? array.length : 0;
     }
 
-    public static int getSize(@Nullable char[] array) {
+    public static int getSize(char[] array) {
         return array != null ? array.length : 0;
     }
 
-    public static int getSize(@Nullable int[] array) {
+    public static int getSize(short[] array) {
         return array != null ? array.length : 0;
     }
 
-    public static int getSize(@Nullable short[] array) {
+    public static int getSize(int[] array) {
         return array != null ? array.length : 0;
     }
 
-    public static int getSize(@Nullable long[] array) {
+    public static int getSize(long[] array) {
         return array != null ? array.length : 0;
     }
 
-    public static int getSize(@Nullable float[] array) {
+    public static int getSize(float[] array) {
         return array != null ? array.length : 0;
     }
 
-    public static int getSize(@Nullable double[] array) {
+    public static int getSize(double[] array) {
         return array != null ? array.length : 0;
     }
+
+    /*Parse*/
 
     public static byte parseByte(String str) {
         return parseByte(str, (byte) 0);
@@ -478,6 +682,8 @@ public final class DataUtil {
         }
     }
 
+    /*Filter*/
+
     public interface Filter<T> {
 
         boolean accept(T t);
@@ -515,5 +721,36 @@ public final class DataUtil {
             return filter(Arrays.asList(array), filter);
         }
         return null;
+    }
+
+    /*Concat*/
+
+    public static byte[] concat(byte[]... array) {
+        int len = array.length;
+        if (len == 0) {
+            return null;
+        } else if (len == 1) {
+            return array[0];
+        } else if (len == 2) {
+            return concatTwoArray(array[0], array[1]);
+        } else {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            try {
+                for (byte[] bytes : array) {
+                    outputStream.write(bytes);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return outputStream.toByteArray();
+        }
+    }
+
+    private static byte[] concatTwoArray(byte[] a, byte[] b) {
+        byte[] c = new byte[a.length + b.length];
+        System.arraycopy(a, 0, c, 0, a.length);
+        System.arraycopy(b, 0, c, a.length, b.length);
+        return c;
     }
 }
