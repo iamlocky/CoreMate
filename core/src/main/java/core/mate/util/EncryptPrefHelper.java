@@ -32,12 +32,12 @@ public class EncryptPrefHelper extends PrefHelper {
 	/*字符串加解密*/
 
     private String getKey(String originKey) {
-        return encryptKeyEnable ? encryptor.encryptToHex(originKey) : originKey;
+        return encryptKeyEnable ? encryptor.encryptHex(originKey) : originKey;
     }
 
     public final EncryptPrefHelper putEncryptedString(String key, String value) {
         key = getKey(key);
-        value = value != null ? encryptor.encryptToHex(value) : null;
+        value = value != null ? encryptor.encryptHex(value) : null;
         putString(key, value);
         return this;
     }

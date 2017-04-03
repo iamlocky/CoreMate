@@ -92,7 +92,7 @@ public final class TextBuilder {
     }
 
     public TextBuilder appendHex(byte... bytes) {
-        append(EncodeUtil.toHexString(bytes));
+        append(EncodeUtil.encodeHex(bytes));
         return this;
     }
 

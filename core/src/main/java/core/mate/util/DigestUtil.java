@@ -59,7 +59,7 @@ public class DigestUtil {
         try {
             MessageDigest digest = MessageDigest.getInstance(algorithm);
             digest.reset();
-            return EncodeUtil.toHexString(digest.digest(bytes));
+            return EncodeUtil.encodeHex(digest.digest(bytes));
         } catch (NoSuchAlgorithmException e) {
             LogUtil.e(e);
             throw new IllegalStateException("无法初始化" + algorithm + "算法");
@@ -95,7 +95,7 @@ public class DigestUtil {
             while ((len = (in.read(buff))) != -1) {
                 digest.update(buff, 0, len);
             }
-            return EncodeUtil.toHexString(digest.digest());
+            return EncodeUtil.encodeHex(digest.digest());
         } catch (NoSuchAlgorithmException e) {
             LogUtil.e(e);
             throw new IllegalStateException("无法初始化" + algorithm + "算法");

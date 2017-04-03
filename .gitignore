@@ -12,8 +12,6 @@
 build
 
 #Test
-app/src/androidTest
-app/src/test
 core/src/androidTest
 core/src/test
 
@@ -21,4 +19,3 @@ core/src/test
 *.pro
 test
 androidTest
-gradle

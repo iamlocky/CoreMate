@@ -15,24 +15,24 @@ public final class EncodeUtil {
 
     /*Base64*/
 
-    public static String toBase64(byte... bytes) {
+    public static String encodeBase64(byte... bytes) {
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
 
-    public static byte[] base64ToBytes(String base64) {
+    public static byte[] decodeBase64(String base64) {
         return Base64.decode(base64, Base64.DEFAULT);
     }
 
 	/*Hex*/
 
     /**
-     * 具体实现请参阅{@link #toHexString(boolean, byte...)}。默认使用小写。
+     * 具体实现请参阅{@link #encodeHex(boolean, byte...)}。默认使用小写。
      *
      * @param bytes
      * @return
      */
-    public static String toHexString(byte... bytes) {
-        return toHexString(false, bytes);
+    public static String encodeHex(byte... bytes) {
+        return encodeHex(false, bytes);
     }
 
     /**
@@ -42,7 +42,7 @@ public final class EncodeUtil {
      * @param bytes
      * @return
      */
-    public static String toHexString(boolean upperCase, byte... bytes) {
+    public static String encodeHex(boolean upperCase, byte... bytes) {
         if (bytes.length == 0) {
             return "";
         }
@@ -67,7 +67,7 @@ public final class EncodeUtil {
      * @param hexStr
      * @return
      */
-    public static byte[] hexToBytes(String hexStr) {
+    public static byte[] decodeHex(String hexStr) {
         int len = hexStr.length();
         if (len == 0) {
             return null;
