@@ -14,3 +14,10 @@ build
 #Test
 app/src/androidTest
 app/src/test
+core/src/androidTest
+core/src/test
+
+#pro
+*.pro
+test
+androidTest
