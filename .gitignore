@@ -21,3 +21,4 @@ core/src/test
 *.pro
 test
 androidTest
+gradle
