@@ -192,6 +192,20 @@ public class AESEncryptor extends AbsEncryptor {
             return this;
         }
 
+        /**
+         * 调用{@link #build()}，如果发生任务异常，则抛出{@link IllegalStateException}
+         *
+         * @return
+         */
+        public AESEncryptor buildQuietly(){
+            try {
+                return build();
+            } catch (Exception e) {
+                LogUtil.e(e);
+                throw new IllegalStateException("无法实例化加密类");
+            }
+        }
+
         public AESEncryptor build() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, NoSuchPaddingException {
             //参数校验
             charset = charset != null ? charset : Charset.defaultCharset();
