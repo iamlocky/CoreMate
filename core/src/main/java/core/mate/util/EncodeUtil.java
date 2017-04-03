@@ -1,6 +1,9 @@
 package core.mate.util;
 
+import android.support.annotation.Nullable;
 import android.util.Base64;
+
+import java.nio.charset.Charset;
 
 /**
  * 用于编码的工具集
@@ -21,6 +24,26 @@ public final class EncodeUtil {
 
     public static byte[] decodeBase64(String base64) {
         return Base64.decode(base64, Base64.DEFAULT);
+    }
+
+    public static String encodeBase64Str(String src) {
+        return encodeBase64Str(src, null);
+    }
+
+    public static String encodeBase64Str(String src, @Nullable Charset charset) {
+        charset = charset != null ? charset : Charset.defaultCharset();
+        byte[] bytes = src.getBytes(charset);
+        return encodeBase64(bytes);
+    }
+
+    public static String decodeBase64Str(String base64) {
+        return decodeBase64Str(base64, null);
+    }
+
+    public static String decodeBase64Str(String base64, @Nullable Charset charset) {
+        charset = charset != null ? charset : Charset.defaultCharset();
+        byte[] bytes = decodeBase64(base64);
+        return new String(bytes, charset);
     }
 
 	/*Hex*/

@@ -60,6 +60,9 @@ public class AESEncryptor extends AbsEncryptor {
 
     public static final String MODE_CBC = "CBC";
     public static final String MODE_CFB = "CFB";
+    /**
+     * {@link Builder}中mode的默认值
+     */
     public static final String MODE_ECB = "ECB";
     public static final String MODE_OFB = "OFB";
     public static final String MODE_PCBC = "PCBC";
@@ -75,6 +78,9 @@ public class AESEncryptor extends AbsEncryptor {
     public @interface Mode {
     }
 
+    /**
+     * {@link Builder}中padding的默认值
+     */
     public static final String PADDING_ZERO = "ZeroBytePadding";
     public static final String PADDING_PKCS5 = "PKCS5Padding";
     public static final String PADDING_ISO10126 = "ISO10126Padding";
@@ -93,16 +99,15 @@ public class AESEncryptor extends AbsEncryptor {
 
     public static final String SECURE_ALGORITHM_PBKDF2WITHHMACSHA1 = "PBKDF2WithHmacSHA1";
 
-    public static final int KEY_LENGTH_128 = 128;
-    public static final int KEY_LENGTH_192 = 192;
-    public static final int KEY_LENGTH_256 = 256;
-
-    public static final int SALT_LENGTH_FOR_128 = KEY_LENGTH_128 / 8;
-    public static final int SALT_LENGTH_FOR_192 = KEY_LENGTH_192 / 8;
-    public static final int SALT_LENGTH_FOR_256 = KEY_LENGTH_256 / 8;
+    public static final int KEY_BITS_LENGTH_128 = 128;
+    public static final int KEY_BITS_LENGTH_192 = 192;
+    public static final int KEY_BITS_LENGTH_256 = 256;
 
     public static final int ITERATION_COUNT = 1000;
 
+    /**
+     * {@link AESEncryptor} 的构造者。
+     */
     public static class Builder {
 
         private Charset charset;
@@ -125,8 +130,16 @@ public class AESEncryptor extends AbsEncryptor {
             return this;
         }
 
-        public Builder setKey(byte[] keyBytes) {
-            this.key = keyBytes;
+        /**
+         * 直接设置key值。
+         * <p>
+         * 注意，按照aes的定义这里数组的长度是有限制的。
+         *
+         * @param key
+         * @return
+         */
+        public Builder setKey(byte[] key) {
+            this.key = key;
             return this;
         }
 
@@ -139,56 +152,50 @@ public class AESEncryptor extends AbsEncryptor {
             return setKey(new FileInputStream(key));
         }
 
-        /**
-         * 使用{@link #getOrDeriveKey(String, int)}从 password 中创建key。
-         * <p>
-         * 默认 key 长度为{@link #KEY_LENGTH_256}
-         *
-         * @param password
-         * @return
-         */
-        public Builder setPassword(String password) {
-            return setPassword(password, KEY_LENGTH_256);
+        public Builder setDerivedKeyQuietly(String password, int keyBitLen) {
+            try {
+                return setDerivedKey(password, keyBitLen);
+            } catch (Exception e) {
+                LogUtil.e(e);
+                throw new IllegalStateException("无法从password中获取key值");
+            }
         }
 
         /**
          * 使用{@link #getOrDeriveKey(String, int)}从 password 中创建key
          *
          * @param password
-         * @param keyLen
+         * @param keyBitLen
          * @return
          */
-        public Builder setPassword(String password, int keyLen) {
-            try {
-                this.key = getOrDeriveKey(password, keyLen);
-            } catch (Exception e) {
-                LogUtil.e(e);
-                throw new IllegalStateException("无法生成key");
-            }
+        public Builder setDerivedKey(String password, int keyBitLen) throws InvalidKeySpecException, NoSuchAlgorithmException {
+            this.key = getOrDeriveKey(password, keyBitLen);
             return this;
         }
 
         /**
          * 使用{@link #deriveKeyInsecurely(String, int)}将password转化为 key。
-         * <p>
-         * 默认长度为{@link #KEY_LENGTH_256}
          *
          * @param password
+         * @param keyBitLen
          * @return
          */
-        public Builder setPasswordInsecurely(String password) {
-            return setPasswordInsecurely(password, KEY_LENGTH_256);
+        @Deprecated
+        public Builder setDerivedKeyInsecurely(String password, int keyBitLen) {
+            this.key = deriveKeyInsecurely(password, keyBitLen);
+            return this;
         }
 
         /**
-         * 使用{@link #deriveKeyInsecurely(String, int)}将password转化为 key
+         * 使用{@link #deriveKeyDeprecated(String, int)}从password中创建key值
          *
          * @param password
-         * @param keyLen
+         * @param keyBitLen
          * @return
          */
-        public Builder setPasswordInsecurely(String password, int keyLen) {
-            this.key = deriveKeyInsecurely(password, keyLen);
+        @Deprecated
+        public Builder setDerivedKeyDeprecated(String password, int keyBitLen) throws NoSuchProviderException, NoSuchAlgorithmException {
+            this.key = deriveKeyDeprecated(password, keyBitLen);
             return this;
         }
 
@@ -197,7 +204,7 @@ public class AESEncryptor extends AbsEncryptor {
          *
          * @return
          */
-        public AESEncryptor buildQuietly(){
+        public AESEncryptor buildQuietly() {
             try {
                 return build();
             } catch (Exception e) {
@@ -265,15 +272,15 @@ public class AESEncryptor extends AbsEncryptor {
      * 使得每次创建的 key 都是一致的。
      *
      * @param password
-     * @param keyLen
+     * @param keyBitLen
      * @return
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
      * @see #getOrDeriveKey(String, int, Integer, SharedPreferences, String)
      */
-    public static byte[] getOrDeriveKey(String password, int keyLen)
+    public static byte[] getOrDeriveKey(String password, int keyBitLen)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
-        return getOrDeriveKey(password, keyLen, null, null, null);
+        return getOrDeriveKey(password, keyBitLen, null, null, null);
     }
 
     /**
@@ -283,16 +290,16 @@ public class AESEncryptor extends AbsEncryptor {
      * 使得每次创建的 key 都是一致的。
      *
      * @param password
-     * @param keyLen
+     * @param keyBitLen
      * @param pref
      * @return
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
      * @see #getOrDeriveKey(String, int, Integer, SharedPreferences, String)
      */
-    public static byte[] getOrDeriveKey(String password, int keyLen, @Nullable SharedPreferences pref)
+    public static byte[] getOrDeriveKey(String password, int keyBitLen, @Nullable SharedPreferences pref)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
-        return getOrDeriveKey(password, keyLen, null, pref, null);
+        return getOrDeriveKey(password, keyBitLen, null, pref, null);
     }
 
     /**
@@ -302,24 +309,24 @@ public class AESEncryptor extends AbsEncryptor {
      * 使得每次创建的 key 都是一致的。
      *
      * @param password
-     * @param keyLen
+     * @param keyBitLen
      * @param iterationCount 用于创建{@link PBEKeySpec}，为 null 时默认值是{@link #ITERATION_COUNT}
      * @param pref           用于保存配置的{@link SharedPreferences}，如果为 null 则默认使用{@link CoreConfig}来存储数据。
      * @param saltName       用于保存盐的 hex 字符串的 key，
-     *                       为 null 时将使用 AES+password+keyLen 拼接成的字符串的 MD5值。
+     *                       为 null 时将使用 AES+password+keyBitLen 拼接成的字符串的 MD5值。
      * @return
      */
-    public static byte[] getOrDeriveKey(String password, int keyLen,
+    public static byte[] getOrDeriveKey(String password, int keyBitLen,
                                         @Nullable Integer iterationCount, @Nullable SharedPreferences pref,
                                         @Nullable String saltName)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
 
         if (TextUtils.isEmpty(saltName)) {
-            saltName = DigestUtil.digestMD5(AES + password + keyLen);
+            saltName = DigestUtil.digestMD5(AES + password + keyBitLen);
         }
-        int saltLen = keyLen / 8;
+        int saltLen = keyBitLen / 8;
         byte[] salt = getOrCreateSalt(saltLen, pref, saltName);
-        return deriveKey(password, keyLen, salt, iterationCount);
+        return deriveKey(password, keyBitLen, salt, iterationCount);
     }
 
     /**
@@ -331,13 +338,13 @@ public class AESEncryptor extends AbsEncryptor {
      * 建议优先使用{@link #getOrDeriveKey(String, int, Integer, SharedPreferences, String)}
      *
      * @param password
-     * @param keyLen
+     * @param keyBitLen
      * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    public static byte[] deriveKey(String password, int keyLen) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return deriveKey(password, keyLen, null, null);
+    public static byte[] deriveKey(String password, int keyBitLen) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return deriveKey(password, keyBitLen, null, null);
     }
 
     /**
@@ -349,39 +356,40 @@ public class AESEncryptor extends AbsEncryptor {
      * 建议优先使用{@link #getOrDeriveKey(String, int, Integer, SharedPreferences, String)}
      *
      * @param password
-     * @param keyLen         可选值如下：{@link #KEY_LENGTH_128}、{@link #KEY_LENGTH_192}、{@link #KEY_LENGTH_256}(为 null 时的默认值)
+     * @param keyBitLen      可选值如下：{@link #KEY_BITS_LENGTH_128}、{@link #KEY_BITS_LENGTH_192}、{@link #KEY_BITS_LENGTH_256}(为 null 时的默认值)
      * @param iterationCount 用于创建{@link PBEKeySpec}，为 null 时默认值是{@link #ITERATION_COUNT}
      * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    public static byte[] deriveKey(String password, int keyLen, @Nullable byte[] secureSalt, @Nullable Integer iterationCount) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        int saltLen = keyLen / 8;
+    public static byte[] deriveKey(String password, int keyBitLen, @Nullable byte[] secureSalt, @Nullable Integer iterationCount) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        int saltLen = keyBitLen / 8;
         iterationCount = iterationCount != null ? iterationCount : ITERATION_COUNT;
 
         secureSalt = secureSalt != null ? secureSalt : newSecureSalt(saltLen);
-        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), secureSalt, iterationCount, keyLen);
+        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), secureSalt, iterationCount, keyBitLen);
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(SECURE_ALGORITHM_PBKDF2WITHHMACSHA1);
         return keyFactory.generateSecret(keySpec).getEncoded();
     }
 
-    public static byte[] deriveKeyInsecurely(String password, int keyLen) {
+    @Deprecated
+    public static byte[] deriveKeyInsecurely(String password, int keyBitLen) {
         byte[] passwordBytes = password.getBytes(Charset.forName("US_ASCII"));
-        return InsecureSHA1PRNGKeyDerivator.deriveInsecureKey(passwordBytes, keyLen);
+        return InsecureSHA1PRNGKeyDerivator.deriveInsecureKey(passwordBytes, keyBitLen);
     }
 
     @Deprecated
-    public static byte[] deriveKeyDeprecated(String password, int keyLen) throws NoSuchProviderException, NoSuchAlgorithmException {
-        return deriveKeyDeprecated(password, null, keyLen);
+    public static byte[] deriveKeyDeprecated(String password, int keyBitLen) throws NoSuchProviderException, NoSuchAlgorithmException {
+        return deriveKeyDeprecated(password, null, keyBitLen);
     }
 
     @Deprecated
-    public static byte[] deriveKeyDeprecated(String password, @Nullable Charset charset, int keyLen) throws NoSuchProviderException, NoSuchAlgorithmException {
+    public static byte[] deriveKeyDeprecated(String password, @Nullable Charset charset, int keyBitLen) throws NoSuchProviderException, NoSuchAlgorithmException {
         SecureRandom secureRandom = SecureRandom.getInstance(DEPREACATED_SECURE_ALGORITHM_SHA1PRNG, DEPREACATED_SECURE_PROVIDER_CRYPTO);
         secureRandom.setSeed(password.getBytes(charset != null ? charset : Charset.defaultCharset()));
 
         KeyGenerator keyGenerator = KeyGenerator.getInstance(AES);
-        keyGenerator.init(keyLen, secureRandom); // 192 and 256 bits may not be available
+        keyGenerator.init(keyBitLen, secureRandom); // 192 and 256 bits may not be available
         SecretKey secretKey = keyGenerator.generateKey();
         return secretKey.getEncoded();
     }
@@ -404,13 +412,15 @@ class InsecureSHA1PRNGKeyDerivator {
      * <p>
      * Use this method only to retrieve encrypted data that couldn't be retrieved otherwise.
      *
-     * @param seed           seed used for the random generator, usually coming from a password
-     * @param keySizeInBytes length of the array returned
+     * @param seed      seed used for the random generator, usually coming from a password
+     * @param kenBitLen length of bits
      */
-    public static byte[] deriveInsecureKey(byte[] seed, int keySizeInBytes) {
+    public static byte[] deriveInsecureKey(byte[] seed, int kenBitLen) {
+        int byteLen = kenBitLen / 8;
+
         InsecureSHA1PRNGKeyDerivator derivator = new InsecureSHA1PRNGKeyDerivator();
         derivator.setSeed(seed);
-        byte[] key = new byte[keySizeInBytes];
+        byte[] key = new byte[byteLen];
         derivator.nextBytes(key);
         return key;
     }
