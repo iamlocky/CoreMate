@@ -40,7 +40,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     private final byte[] lock = new byte[0];
 
     @Override
-    public Map<String, ?> getAll() {
+    public final Map<String, ?> getAll() {
         if (threadSafe) {
             synchronized (lock) {
                 return super.getAll();
@@ -50,7 +50,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public String getString(String key, String defValue) {
+    public final String getString(String key, String defValue) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.getString(key, defValue);
@@ -60,7 +60,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public Set<String> getStringSet(String key, Set<String> defValues) {
+    public final Set<String> getStringSet(String key, Set<String> defValues) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.getStringSet(key, defValues);
@@ -70,7 +70,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public int getInt(String key, int defValue) {
+    public final int getInt(String key, int defValue) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.getInt(key, defValue);
@@ -80,7 +80,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public long getLong(String key, long defValue) {
+    public final long getLong(String key, long defValue) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.getLong(key, defValue);
@@ -90,7 +90,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public float getFloat(String key, float defValue) {
+    public final float getFloat(String key, float defValue) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.getFloat(key, defValue);
@@ -100,7 +100,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public boolean getBoolean(String key, boolean defValue) {
+    public final boolean getBoolean(String key, boolean defValue) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.getBoolean(key, defValue);
@@ -110,7 +110,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public boolean contains(String key) {
+    public final boolean contains(String key) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.contains(key);
@@ -120,7 +120,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public PrefHelper putString(String key, String value) {
+    public final PrefHelper putString(String key, String value) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.putString(key, value);
@@ -130,7 +130,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public PrefHelper putStringSet(String key, Set<String> values) {
+    public final PrefHelper putStringSet(String key, Set<String> values) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.putStringSet(key, values);
@@ -140,7 +140,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public PrefHelper putBoolean(String key, boolean value) {
+    public final PrefHelper putBoolean(String key, boolean value) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.putBoolean(key, value);
@@ -150,7 +150,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public PrefHelper putInt(String key, int value) {
+    public final PrefHelper putInt(String key, int value) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.putInt(key, value);
@@ -160,7 +160,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public PrefHelper putLong(String key, long value) {
+    public final PrefHelper putLong(String key, long value) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.putLong(key, value);
@@ -170,7 +170,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public PrefHelper putFloat(String key, float value) {
+    public final PrefHelper putFloat(String key, float value) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.putFloat(key, value);
@@ -180,7 +180,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public PrefHelper remove(String key) {
+    public final PrefHelper remove(String key) {
         if (threadSafe) {
             synchronized (lock) {
                 return super.remove(key);
@@ -190,7 +190,7 @@ public class ConcurrentPrefHelper extends PrefHelper {
     }
 
     @Override
-    public PrefHelper clear() {
+    public final PrefHelper clear() {
         if (threadSafe) {
             synchronized (lock) {
                 return super.clear();
