@@ -1,115 +1,130 @@
 package core.mate.util;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.Map;
 import java.util.Set;
 
+import core.mate.Core;
+
 /**
- * 带加密的{@link SharedPreferences}配置处理文件
- *
  * @author DrkCore
  * @since 2016年2月18日17:56:06
  */
 public class PrefHelper {
 
     private final SharedPreferences pref;
-    private final SharedPreferences.Editor editor;
-    private boolean applyOrCommit = true;
+    private volatile boolean applyOrCommit = true;
 
-    public PrefHelper setApplyOrCommit(boolean applyOrCommit) {
+    public final PrefHelper setApplyOrCommit(boolean applyOrCommit) {
         this.applyOrCommit = applyOrCommit;
         return this;
     }
 
+    public PrefHelper(String pref) {
+        this(pref, Context.MODE_PRIVATE);
+    }
+
+    public PrefHelper(String pref, int mode) {
+        this(Core.getInstance().getAppContext().getSharedPreferences(pref, mode));
+    }
+
     public PrefHelper(SharedPreferences pref) {
         this.pref = pref;
-        this.editor = pref.edit();
     }
 
     /*数据读写*/
 
-    public final Map<String, ?> getAll() {
+    public Map<String, ?> getAll() {
         return pref.getAll();
     }
 
-    public final String getString(String key, String defValue) {
+    public String getString(String key, String defValue) {
         return pref.getString(key, defValue);
     }
 
-    public final Set<String> getStringSet(String key, Set<String> defValues) {
+    public Set<String> getStringSet(String key, Set<String> defValues) {
         return pref.getStringSet(key, defValues);
     }
 
-    public final int getInt(String key, int defValue) {
+    public int getInt(String key, int defValue) {
         return pref.getInt(key, defValue);
     }
 
-    public final long getLong(String key, long defValue) {
+    public long getLong(String key, long defValue) {
         return pref.getLong(key, defValue);
     }
 
-    public final float getFloat(String key, float defValue) {
+    public float getFloat(String key, float defValue) {
         return pref.getFloat(key, defValue);
     }
 
-    public final boolean getBoolean(String key, boolean defValue) {
+    public boolean getBoolean(String key, boolean defValue) {
         return pref.getBoolean(key, defValue);
     }
 
-    public final boolean contains(String key) {
+    public boolean contains(String key) {
         return pref.contains(key);
     }
 
-    public final PrefHelper putString(String key, String value) {
+    public PrefHelper putString(String key, String value) {
+        SharedPreferences.Editor editor = pref.edit();
         editor.putString(key, value);
-        submitEdit();
+        submitEdit(editor);
         return this;
     }
 
     public PrefHelper putStringSet(String key, Set<String> values) {
+        SharedPreferences.Editor editor = pref.edit();
         editor.putStringSet(key, values);
-        submitEdit();
+        submitEdit(editor);
         return this;
     }
 
-    public final PrefHelper putBoolean(String key, boolean value) {
+    public PrefHelper putBoolean(String key, boolean value) {
+        SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(key, value);
-        submitEdit();
+        submitEdit(editor);
         return this;
     }
 
-    public final PrefHelper putInt(String key, int value) {
+    public PrefHelper putInt(String key, int value) {
+        SharedPreferences.Editor editor = pref.edit();
         editor.putInt(key, value);
-        submitEdit();
+        submitEdit(editor);
         return this;
     }
 
-    public final PrefHelper putLong(String key, long value) {
+    public PrefHelper putLong(String key, long value) {
+        SharedPreferences.Editor editor = pref.edit();
         editor.putLong(key, value);
-        submitEdit();
+        submitEdit(editor);
         return this;
     }
 
-    public final PrefHelper putFloat(String key, float value) {
+    public PrefHelper putFloat(String key, float value) {
+        SharedPreferences.Editor editor = pref.edit();
         editor.putFloat(key, value);
-        submitEdit();
+        submitEdit(editor);
         return this;
     }
 
-    public final PrefHelper remove(String key) {
+    public PrefHelper remove(String key) {
+        SharedPreferences.Editor editor = pref.edit();
         editor.remove(key);
-        submitEdit();
+        submitEdit(editor);
         return this;
     }
 
-    public final PrefHelper clear() {
+    public PrefHelper clear() {
+        SharedPreferences.Editor editor = pref.edit();
         editor.clear();
-        submitEdit();
+        submitEdit(editor);
         return this;
     }
 
-    private void submitEdit() {
+    private void submitEdit(SharedPreferences.Editor editor) {
         if (applyOrCommit) {
             editor.apply();
         } else {

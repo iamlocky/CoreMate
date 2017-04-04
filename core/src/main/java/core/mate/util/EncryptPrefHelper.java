@@ -3,12 +3,15 @@ package core.mate.util;
 import android.content.SharedPreferences;
 
 /**
- * 带加密的{@link android.content.SharedPreferences}配置处理文件
+ * 带有加密功能的{@link SharedPreferences}的辅助类。
+ * <p>
+ * 虽然继承自{@link ConcurrentPrefHelper} 但是默认情况下
+ * 已关闭了线程安全的开关。
  *
  * @author DrkCore
  * @since 2016年2月18日17:56:06
  */
-public class EncryptPrefHelper extends PrefHelper {
+public class EncryptPrefHelper extends ConcurrentPrefHelper {
 
 	/*成员*/
 
@@ -27,6 +30,7 @@ public class EncryptPrefHelper extends PrefHelper {
         super(pref);
         this.encryptKeyEnable = encryptKeyEnable;
         this.encryptor = encryptor;
+        setThreadSafe(false);
     }
 
 	/*字符串加解密*/
