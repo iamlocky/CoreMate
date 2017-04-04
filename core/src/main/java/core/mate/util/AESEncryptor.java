@@ -244,7 +244,7 @@ public class AESEncryptor extends AbsEncryptor {
      * @return
      */
     public static byte[] getOrCreateSalt(int saltLen, @Nullable SharedPreferences pref, @NonNull String key) {
-        String saltHex = pref != null ? pref.getString(key, null) : CoreConfig.get(key, null);
+        String saltHex = pref != null ? pref.getString(key, null) : CoreConfig.getInstance().getString(key, null);
         byte[] salt = !TextUtils.isEmpty(saltHex) ? EncodeUtil.decodeHex(saltHex) : null;
         if (salt == null) {
             salt = newSecureSalt(saltLen);
@@ -252,7 +252,7 @@ public class AESEncryptor extends AbsEncryptor {
             if (pref != null) {
                 pref.edit().putString(key, saltHex).apply();
             } else {
-                CoreConfig.put(key, saltHex);
+                CoreConfig.getInstance().putString(key, saltHex);
             }
         }
         return salt;

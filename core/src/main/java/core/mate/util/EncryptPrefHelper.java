@@ -1,5 +1,6 @@
 package core.mate.util;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
@@ -22,18 +23,25 @@ public class EncryptPrefHelper extends ConcurrentPrefHelper {
         return encryptKeyEnable;
     }
 
-    public EncryptPrefHelper(SharedPreferences pref, AbsEncryptor encryptor) {
-        this(pref, encryptor, true);
+    public EncryptPrefHelper(String pref, AbsEncryptor encryptor) {
+        this(pref, Context.MODE_PRIVATE, encryptor, true);
+    }
+
+    public EncryptPrefHelper(String pref, int mode, AbsEncryptor encryptor, boolean encryptKeyEnable) {
+        super(pref, mode);
+        this.encryptor = encryptor;
+        this.encryptKeyEnable = encryptKeyEnable;
+        setThreadSafe(false);
     }
 
     public EncryptPrefHelper(SharedPreferences pref, AbsEncryptor encryptor, boolean encryptKeyEnable) {
         super(pref);
-        this.encryptKeyEnable = encryptKeyEnable;
         this.encryptor = encryptor;
+        this.encryptKeyEnable = encryptKeyEnable;
         setThreadSafe(false);
     }
 
-	/*字符串加解密*/
+    /*字符串加解密*/
 
     private String getKey(String originKey) {
         return encryptKeyEnable ? encryptor.encryptHex(originKey) : originKey;
