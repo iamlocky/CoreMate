@@ -105,13 +105,16 @@ public final class ViewUtil {
         return heightPixels;
     }
 
+    public static int getSmallestScreenLength() {
+        return Math.min(getScreenWidth(), getScreenHeight());
+    }
+
     public static int getStatusBarHeight() {
         return statusBarHeight;
     }
 
     /**
      * 获取虚拟导航按钮高度。为0表示不存在虚拟导航按键。
-     *
      *
      * @return
      */
