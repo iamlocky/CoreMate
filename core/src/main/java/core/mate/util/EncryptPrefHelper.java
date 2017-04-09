@@ -6,13 +6,13 @@ import android.content.SharedPreferences;
 /**
  * 带有加密功能的{@link SharedPreferences}的辅助类。
  * <p>
- * 虽然继承自{@link ConcurrentPrefHelper} 但是默认情况下
+ * 虽然继承自{@link SyncPrefHelper} 但是默认情况下
  * 已关闭了线程安全的开关。
  *
  * @author DrkCore
  * @since 2016年2月18日17:56:06
  */
-public class EncryptPrefHelper extends ConcurrentPrefHelper {
+public class EncryptPrefHelper extends SyncPrefHelper {
 
 	/*成员*/
 
@@ -86,7 +86,6 @@ public class EncryptPrefHelper extends ConcurrentPrefHelper {
         String valueStr = String.valueOf(value);
         return putEncryptedString(key, valueStr);
     }
-
 
     public final boolean getDecryptedBoolean(String key, boolean defValue) {
         String valueStr = getDecryptedString(key, null);

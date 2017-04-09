@@ -4,7 +4,7 @@ package core.mate.util;
  * @author DrkCore
  * @since 2017-04-03
  */
-class CoreConfig extends ConcurrentPrefHelper{
+class CoreConfig extends SyncPrefHelper {
 
     private static volatile CoreConfig instance = null;
 
