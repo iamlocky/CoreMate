@@ -154,15 +154,15 @@ public final class ContextUtil {
         return Core.getInstance().getAppContext().getString(strId);
     }
 
-    public CharSequence[] getTextArray(@ArrayRes int arrayId) {
+    public static CharSequence[] getTextArray(@ArrayRes int arrayId) {
         return getResources().getTextArray(arrayId);
     }
 
-    public String[] getStringArray(@ArrayRes int arrayId) {
+    public static String[] getStringArray(@ArrayRes int arrayId) {
         return getResources().getStringArray(arrayId);
     }
 
-    public int[] getIntArray(@ArrayRes int arrayId) {
+    public static int[] getIntArray(@ArrayRes int arrayId) {
         return getResources().getIntArray(arrayId);
     }
 
