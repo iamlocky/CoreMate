@@ -17,8 +17,13 @@ import android.support.annotation.ArrayRes;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
@@ -196,6 +201,23 @@ public final class ContextUtil {
     public static int getDimensionPixelSize(@DimenRes int id) {
         Context context = Core.getInstance().getAppContext();
         return context.getResources().getDimensionPixelSize(id);
+    }
+
+    public static View inflate(@LayoutRes int layoutId){
+        return inflate(layoutId,null,false);
+    }
+
+    public static View inflate(@LayoutRes int layoutId, @Nullable ViewGroup container){
+        return inflate(layoutId,container,false);
+    }
+
+    private static LayoutInflater inflater;
+
+    public static View inflate(@LayoutRes int layoutId, @Nullable ViewGroup container,boolean attachToRoot){
+        if(inflater == null){
+            inflater = LayoutInflater.from(Core.getInstance().getAppContext());
+        }
+        return inflater.inflate(layoutId,container,attachToRoot);
     }
 
     /*Dir*/

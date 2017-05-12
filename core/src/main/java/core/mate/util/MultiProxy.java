@@ -49,6 +49,7 @@ public class MultiProxy implements InvocationHandler {
      * @param <T>
      * @return
      */
+    @SuppressWarnings("unchecked")
     public <T> T getProxy() {
         return (T) proxy;
     }
@@ -128,6 +129,14 @@ public class MultiProxy implements InvocationHandler {
      * * 注意，如果是包装类的布尔类型也就是Boolean为null的话，认定为false。
      */
     public static final int BOOL_MODE_AND = 2;
+    /**
+     * 迭代代理实例直到其中一个返回 true 值。
+     * <p>
+     * 当返回值为布尔类型时该模式将覆盖{@link #resultMode}的效果。
+     * <p>
+     * * 注意，如果是包装类的布尔类型也就是Boolean为null的话，认定为false。
+     */
+    public static final int BOOL_MODE_FIRST_TRUE = 3;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({BOOL_MODE_DISABLE, BOOL_MODE_OR, BOOL_MODE_AND})
@@ -175,23 +184,9 @@ public class MultiProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = null;
         Class<?> returnType = method.getReturnType();
-        if (booleanMergeMode != BOOL_MODE_DISABLE && (returnType == Boolean.class || returnType == boolean.class)) {//布尔模式
-            boolean bool = false, tmp;
-            for (int i = 0, size = proxies.size(); i < size; i++) {
-                tmp = Boolean.TRUE.equals(method.invoke(proxies.get(i), args));
-                if (i == 0) {
-                    bool = tmp;
-                } else {
-                    if (booleanMergeMode == BOOL_MODE_OR) {
-                        bool |= tmp;
-                    } else if (booleanMergeMode == BOOL_MODE_AND) {
-                        bool &= tmp;
-                    } else {
-                        throw new IllegalStateException();
-                    }
-                }
-            }
-            result = bool;
+        if (booleanMergeMode != BOOL_MODE_DISABLE &&
+                (returnType == Boolean.class || returnType == boolean.class)) {//布尔模式
+            result = invokeBoolean(method, args);
         } else {//普通取值模式
             Object tmp;
             for (int i = 0, size = proxies.size(); i < size; i++) {
@@ -205,6 +200,29 @@ public class MultiProxy implements InvocationHandler {
             }
         }
         return result;
+    }
+
+    private boolean invokeBoolean(Method method, Object[] args) throws Throwable {
+        boolean bool = false, tmp;
+        for (int i = 0, size = proxies.size(); i < size; i++) {
+            tmp = Boolean.TRUE.equals(method.invoke(proxies.get(i), args));
+            if (tmp && booleanMergeMode == BOOL_MODE_FIRST_TRUE) {
+                return true;//命中第一个true
+            }
+
+            if (i == 0) {
+                bool = tmp;
+            } else {
+                if (booleanMergeMode == BOOL_MODE_OR) {
+                    bool |= tmp;
+                } else if (booleanMergeMode == BOOL_MODE_AND) {
+                    bool &= tmp;
+                } else {
+                    throw new IllegalStateException();
+                }
+            }
+        }
+        return bool;
     }
 
     /*Delegate*/
