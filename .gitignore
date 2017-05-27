@@ -2,7 +2,6 @@
 *.jks
 
 #gradle config
-/gradle
 *.properties
 .gradle
 
